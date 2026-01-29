@@ -1,0 +1,228 @@
+# SqncR
+
+**AI-Native Generative Music for MIDI Devices**
+
+> Talk to your studio. Create organic, evolving music through conversation with AI.
+
+## What is SqncR?
+
+SqncR (Sequencer) is an AI-first generative music system that lets you control your MIDI devices through natural language conversation. Built as an MCP (Model Context Protocol) server, it works seamlessly with Claude Desktop, GitHub Copilot, and other AI assistants.
+
+**The Vision:**
+- Code in VSCode on your left monitor
+- Chat with Claude/Copilot on your right monitor
+- Say "create an ambient drone, 87 BPM, darker"
+- Your hardware synths start playing
+- Keep coding while the music evolves
+
+## Status: Planning & Architecture Phase
+
+🚧 **Currently:** Designing architecture and establishing patterns  
+📋 **Next:** Building MCP server and device abstraction layer  
+🎯 **Goal:** Production-ready agentic music system
+
+## Core Principles
+
+**Device-Agnostic**
+- Works with any MIDI device (synths, drum machines, FX, lights)
+- Device profiles define capabilities, not the architecture
+- Add new devices without changing core code
+
+**AI-Native**
+- Natural language is the interface (no UI)
+- Conversation-driven music creation
+- Works in Claude, Copilot, or any MCP-compatible AI
+
+**Musically Intelligent**
+- Deep music theory understanding (scales, modes, harmony)
+- Translates abstract concepts to music ("make it sound like Rothko")
+- Sophisticated chord progressions and voice leading
+
+**Agentic Architecture**
+- **Skills:** Discrete tasks (analyze-song, vibe-to-music)
+- **Agents:** Autonomous, stateful (composition, listener, orchestrator)
+- **MCP Servers:** Stateful services with tools/resources
+
+## Example Workflows
+
+### Workflow 1: Quick Generation
+```
+You: "list my midi devices"
+SqncR: [Shows Polyend Synth, Moog Mother-32, etc.]
+
+You: "ambient but rhythmic, 87bpm. polyend bass on channel 1, 
+      chords on 2, pads on 3"
+SqncR: [Music starts playing through your Polyend]
+
+You: "darker"
+SqncR: [Shifts to Phrygian mode, lowers voicings]
+
+You: "more polyrhythms"
+SqncR: [Adds 3-against-4 feel]
+```
+
+### Workflow 2: Abstract Concepts
+```
+You: "make it sound like Rothko makes you feel"
+SqncR: [Slow harmonic rhythm, extended chords, warm sustained tones]
+
+You: "shift to something like Jon Hopkins"
+SqncR: [Adds intricate rhythms, forward momentum, glitchy elements]
+```
+
+### Workflow 3: Song Recreation
+```
+You: "i want it to sound like that cream song from the breakfast club"
+SqncR: [Searches, identifies "I'm So Glad", extracts key/tempo, 
+        generates in E blues with shuffle feel]
+```
+
+### Workflow 4: Interactive Jamming
+```
+You: "listen to what i play and complement me"
+SqncR: [Monitors MIDI input, detects your chords, generates 
+        complementary bass and fills]
+```
+
+## Architecture Overview
+
+```
+[You in Claude/Copilot]
+         ↓
+   [Skills Layer] ← analyze-song, vibe-to-music, device-selector
+         ↓
+   [Agents Layer] ← composition, listener, session-manager
+         ↓
+   [MCP Servers] ← sqncr-core, sqncr-theory, sqncr-devices
+         ↓
+   [SqncR Core] ← Music theory, generation, device abstraction
+         ↓
+   [Your MIDI Devices] ← Polyend, Moog, Chase Bliss, etc.
+```
+
+### Components
+
+**Skills (Composable Tasks)**
+- `skill-analyze-song` - Extract musical data from song descriptions
+- `skill-vibe-to-music` - Translate concepts (Rothko, film noir) to parameters
+- `skill-chord-progression` - Generate theory-based progressions
+- `skill-device-selector` - Choose best device for musical role
+- `skill-polyrhythm-generator` - Create complex rhythmic patterns
+
+**Agents (Autonomous, Stateful)**
+- `agent-session-manager` - Maintains musical coherence and state
+- `agent-composition` - High-level structure and orchestration
+- `agent-listener` - Real-time input analysis and adaptation
+- `agent-device-orchestrator` - Multi-device coordination
+
+**MCP Servers**
+- `sqncr-core` - Main server with generation/session tools
+- `sqncr-theory` - Music theory computations
+- `sqncr-devices` - Device registry and profiles
+
+## Supported Devices (Planned)
+
+**Current Focus:**
+- Polyend Synth (3 engines, 8 voices)
+- Moog Mother-32 (analog mono synth)
+- Moog DFAM (analog drum machine)
+- Chase Bliss MESS (FX sequencer pedal)
+- Polyend Play+ (sampler/sequencer)
+- MIDI lighting controllers
+
+**Architecture supports ANY MIDI device** - just add a device profile.
+
+## Technology Stack
+
+- **MCP Servers:** TypeScript/Node.js with `@modelcontextprotocol/sdk`
+- **MIDI Layer:** Rust executables (`midir`) for low-latency
+- **Music Theory:** TypeScript with `tonal` library
+- **State:** SQLite or JSON files
+- **Skills:** Hybrid (executables + modules)
+- **Agents:** TypeScript classes
+
+## Getting Started (Future)
+
+```bash
+# Clone repo
+git clone https://github.com/bradygaster/SqncR.git
+cd SqncR
+
+# Install dependencies
+npm install
+
+# Configure your devices
+cp config.example.json ~/.sqncr/config.json
+# Edit with your MIDI setup
+
+# Start MCP server
+npm start
+
+# Add to Claude Desktop config
+# ~/.config/claude/claude_desktop_config.json
+{
+  "mcpServers": {
+    "sqncr": {
+      "command": "node",
+      "args": ["path/to/SqncR/dist/index.js"]
+    }
+  }
+}
+
+# Talk to Claude
+"list my midi devices"
+"start an ambient piece"
+```
+
+## Documentation
+
+- [CONCEPT.md](CONCEPT.md) - High-level vision and philosophy
+- [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design
+- [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Skills, Agents, MCP details
+- [MUSIC_THEORY.md](MUSIC_THEORY.md) - Theory concepts and conversational design
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines and ground rules
+
+## Contributing
+
+We're in the planning phase. Contributions welcome once core architecture is established.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- Branch strategy (use `main`, not `master`)
+- Code standards
+- Commit message format
+- PR process
+- Musical philosophy
+
+## Why SqncR?
+
+**For Musicians:**
+- No UI to learn - just talk
+- Works with gear you already own
+- Real-time, organic music generation
+- Sophisticated music theory built-in
+
+**For Developers:**
+- Modern agentic architecture
+- Clean separation of concerns (Skills/Agents/MCP)
+- Extensible device profiles
+- Example of "the right way" to build AI apps
+
+**For AI Enthusiasts:**
+- Real-world agentic application
+- Natural language → domain-specific actions
+- Stateful agents with autonomy
+- MCP protocol implementation
+
+## License
+
+*TBD - Private repo during development*
+
+## Contact
+
+**Maintainer:** Brady Gaster ([@bradygaster](https://github.com/bradygaster))
+
+**Repository:** [https://github.com/bradygaster/SqncR](https://github.com/bradygaster/SqncR) (Private)
+
+---
+
+**Built with:** Music theory, MIDI magic, and conversational AI ✨🎹🎵
