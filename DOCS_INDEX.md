@@ -30,6 +30,11 @@
 
 ## Reference Documentation
 
+### Developer Reference
+- [docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md) - Quick reference card for developers
+- [docs/TECHNICAL_DEBT.md](docs/TECHNICAL_DEBT.md) - Technical debt tracking log
+- [CHANGELOG.md](CHANGELOG.md) - Version history and change log
+
 ### Device Profiles
 Device profiles are documented in:
 - [AGENTIC_ARCHITECTURE.md - Device Abstraction Layer](AGENTIC_ARCHITECTURE.md#device-abstraction-layer)

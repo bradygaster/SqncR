@@ -93,12 +93,201 @@ Was using Locrian intervals by mistake. Now properly uses
 - Mock MIDI devices for testing (no hardware required for CI)
 - Real hardware testing documented separately
 
+### Documentation Standards
+
+**Every Code Change Must Include Documentation**
+
+Documentation is not optional. It's part of the Definition of Done for every task.
+
+#### When You Add/Change Code, Update:
+
+**1. Code Documentation**
+- [ ] XML comments on public APIs
+- [ ] Method-level documentation for complex logic
+- [ ] Example usage in comments where helpful
+
+**2. Architecture Documentation**
+- [ ] Update ARCHITECTURE.md if adding new patterns
+- [ ] Update DIAGRAMS.md if changing flows
+- [ ] Update AGENTIC_ARCHITECTURE.md if adding skills/agents
+
+**3. User-Facing Documentation**
+- [ ] Update README.md if changing user experience
+- [ ] Update SKILLS.md if adding/changing skills
+- [ ] Update relevant sprint plan if in active sprint
+
+**4. Always Update**
+- [ ] DOCS_INDEX.md - Add new documents to index
+- [ ] CHANGELOG.md - Add entry for user-visible changes
+
+#### Documentation Checklist Template
+
+When starting work on a feature/fix, copy this checklist to your PR:
+
+```markdown
+## Documentation Checklist
+
+### Code Documentation
+- [ ] XML comments added to public APIs
+- [ ] Complex logic documented
+- [ ] Examples provided where helpful
+
+### Architecture Documentation
+- [ ] ARCHITECTURE.md updated (if applicable)
+- [ ] DIAGRAMS.md updated (if applicable)
+- [ ] AGENTIC_ARCHITECTURE.md updated (if applicable)
+
+### User Documentation
+- [ ] README.md updated (if applicable)
+- [ ] SKILLS.md updated (if applicable)
+- [ ] Quick Start Guide updated (if applicable)
+
+### Reference Documentation
+- [ ] API Reference updated (if applicable)
+- [ ] CLI Reference updated (if applicable)
+- [ ] MCP Tools Reference updated (if applicable)
+
+### Always Required
+- [ ] DOCS_INDEX.md updated
+- [ ] CHANGELOG.md updated
+- [ ] Sprint plan updated (if in active sprint)
+
+### Examples
+- [ ] Code examples added/updated (if applicable)
+- [ ] Configuration examples added/updated (if applicable)
+```
+
+#### New Document Checklist
+
+When creating a new document:
+
+```markdown
+## New Document Checklist
+- [ ] Document created in correct location
+- [ ] Mermaid diagrams used (no ASCII art)
+- [ ] External links added where relevant
+- [ ] Cross-references to related docs
+- [ ] Added to DOCS_INDEX.md
+- [ ] Added to README.md (if appropriate)
+- [ ] Links tested
+- [ ] Table of contents added (if >3 sections)
+- [ ] "Last Updated" date added
+- [ ] "See Also" section added
+```
+
+#### Documentation-as-Code Tools
+
+**Install these to help maintain docs:**
+
+1. **markdownlint** - Markdown linting
+```bash
+npm install -g markdownlint-cli
+markdownlint '**/*.md' --ignore node_modules
+```
+
+2. **markdown-link-check** - Check for broken links
+```bash
+npm install -g markdown-link-check
+markdown-link-check README.md
+```
+
+3. **GitHub Actions** - Automated checks (we'll add in Sprint 06)
+```yaml
+name: Documentation Check
+on: [push, pull_request]
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install -g markdownlint-cli
+      - run: markdownlint '**/*.md' --ignore node_modules
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+```
+
+#### Sprint-Based Documentation Strategy
+
+**Sprint 00 (Foundation):**
+- [ ] Create LICENSE
+- [ ] Create Development Setup Guide
+- [ ] Clean up legacy files
+- [ ] Add src/ README
+
+**Sprint 01 (Theory & MIDI):**
+- [ ] Music theory API reference
+- [ ] MIDI service API reference
+- [ ] Device profile documentation
+- [ ] Testing guide
+
+**Sprint 02 (Core Skills):**
+- [ ] Skill development guide
+- [ ] First code examples
+- [ ] Quick Start Guide
+
+**Sprint 03 (CLI & MCP):**
+- [ ] CLI reference
+- [ ] MCP tools reference
+- [ ] Configuration examples
+
+**Sprint 04 (API & SDK):**
+- [ ] API reference (OpenAPI/Swagger)
+- [ ] SDK reference
+- [ ] Integration examples
+
+**Sprint 05 (Advanced):**
+- [ ] Agent development guide
+- [ ] Advanced examples
+- [ ] Tutorial
+
+**Sprint 06 (Production):**
+- [ ] Troubleshooting guide
+- [ ] FAQ
+- [ ] Performance benchmarks
+- [ ] Release process
+
+#### Documentation Review Process
+
+**Before Merging Any PR:**
+1. Run `markdownlint '**/*.md'`
+2. Run `markdown-link-check` on changed files
+3. Verify all checkboxes checked
+4. Verify DOCS_INDEX.md updated
+5. Verify CHANGELOG.md updated
+
+**Weekly Documentation Review (During Active Development):**
+- Review all docs for accuracy
+- Update outdated information
+- Check all external links
+- Update "Last Updated" dates
+
+#### Documentation Debt
+
+If you must skip documentation (tech debt), add to technical debt log:
+
+```markdown
+## docs/technical-debt.md
+
+### [Date] - [Feature/Fix]
+**Documentation Owed:**
+- [ ] API reference for XYZ
+- [ ] Example for ABC
+
+**Why Deferred:** [reason]
+**Target Sprint:** [sprint number]
+```
+
+---
+
 ### Pull Request Process
 
 1. **Create feature branch** from `main`
 2. **Implement** with frequent, atomic commits
 3. **Test** thoroughly (automated + manual if MIDI-related)
-4. **Document** in relevant .md files
+4. **Document** in relevant .md files (use checklists above)
 5. **PR to `main`** with clear description
 6. **Review** - at least one approval required
 7. **Squash and merge** (keep history clean)
