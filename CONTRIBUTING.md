@@ -135,11 +135,29 @@ How does this affect music generation? (if applicable)
 ### Documentation Standards
 
 **Keep docs up-to-date:**
+- `README.md` - getting started, installation, usage (update frequently)
 - `CONCEPT.md` - high-level vision (rarely changes)
 - `ARCHITECTURE.md` - system architecture (update when structure changes)
 - `AGENTIC_ARCHITECTURE.md` - skills/agents/MCP details (update when adding new components)
 - `MUSIC_THEORY.md` - theory concepts and workflows (update with new musical capabilities)
-- `README.md` - getting started, installation, usage (update frequently)
+- `DOCS_INDEX.md` - documentation index (**update with every doc change**)
+
+**Documentation Index Requirement:**
+- **CRITICAL**: Update `DOCS_INDEX.md` whenever you create, modify, or delete documentation
+- Add new documents with brief description
+- Update "Last Updated" timestamp
+- Link to relevant external resources
+- Keep project status current
+
+**Linking Standards:**
+- Link to external resources for:
+  - Device manufacturer pages (Polyend, Moog, etc.)
+  - Music theory concepts (scales, modes, harmony)
+  - Technical specifications (MIDI implementation charts)
+  - Development tools and libraries
+- Use descriptive link text (not "click here")
+- Verify links are current and accessible
+- Link to specific sections in long documents using anchors
 
 **Code Documentation:**
 - JSDoc for all public functions/classes

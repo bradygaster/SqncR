@@ -423,9 +423,10 @@ autonomy: |
 {
   "devices://polyend-synth": "Polyend Synth profile",
   "devices://moog-mother32": "Moog Mother-32 profile",
+  "devices://moog-dfam": "Moog DFAM profile",
+  "devices://sonoclast-mafd": "Sonoclast MAFD profile",
   "devices://polyend-mess": "Polyend MESS profile",
-  "devices://polyend-play": "Polyend Play+ profile",
-  "devices://moog-dfam": "Moog DFAM profile"
+  "devices://polyend-play": "Polyend Play+ profile"
 }
 ```
 
@@ -554,7 +555,71 @@ interface DeviceProfile {
 }
 ```
 
-**Polyend Play+**
+**Moog DFAM**
+```typescript
+{
+  id: "moog-dfam-001",
+  name: "Moog DFAM",
+  type: "drum_machine",
+  midi: {
+    channels: [1],  // via MAFD adapter
+    polyphony: 1,
+    capabilities: ["note_on", "note_off", "velocity", "aftertouch"]
+  },
+  roles: ["drums", "percussion", "bass"],
+  characteristics: {
+    timbre: ["analog", "punchy", "aggressive", "modular"],
+    synthesis: ["analog_percussion"],
+    range: null  // 8-step sequencer triggered by MIDI via MAFD
+  },
+  optimization: {
+    requires_adapter: {
+      name: "Sonoclast MAFD",
+      url: "https://sonoclast.com/products/mafd/",
+      function: "MIDI-to-trigger conversion for DFAM's 8 steps"
+    },
+    note_priority: "last",
+    step_mapping: "8 adjacent MIDI notes → 8 DFAM steps",
+    cv_outputs: {
+      velocity: "0-5V from MIDI velocity",
+      pressure: "0-5V from aftertouch/mod wheel"
+    }
+  }
+}
+```
+
+**Sonoclast MAFD** (MIDI Adapter for DFAM)
+```typescript
+{
+  id: "sonoclast-mafd-001",
+  name: "Sonoclast MAFD",
+  type: "controller",
+  midi: {
+    channels: [1],  // configurable via firmware
+    polyphony: 8,  // 8 DFAM steps
+    capabilities: ["note_on", "note_off", "velocity", "aftertouch", "mod_wheel"]
+  },
+  roles: ["controller"],  // MIDI-to-CV bridge
+  characteristics: {
+    timbre: null,  // no sound generation
+    synthesis: null,
+    range: null
+  },
+  optimization: {
+    controls_device: "Moog DFAM",
+    inputs: ["USB MIDI", "DIN MIDI", "TRS MIDI Type B"],
+    outputs: {
+      "ADV/CLOCK": "Triggers DFAM step advancement",
+      "VELOCITY OUT": "0-5V CV from MIDI velocity (0-127)",
+      "PRESSURE OUT": "0-5V CV from aftertouch or mod wheel"
+    },
+    power: "USB or Eurorack +5V rail (45mA)",
+    form_factor: ["2hp Eurorack", "Desktop case"],
+    step_mapping: "8 adjacent MIDI notes map to 8 DFAM steps",
+    url: "https://sonoclast.com/products/mafd/"
+  }
+}
+```
 ```typescript
 {
   id: "polyend-play-001",
@@ -813,17 +878,17 @@ interface DeviceProfile {
 ## Technology Stack Recommendations
 
 **MCP Servers:** TypeScript/Node.js
-- `@modelcontextprotocol/sdk`
+- [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk)
 - Fast development
 - Good MIDI libraries
 
 **MIDI Layer:** Rust executables
-- `midir` for low-latency
+- [`midir`](https://github.com/Boddlnagg/midir) for low-latency
 - Cross-platform
 - Called as skills from MCP server
 
 **Music Theory:** TypeScript
-- `tonal` library as foundation
+- [`tonal`](https://github.com/tonaljs/tonal) library as foundation
 - Custom extensions for advanced theory
 
 **State Management:** SQLite or JSON files
@@ -883,6 +948,25 @@ interface DeviceProfile {
         "default_roles": {
           "5": "fx"
         }
+      },
+      {
+        "id": "moog-dfam-001",
+        "profile": "moog-dfam",
+        "nickname": "DFAM",
+        "midi_adapter": "sonoclast-mafd-001",
+        "midi_port": "MAFD",
+        "channels": [6],
+        "default_roles": {
+          "6": "drums"
+        }
+      },
+      {
+        "id": "sonoclast-mafd-001",
+        "profile": "sonoclast-mafd",
+        "nickname": "MAFD",
+        "midi_port": "MAFD USB",
+        "channels": [6],
+        "controls_device": "moog-dfam-001"
       }
     ]
   },

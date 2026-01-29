@@ -2,9 +2,14 @@
 
 ## Music Theory Foundation
 
+SqncR needs deep understanding of music theory to generate musically coherent and sophisticated content. Below are the core concepts, with links to detailed resources.
+
 ### Core Concepts SqncR Must Understand
 
 **Scales & Modes**
+
+Learn more: [Modes (Wikipedia)](https://en.wikipedia.org/wiki/Mode_(music)), [Music Theory - Modes](https://www.musictheory.net/lessons/23)
+
 ```
 Major Modes:
 - Ionian (major) - bright, happy
@@ -19,6 +24,9 @@ Minor Modes:
 ```
 
 **Circle of Fifths / Harmonic Relationships**
+
+Learn more: [Circle of Fifths (Wikipedia)](https://en.wikipedia.org/wiki/Circle_of_fifths), [Interactive Circle of Fifths](https://randscullard.com/CircleOfFifths/)
+
 ```
 Close relationships (smooth transitions):
 - I - IV - V (tonic - subdominant - dominant)
@@ -32,6 +40,9 @@ Distant relationships (dramatic shifts):
 ```
 
 **Chord Function & Emotional Value**
+
+Learn more: [Chord Progressions](https://en.wikipedia.org/wiki/Chord_progression), [Voice Leading](https://en.wikipedia.org/wiki/Voice_leading)
+
 ```
 Stability → Tension → Release:
 - I (tonic) = home, rest, resolution
@@ -49,6 +60,9 @@ Emotional Qualities:
 ```
 
 **Rhythmic Concepts**
+
+Learn more: [Polyrhythm (Wikipedia)](https://en.wikipedia.org/wiki/Polyrhythm), [Rhythm and Meter](https://www.musictheory.net/lessons/12)
+
 ```
 Polyrhythms:
 - 3 against 4 (hemiola)
@@ -64,6 +78,8 @@ Density:
 ---
 
 ## Device Profile: Polyend Synth
+
+**Official Documentation:** [Polyend Synth](https://polyend.com/synth/), [Manual (PDF)](https://polyend.com/downloads/synth-downloads/)
 
 **MIDI Implementation:**
 - 8-voice polyphony

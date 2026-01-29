@@ -116,6 +116,9 @@ class SqncRServer {
 ### Multi-Protocol Support
 
 **MCP (Primary)**
+
+Learn more: [Model Context Protocol](https://modelcontextprotocol.io/), [MCP Specification](https://spec.modelcontextprotocol.io/)
+
 ```json
 {
   "mcpServers": {
@@ -178,21 +181,21 @@ sqncr stop
 ### Key Libraries
 
 **MIDI:**
-- `midir` (Rust) or `node-midi` (Node)
+- [`midir`](https://github.com/Boddlnagg/midir) (Rust) or [`node-midi`](https://github.com/justinlatimer/node-midi) (Node)
 - `portmidi` wrapper
-- Virtual MIDI: rtpmidi, LoopMIDI integration
+- Virtual MIDI: rtpmidi, [LoopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) integration
 
 **MCP:**
-- `@modelcontextprotocol/sdk` (TypeScript)
+- [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) (TypeScript)
 - Rust MCP SDK (if available)
 
 **Music Theory:**
-- `tonal` (JS) - scales, chords, theory
+- [`tonal`](https://github.com/tonaljs/tonal) (JS) - scales, chords, theory
 - Custom Rust implementation for speed
 
 **AI/ML:**
-- Local inference: ONNX runtime
-- Magenta.js for music ML
+- Local inference: [ONNX Runtime](https://onnxruntime.ai/)
+- [Magenta.js](https://magenta.tensorflow.org/get-started/#magenta-js) for music ML
 - Or keep it algorithmic initially
 
 ## Service Architecture

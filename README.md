@@ -123,20 +123,21 @@ SqncR: [Monitors MIDI input, detects your chords, generates
 ## Supported Devices (Planned)
 
 **Current Focus:**
-- Polyend Synth (3 engines, 8 voices)
-- Moog Mother-32 (analog mono synth)
-- Moog DFAM (analog drum machine)
-- Polyend MESS (multi-FX step sequencer pedal)
-- Polyend Play+ (sampler/sequencer)
+- [Polyend Synth](https://polyend.com/synth/) (3 engines, 8 voices)
+- [Moog Mother-32](https://www.moogmusic.com/products/mother-32) (analog mono synth)
+- [Moog DFAM](https://www.moogmusic.com/products/dfam-drummer-another-mother) (analog drum machine)
+- [Sonoclast MAFD](https://sonoclast.com/products/mafd/) (MIDI adapter for DFAM)
+- [Polyend MESS](https://polyend.com/mess/) (multi-FX step sequencer pedal)
+- [Polyend Play+](https://polyend.com/play/) (sampler/sequencer)
 - MIDI lighting controllers
 
 **Architecture supports ANY MIDI device** - just add a device profile.
 
 ## Technology Stack
 
-- **MCP Servers:** TypeScript/Node.js with `@modelcontextprotocol/sdk`
-- **MIDI Layer:** Rust executables (`midir`) for low-latency
-- **Music Theory:** TypeScript with `tonal` library
+- **MCP Servers:** TypeScript/Node.js with [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk)
+- **MIDI Layer:** Rust executables ([`midir`](https://github.com/Boddlnagg/midir)) for low-latency
+- **Music Theory:** TypeScript with [`tonal`](https://github.com/tonaljs/tonal) library
 - **State:** SQLite or JSON files
 - **Skills:** Hybrid (executables + modules)
 - **Agents:** TypeScript classes
@@ -176,11 +177,19 @@ npm start
 
 ## Documentation
 
+- [README.md](README.md) - Project overview and getting started
 - [CONCEPT.md](CONCEPT.md) - High-level vision and philosophy
 - [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design
 - [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Skills, Agents, MCP details
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Theory concepts and conversational design
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines and ground rules
+- [DOCS_INDEX.md](DOCS_INDEX.md) - Complete documentation index
+
+## External Resources
+
+- [Model Context Protocol](https://modelcontextprotocol.io/) - MCP documentation
+- [MIDI Association](https://www.midi.org/) - Official MIDI standards
+- [Music Theory Resources](https://www.musictheory.net/) - Reference materials
 
 ## Contributing
 
