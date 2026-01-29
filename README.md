@@ -97,7 +97,7 @@ SqncR: [Monitors MIDI input, detects your chords, generates
          ↓
    [SqncR Core] ← Music theory, generation, device abstraction
          ↓
-   [Your MIDI Devices] ← Polyend, Moog, Chase Bliss, etc.
+   [Your MIDI Devices] ← Polyend, Moog, etc.
 ```
 
 ### Components
@@ -126,7 +126,7 @@ SqncR: [Monitors MIDI input, detects your chords, generates
 - Polyend Synth (3 engines, 8 voices)
 - Moog Mother-32 (analog mono synth)
 - Moog DFAM (analog drum machine)
-- Chase Bliss MESS (FX sequencer pedal)
+- Polyend MESS (multi-FX step sequencer pedal)
 - Polyend Play+ (sampler/sequencer)
 - MIDI lighting controllers
 

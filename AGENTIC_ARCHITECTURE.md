@@ -39,7 +39,7 @@
         ┌─────────────────────┼─────────────────────┐
         │                     │                     │
 ┌───────▼─────┐    ┌─────────▼──────┐    ┌────────▼────────┐
-│ Polyend     │    │ Moog Mother-32 │    │ Chase Bliss     │
+│ Polyend     │    │ Moog Mother-32 │    │ Polyend         │
 │ Synth       │    │ & DFAM         │    │ MESS            │
 │ (3 engines) │    │ (analog)       │    │ (FX sequencer)  │
 └─────────────┘    └────────────────┘    └─────────────────┘
@@ -423,7 +423,7 @@ autonomy: |
 {
   "devices://polyend-synth": "Polyend Synth profile",
   "devices://moog-mother32": "Moog Mother-32 profile",
-  "devices://chase-bliss-mess": "Chase Bliss MESS profile",
+  "devices://polyend-mess": "Polyend MESS profile",
   "devices://polyend-play": "Polyend Play+ profile",
   "devices://moog-dfam": "Moog DFAM profile"
 }
@@ -515,32 +515,41 @@ interface DeviceProfile {
 }
 ```
 
-**Chase Bliss MESS**
+**Polyend MESS**
 ```typescript
 {
-  id: "chase-bliss-mess-001",
-  name: "Chase Bliss MESS",
+  id: "polyend-mess-001",
+  name: "Polyend MESS",
   type: "fx",
   midi: {
-    channels: [1],
+    channels: [1],  // configurable
     polyphony: 1,
-    capabilities: ["cc", "program_change"]
+    capabilities: ["cc", "program_change", "clock", "transport"]
   },
-  roles: ["texture", "fx"],
+  roles: ["texture", "fx", "sequencer"],
   characteristics: {
-    timbre: ["glitchy", "reverse", "pitch_shift", "stutter"],
-    synthesis: ["sample_manipulation"],
+    timbre: ["glitchy", "lofi", "degradation", "modulation", "delay", "reverb"],
+    synthesis: ["multi_fx"],
     range: null  // FX pedal, no note range
   },
   optimization: {
     parameter_map: {
-      // MIDI CC → pedal parameter mappings
-      1: "mix",
-      2: "time",
-      3: "feedback"
-      // ... etc
+      // MIDI CC → effect parameter mappings (see manual page 21)
+      // Assignable per preset
     },
-    sequencer: true
+    sequencer: {
+      steps: 16,
+      midi_controllable: true,
+      clock_sync: true
+    },
+    presets: {
+      midi_accessible: 127,  // PC 0-127
+      total: "unlimited"  // but >127 not accessible via MIDI
+    },
+    limitations: [
+      "Cannot engage/bypass effect via MIDI",
+      "Presets >127 not accessible via MIDI PC"
+    ]
   }
 }
 ```
@@ -659,7 +668,7 @@ interface DeviceProfile {
    Agent plans:
    - Polyend Synth (Ch2, Ch3): granular pads, atmospheric textures
    - Moog Mother-32: monophonic bass line
-   - MESS: triggered on beat 4 of every other bar, random parameter modulation
+   - Polyend MESS: triggered on beat 4 of every other bar, random parameter modulation via CC
 
 2. Calls skill-device-selector for each role
    (validates choices, suggests channel assignments)
@@ -778,7 +787,7 @@ interface DeviceProfile {
 → Add all device profiles
   - Polyend Play+
   - Moog Mother-32, DFAM
-  - Chase Bliss MESS
+  - Polyend MESS
   - MIDI lights
 
 → agent-device-orchestrator
@@ -866,10 +875,10 @@ interface DeviceProfile {
         }
       },
       {
-        "id": "chase-bliss-mess-001",
-        "profile": "chase-bliss-mess",
+        "id": "polyend-mess-001",
+        "profile": "polyend-mess",
         "nickname": "MESS",
-        "midi_port": "MESS MIDI",
+        "midi_port": "Polyend MESS",
         "channels": [5],
         "default_roles": {
           "5": "fx"
