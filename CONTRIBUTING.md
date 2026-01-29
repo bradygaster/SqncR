@@ -157,6 +157,25 @@ How does this affect music generation? (if applicable)
 - Verify links are current and accessible
 - Link to specific sections in long documents using anchors
 
+**Diagram Standards:**
+- **Always use Mermaid diagrams** for architecture, flows, and visualizations
+- **Never use ASCII art** for diagrams
+- Mermaid is rendered natively in GitHub and most markdown viewers
+- Supported diagram types:
+  - `flowchart` - System architecture, process flows
+  - `sequenceDiagram` - Interactions, message flows
+  - `stateDiagram-v2` - State machines, agent states
+  - `classDiagram` - Type hierarchies, relationships
+  - `graph` - Simple node/edge diagrams
+- Example:
+  ```mermaid
+  flowchart TD
+      User[User] --> AI[AI Assistant]
+      AI --> MCP[MCP Server]
+      MCP --> MIDI[MIDI Service]
+      MIDI --> Device[Hardware Synth]
+  ```
+
 **Code Documentation:**
 - JSDoc for all public functions/classes
 - Inline comments for complex musical algorithms

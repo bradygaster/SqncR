@@ -249,17 +249,29 @@ builder.Build().Run();
 
 ### Service Dependencies
 
-```
-Claude/Copilot
-      ↓
-  MCP Server (ASP.NET Core)
-      ↓
-  ┌───┴───┐
-  ↓       ↓
-MIDI    Theory
-Service Service
-  ↓       ↓
-SQLite (Shared State)
+```mermaid
+flowchart TD
+    Claude["Claude/Copilot"]
+    MCP["MCP Server<br/>(ASP.NET Core)"]
+    
+    subgraph Services
+        MIDI["MIDI Service"]
+        Theory["Theory Service"]
+    end
+    
+    SQLite["SQLite<br/>(Shared State)"]
+    
+    Claude --> MCP
+    MCP --> MIDI
+    MCP --> Theory
+    MIDI --> SQLite
+    Theory --> SQLite
+    
+    style Claude fill:#e1f5ff
+    style MCP fill:#fff4e1
+    style MIDI fill:#f0e1ff
+    style Theory fill:#f0e1ff
+    style SQLite fill:#e1ffe1
 ```
 
 ---
@@ -268,78 +280,96 @@ SQLite (Shared State)
 
 ### Trace 1: "Make it darker"
 
-```
-User Command: "make it darker" (1.2s)
-├─ Parse Command (5ms)
-│  └─ Intent: ModifyGeneration, Parameter: "darker"
-├─ Vibe-to-Music Skill (20ms)
-│  ├─ Semantic Analysis: "darker" (5ms)
-│  └─ Map to Parameters (15ms)
-│     ├─ mode: "phrygian"
-│     ├─ brightness: -0.3
-│     ├─ velocity_offset: -15
-│     └─ voicing: "lower"
-├─ Composition Agent: Update (50ms)
-│  ├─ Current State: A minor
-│  ├─ Target State: A Phrygian
-│  └─ Transition Plan (30ms)
-│     └─ Smooth shift over 2 bars
-└─ Generate MIDI Transition (1.1s)
-   ├─ Recalculate Voicings (20ms)
-   ├─ Send Transition Notes (1.08s)
-   │  ├─ Polyend Ch2: D#4→D4 vel=70→55 (500ms)
-   │  ├─ Polyend Ch3: F4→F4 vel=60→45 (500ms)
-   │  └─ Moog Ch4: A2→A2 vel=80→65 (500ms)
-   └─ Update Agent State: "A Phrygian, dark"
+```mermaid
+sequenceDiagram
+    participant User
+    participant AI as AI Assistant
+    participant Skill as Vibe-to-Music Skill
+    participant Agent as Composition Agent
+    participant MIDI as MIDI Service
+    participant Device as Polyend Synth
+    
+    User->>AI: "make it darker"
+    Note over AI: Parse Command (5ms)
+    AI->>Skill: Translate "darker" to params
+    Note over Skill: Semantic Analysis (5ms)<br/>Map to Parameters (15ms)
+    Skill-->>AI: mode: phrygian<br/>brightness: -0.3<br/>velocity: -15<br/>voicing: lower
+    AI->>Agent: Update generation
+    Note over Agent: Current: A minor<br/>Target: A Phrygian<br/>Plan transition (30ms)
+    Agent->>MIDI: Send transition notes
+    Note over MIDI: Recalculate voicings (20ms)
+    MIDI->>Device: Polyend Ch2: D#4→D4 vel=70→55
+    MIDI->>Device: Polyend Ch3: F4→F4 vel=60→45
+    MIDI->>Device: Moog Ch4: A2→A2 vel=80→65
+    Note over Agent: Update state: A Phrygian, dark
+    Agent-->>AI: Generation updated
+    AI-->>User: "Shifted to Phrygian, darker voicings"
 ```
 
 ### Trace 2: List MIDI Devices
 
-```
-List MIDI Devices (45ms)
-├─ MCP Tool Call: list_midi_devices (45ms)
-│  └─ MIDI Service: ScanDevices (40ms)
-│     ├─ DryWetMidi: GetInputDevices (15ms)
-│     │  ├─ Found: Polyend Synth MIDI 1
-│     │  ├─ Found: Moog Mother-32
-│     │  └─ Found: MAFD USB
-│     ├─ DryWetMidi: GetOutputDevices (15ms)
-│     │  ├─ Found: Polyend Synth MIDI 1
-│     │  ├─ Found: Moog Mother-32
-│     │  └─ Found: MAFD USB
-│     └─ Load Device Profiles (10ms)
-│        ├─ Match: polyend-synth → Polyend Synth MIDI 1
-│        ├─ Match: moog-mother32 → Moog Mother-32
-│        └─ Match: sonoclast-mafd → MAFD USB
-└─ Return: 3 devices with profiles
+```mermaid
+sequenceDiagram
+    participant AI as AI Assistant
+    participant MCP as MCP Server
+    participant MIDI as MIDI Service
+    participant DryWet as DryWetMidi
+    participant Registry as Device Registry
+    
+    AI->>MCP: list_midi_devices tool call
+    MCP->>MIDI: ScanDevices()
+    MIDI->>DryWet: GetInputDevices()
+    Note over DryWet: Found 3 input devices (15ms)
+    DryWet-->>MIDI: Polyend Synth MIDI 1<br/>Moog Mother-32<br/>MAFD USB
+    MIDI->>DryWet: GetOutputDevices()
+    Note over DryWet: Found 3 output devices (15ms)
+    DryWet-->>MIDI: Polyend Synth MIDI 1<br/>Moog Mother-32<br/>MAFD USB
+    MIDI->>Registry: LoadDeviceProfiles()
+    Note over Registry: Match devices to profiles (10ms)
+    Registry-->>MIDI: polyend-synth<br/>moog-mother32<br/>sonoclast-mafd
+    MIDI-->>MCP: 3 devices with profiles
+    MCP-->>AI: Device list (45ms total)
+    AI-->>AI: Display to user
 ```
 
 ### Trace 3: Generate Ambient Piece
 
-```
-Generate Ambient Piece (60s)
-├─ Parse Request (10ms)
-│  ├─ Genre: "ambient"
-│  ├─ Tempo: 87 BPM
-│  └─ Devices: Polyend (1,2,3)
-├─ Composition Agent: Initialize (100ms)
-│  ├─ Select Key: A minor (20ms)
-│  ├─ Select Mode: Dorian (15ms)
-│  ├─ Generate Progression: i-iv-VI-III (50ms)
-│  └─ Plan Structure: 60s continuous (15ms)
-├─ Device Orchestrator: Assign Roles (30ms)
-│  ├─ Polyend Ch1 → Bass
-│  ├─ Polyend Ch2 → Chords
-│  └─ Polyend Ch3 → Pads
-└─ Generation Loop (59.8s)
-   ├─ Bar 1 (4s)
-   │  ├─ Bass: A2 whole note (4s)
-   │  └─ Pads: Am7 sustained (4s)
-   ├─ Bar 2 (4s)
-   │  ├─ Bass: D2 whole note (4s)
-   │  ├─ Chords: Dm7 half notes (4s)
-   │  └─ Pads: Continue Am7 (4s)
-   └─ ... (continues for 60s)
+```mermaid
+sequenceDiagram
+    participant User
+    participant AI as AI Assistant
+    participant Comp as Composition Agent
+    participant Orch as Device Orchestrator
+    participant Theory as Theory Service
+    participant Gen as Generator
+    participant MIDI as MIDI Service
+    participant Device as Polyend Synth
+    
+    User->>AI: "ambient piece, 87bpm, use polyend channels 1,2,3"
+    AI->>Comp: Initialize generation
+    Note over Comp: Parse request (10ms)
+    Comp->>Theory: Select key and mode
+    Theory-->>Comp: A minor, Dorian (20ms)
+    Comp->>Theory: Generate progression
+    Note over Theory: Create i-iv-VI-III (50ms)<br/>Apply voice leading
+    Theory-->>Comp: Progression ready
+    Comp->>Orch: Assign device roles
+    Note over Orch: Polyend Ch1 → Bass<br/>Polyend Ch2 → Chords<br/>Polyend Ch3 → Pads
+    Orch-->>Comp: Assignments complete (30ms)
+    
+    loop Generation Loop (60s)
+        Comp->>Gen: Generate bar
+        Gen->>Theory: Get notes for bar
+        Theory-->>Gen: Bass: A2 whole note<br/>Chords: Am7<br/>Pads: sustained
+        Gen->>MIDI: Send notes
+        MIDI->>Device: Polyend Ch1 A2 vel=80
+        MIDI->>Device: Polyend Ch2 Am7 chord
+        MIDI->>Device: Polyend Ch3 sustained pad
+        Note over Device: Music plays (4s per bar)
+    end
+    
+    Gen-->>AI: Generation complete
+    AI-->>User: "Playing ambient piece"
 ```
 
 ---

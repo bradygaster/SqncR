@@ -9,45 +9,49 @@
 - Compositional intelligence layer sits above device layer
 
 **Modern Agentic Stack**
-```
-┌─────────────────────────────────────────────────────┐
-│  User (Natural Language)                            │
-└────────────────────┬────────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────────┐
-│  AI Assistant (Claude/Copilot)                      │
-│  - Orchestrates agentic workflow                    │
-│  - Calls skills, agents, MCP servers                │
-└────────────────────┬────────────────────────────────┘
-                     │
-        ┌────────────┴────────────┬─────────────────┐
-        │                         │                 │
-┌───────▼─────────┐   ┌──────────▼──────┐   ┌──────▼──────────┐
-│  Skills Layer   │   │  Agents Layer   │   │  MCP Servers    │
-│  (Task-focused) │   │  (Autonomous)   │   │  (Stateful)     │
-└───────┬─────────┘   └──────────┬──────┘   └──────┬──────────┘
-        │                        │                  │
-        └────────────────────────┴──────────────────┘
-                              │
-                ┌─────────────▼──────────────┐
-                │  SqncR Core Engine         │
-                │  - Device abstraction      │
-                │  - Music theory            │
-                │  - Generation coordination │
-                └─────────────┬──────────────┘
-                              │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-┌───────▼─────┐    ┌─────────▼──────┐    ┌────────▼────────┐
-│ Polyend     │    │ Moog Mother-32 │    │ Polyend         │
-│ Synth       │    │ & DFAM         │    │ MESS            │
-│ (3 engines) │    │ (analog)       │    │ (FX sequencer)  │
-└─────────────┘    └────────────────┘    └─────────────────┘
-        │                     │                     │
-┌───────▼─────┐    ┌─────────▼──────┐    ┌────────▼────────┐
-│ Play+       │    │ MIDI Lights    │    │ Future Devices  │
-│ (16 synths) │    │ (visual sync)  │    │ (extensible)    │
-└─────────────┘    └────────────────┘    └─────────────────┘
+
+```mermaid
+flowchart TD
+    User["User<br/>(Natural Language)"]
+    AI["AI Assistant<br/>(Claude/Copilot)<br/>Orchestrates agentic workflow"]
+    
+    subgraph Layers
+        Skills["Skills Layer<br/>(Task-focused)"]
+        Agents["Agents Layer<br/>(Autonomous)"]
+        MCP["MCP Servers<br/>(Stateful)"]
+    end
+    
+    Core["SqncR Core Engine<br/>- Device abstraction<br/>- Music theory<br/>- Generation coordination"]
+    
+    subgraph Devices
+        Polyend["Polyend Synth<br/>(3 engines)"]
+        Moog["Moog Mother-32 & DFAM<br/>(analog)"]
+        MESS["Polyend MESS<br/>(FX sequencer)"]
+        Play["Play+<br/>(16 synths)"]
+        Lights["MIDI Lights<br/>(visual sync)"]
+        Future["Future Devices<br/>(extensible)"]
+    end
+    
+    User --> AI
+    AI --> Skills
+    AI --> Agents
+    AI --> MCP
+    Skills --> Core
+    Agents --> Core
+    MCP --> Core
+    Core --> Polyend
+    Core --> Moog
+    Core --> MESS
+    Core --> Play
+    Core --> Lights
+    Core --> Future
+    
+    style User fill:#e1f5ff
+    style AI fill:#fff4e1
+    style Skills fill:#f0e1ff
+    style Agents fill:#f0e1ff
+    style MCP fill:#f0e1ff
+    style Core fill:#e1ffe1
 ```
 
 ---
@@ -916,30 +920,29 @@ interface DeviceProfile {
 - Aspire integration for connection management
 
 **Observability Architecture**
-```
-┌─────────────────────────────────────────────┐
-│  Aspire Dashboard (http://localhost:15888)  │
-│  - Distributed Traces                       │
-│  - Logs (structured)                        │
-│  - Metrics (MIDI throughput, latency)       │
-│  - Resource monitoring                      │
-└─────────────────────────────────────────────┘
-                    ↑
-                    │ OpenTelemetry
-                    │
-┌───────────────────┴─────────────────────────┐
-│  SqncR Aspire AppHost                       │
-│  - Orchestrates all services                │
-│  - Service discovery                        │
-│  - Configuration management                 │
-└───────────────────┬─────────────────────────┘
-                    │
-        ┌───────────┼───────────┐
-        ↓           ↓           ↓
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│MCP Server│ │MIDI Svc  │ │Theory Svc│
-│(ASP.NET) │ │(DryWet)  │ │(C#)      │
-└──────────┘ └──────────┘ └──────────┘
+
+```mermaid
+flowchart TD
+    Dashboard["Aspire Dashboard<br/>http://localhost:15888<br/>- Distributed Traces<br/>- Logs (structured)<br/>- Metrics (MIDI throughput, latency)<br/>- Resource monitoring"]
+    
+    AppHost["SqncR Aspire AppHost<br/>- Orchestrates all services<br/>- Service discovery<br/>- Configuration management"]
+    
+    subgraph Services
+        MCP["MCP Server<br/>(ASP.NET)"]
+        MIDI["MIDI Service<br/>(DryWetMidi)"]
+        Theory["Theory Service<br/>(C#)"]
+    end
+    
+    Dashboard -->|OpenTelemetry| AppHost
+    AppHost --> MCP
+    AppHost --> MIDI
+    AppHost --> Theory
+    
+    style Dashboard fill:#e1f5ff
+    style AppHost fill:#fff4e1
+    style MCP fill:#f0e1ff
+    style MIDI fill:#f0e1ff
+    style Theory fill:#f0e1ff
 ```
 
 **OpenTelemetry Traces for MIDI**

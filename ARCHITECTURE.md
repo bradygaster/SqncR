@@ -14,14 +14,19 @@ Technical musicians who:
 ## Architecture Philosophy
 
 ### AI-First Design
-```
-[You Coding in IDE] ←→ [Claude/Copilot with MCP]
-                              ↓
-                         [SqncR MCP Server]
-                              ↓
-                    [MIDI Hardware/Software]
-                              ↓
-                         [Sound Output]
+
+```mermaid
+flowchart TD
+    User["You Coding in IDE"] --> Copilot["Claude/Copilot with MCP"]
+    Copilot --> MCP["SqncR MCP Server"]
+    MCP --> MIDI["MIDI Hardware/Software"]
+    MIDI --> Sound["Sound Output"]
+    
+    style User fill:#e1f5ff
+    style Copilot fill:#fff4e1
+    style MCP fill:#f0e1ff
+    style MIDI fill:#e1ffe1
+    style Sound fill:#ffe1e1
 ```
 
 **The Experience:**
@@ -210,26 +215,47 @@ sqncr stop
 
 ### Process Model
 
-```
-┌─────────────────────────────────────────┐
-│  Claude Desktop / Copilot CLI           │
-│  (AI Assistant)                         │
-└─────────────┬───────────────────────────┘
-              │ MCP Protocol
-              ↓
-┌─────────────────────────────────────────┐
-│  SqncR MCP Server (sqncr-server.exe)    │
-│  - Tool handlers                        │
-│  - Session management                   │
-│  - Generation coordination              │
-└─────────────┬───────────────────────────┘
-              │
-        ┌─────┴─────┬──────────────┐
-        ↓           ↓              ↓
-    [MIDI Out]  [Generator]   [Analyzer]
-        │           │              │
-        ↓           ↓              ↓
-    Hardware    Algorithms    MIDI Input
+```mermaid
+flowchart TD
+    subgraph Client
+        AI["Claude Desktop / Copilot CLI<br/>(AI Assistant)"]
+    end
+    
+    subgraph "SqncR MCP Server"
+        Tools["Tool Handlers"]
+        Session["Session Management"]
+        Gen["Generation Coordination"]
+    end
+    
+    subgraph Services
+        MIDIOut["MIDI Out"]
+        Generator["Generator"]
+        Analyzer["Analyzer"]
+    end
+    
+    subgraph Output
+        Hardware["Hardware Synths"]
+        Algorithms["Algorithms"]
+        MIDIIn["MIDI Input"]
+    end
+    
+    AI -->|MCP Protocol| Tools
+    Tools --> Session
+    Session --> Gen
+    Gen --> MIDIOut
+    Gen --> Generator
+    Gen --> Analyzer
+    MIDIOut --> Hardware
+    Generator --> Algorithms
+    Analyzer --> MIDIIn
+    
+    style AI fill:#e1f5ff
+    style Tools fill:#fff4e1
+    style Session fill:#fff4e1
+    style Gen fill:#fff4e1
+    style MIDIOut fill:#f0e1ff
+    style Generator fill:#f0e1ff
+    style Analyzer fill:#f0e1ff
 ```
 
 ### State Management

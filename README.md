@@ -86,18 +86,38 @@ SqncR: [Monitors MIDI input, detects your chords, generates
 
 ## Architecture Overview
 
-```
-[You in Claude/Copilot]
-         ↓
-   [Skills Layer] ← analyze-song, vibe-to-music, device-selector
-         ↓
-   [Agents Layer] ← composition, listener, session-manager
-         ↓
-   [MCP Servers] ← sqncr-core, sqncr-theory, sqncr-devices
-         ↓
-   [SqncR Core] ← Music theory, generation, device abstraction
-         ↓
-   [Your MIDI Devices] ← Polyend, Moog, etc.
+```mermaid
+flowchart TD
+    User["You in Claude/Copilot"]
+    
+    subgraph "Skills Layer"
+        Skills["analyze-song, vibe-to-music,<br/>device-selector"]
+    end
+    
+    subgraph "Agents Layer"
+        Agents["composition, listener,<br/>session-manager"]
+    end
+    
+    subgraph "MCP Servers"
+        MCP["sqncr-core, sqncr-theory,<br/>sqncr-devices"]
+    end
+    
+    Core["SqncR Core<br/>Music theory, generation,<br/>device abstraction"]
+    
+    Devices["Your MIDI Devices<br/>Polyend, Moog, etc."]
+    
+    User --> Skills
+    Skills --> Agents
+    Agents --> MCP
+    MCP --> Core
+    Core --> Devices
+    
+    style User fill:#e1f5ff
+    style Skills fill:#fff4e1
+    style Agents fill:#fff4e1
+    style MCP fill:#fff4e1
+    style Core fill:#f0e1ff
+    style Devices fill:#e1ffe1
 ```
 
 ### Components
