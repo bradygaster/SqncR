@@ -1,6 +1,6 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026 (Added implementation roadmap)
+**Last Updated:** January 29, 2026 (Added sprint plans)
 
 ## Core Documentation
 
@@ -16,6 +16,16 @@
 - [OBSERVABILITY.md](OBSERVABILITY.md) - .NET Aspire + OpenTelemetry observability strategy
 - [SKILLS.md](SKILLS.md) - Complete catalog of all available skills
 - [ROADMAP.md](ROADMAP.md) - Implementation roadmap and TODO lists
+
+### Sprint Plans
+- [sprints/README.md](sprints/README.md) - Sprint overview and index
+- [Sprint 00: Foundation](sprints/sprint_00_foundation.md) - Project setup and Aspire configuration
+- [Sprint 01: Theory & MIDI](sprints/sprint_01_theory-and-midi.md) - Music theory library and MIDI service
+- [Sprint 02: Core Skills](sprints/sprint_02_core-skills.md) - MVP skills and service facade
+- [Sprint 03: CLI & MCP](sprints/sprint_03_cli-and-mcp.md) - CLI tool and MCP server transports
+- [Sprint 04: API & SDK](sprints/sprint_04_api-and-sdk.md) - REST API and SDK library
+- [Sprint 05: Advanced Skills](sprints/sprint_05_advanced-skills.md) - Advanced skills and agents
+- [Sprint 06: Production](sprints/sprint_06_production.md) - Device-specific skills and polish
 
 ## Reference Documentation
 
@@ -100,23 +110,24 @@ MCP servers are documented in:
 
 ## Project Status
 
-### Current Phase: Planning & Architecture
+### Current Phase: Planning Complete ✅
 - ✅ Core documentation complete
 - ✅ Agentic architecture defined
 - ✅ Device abstraction layer designed
 - ✅ Music theory foundation documented
-- ⏳ MCP server implementation (not started)
-- ⏳ Skills implementation (not started)
-- ⏳ Agents implementation (not started)
+- ✅ Observability strategy defined
+- ✅ Sprint plans created
+- 🔲 Implementation not started
 
 ### Next Steps
+**Sprint 00: Foundation & Project Setup** (2 weeks)
 1. Initialize .NET 9 solution with Aspire
-2. Create Aspire AppHost project
+2. Create all projects (Core, Midi, Theory, State, AppHost)
 3. Set up OpenTelemetry instrumentation
-4. Implement MIDI service with DryWetMidi
-5. Build music theory library with observability
-6. Create MCP server with C# SDK
-7. Test with Aspire Dashboard
+4. Verify Aspire Dashboard working
+5. Establish development workflow
+
+See [sprints/README.md](sprints/README.md) for complete sprint breakdown.
 
 ## Contributing
 
