@@ -4,7 +4,7 @@
 
 Skills are discrete, composable, stateless capabilities that can be called by the AI assistant to perform specific tasks. Each skill is focused on a single responsibility and can be combined to create complex musical workflows.
 
-**Total Skills Documented:** 40+ (including device-specific)
+**Total Skills Documented:** 43+ (general + device-specific + conversational)
 
 ---
 
@@ -18,6 +18,7 @@ Skills are discrete, composable, stateless capabilities that can be called by th
 - [Session Management Skills](#session-management-skills)
 - [Utility Skills](#utility-skills)
 - [Device-Specific Skills](#device-specific-skills)
+- [Conversational Intelligence & Device Awareness](#conversational-intelligence--device-awareness)
 - [Future Skills](#future-skills)
 
 ---
@@ -342,6 +343,37 @@ outputs:
 - *"what key and tempo is Pyramid Song by Radiohead?"*
 - *"extract the chord progression from Blue in Green"*
 - *"tell me about the harmonic structure of this track"*
+- *"start with an aphex twin-like heartbeat-style bassline that isn't too thumpy"*
+
+**Conversational Flow:**
+```
+User: "start with an aphex twin-like heartbeat-style bassline that isn't too thumpy"
+
+AI calls skill-analyze-song → identifies Aphex Twin characteristics:
+- Broken beat, IDM style
+- Sub-bass focus, not aggressive
+- Irregular rhythms
+- 808-style but more subdued
+
+AI: "I can create that Aphex Twin heartbeat bass. You have:
+     1. Moog Mother-32 (warm analog, perfect for sub-bass)
+     2. Polyend Synth Ch1 (versatile, can do 808-style)
+     Which would you prefer?"
+
+User: "the Moog"
+
+AI: "Great. What MIDI channel is the Mother-32 on?"
+
+User: "channel 4"
+
+AI calls skill-bass-line-generator with:
+- style: "aphex_twin_heartbeat"
+- thumpy: false (subdued)
+- device: "moog-mother32-001"
+- channel: 4
+
+Music starts playing
+```
 
 ```yaml
 name: Song Analyzer
@@ -1166,6 +1198,344 @@ inputs:
 outputs:
   sequencer_data: object
   pattern_length: number
+```
+
+---
+
+## Conversational Intelligence & Device Awareness
+
+SqncR's AI assistant should intelligently guide conversations, asking clarifying questions when needed while leveraging knowledge of connected devices.
+
+### Principle: Smart Defaults + Clarifying Questions
+
+**When User Says:** *"start with an aphex twin-like heartbeat-style bassline that isn't too thumpy"*
+
+**AI Should:**
+1. ✅ **Understand the intent** (Aphex Twin = IDM, broken beat, sub-bass)
+2. ✅ **Know what devices are available** (already scanned at session start)
+3. ✅ **Suggest best device** based on characteristics
+4. ✅ **Ask only necessary questions** (channel, if not already configured)
+5. ✅ **Use defaults when reasonable** (tempo, key if not specified)
+
+**Conversational Flow Pattern:**
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant AI as AI Assistant
+    participant Skills as Skill Layer
+    participant Devices as Device Registry
+    participant Session as Session Manager
+    
+    User->>AI: Complex musical request
+    AI->>Skills: Parse intent
+    Skills-->>AI: Musical parameters extracted
+    AI->>Devices: Query available devices
+    Devices-->>AI: Connected devices list
+    AI->>AI: Match requirements to devices
+    alt Device selection clear
+        AI->>Session: Configure generation
+        Session-->>User: Music starts
+    else Multiple options
+        AI->>User: Ask: "Which device? (Options: A, B)"
+        User->>AI: Selected device
+        AI->>Session: Configure with selection
+        Session-->>User: Music starts
+    end
+    alt Missing critical info
+        AI->>User: Ask: "What channel for X?"
+        User->>AI: Provide channel
+        AI->>Session: Complete configuration
+    end
+```
+
+### Example Conversations
+
+#### Scenario 1: Smart Device Suggestion
+
+```
+User: "start with an aphex twin-like heartbeat-style bassline 
+       that isn't too thumpy"
+
+AI Analysis (using skill-analyze-song + skill-device-selector):
+- Musical style: Aphex Twin, IDM, broken beat
+- Role needed: Bass
+- Character: Subdued sub-bass, "heartbeat" rhythm, not aggressive
+- Tempo: ~95 BPM (typical Aphex Twin IDM tempo)
+- Looks up connected devices via skill-list-devices
+- Finds: Moog Mother-32 (analog, warm), Polyend Synth (versatile)
+- Best match: Moog Mother-32 (focused sub-bass character)
+
+AI: "Perfect for an Aphex Twin heartbeat bass. I'd suggest the 
+     Moog Mother-32 (warm analog sub-bass, great for that subdued 
+     IDM feel). It's on channel 4. Sound good, or would you prefer 
+     the Polyend Synth?"
+
+User: "the Moog works"
+
+AI: "Great. Starting Aphex Twin-style heartbeat bass on 
+     Moog Mother-32, channel 4. I'll use C minor at 95 BPM 
+     with irregular rhythm patterns. Want a different key or tempo?"
+
+User: "nah that's perfect"
+
+[Music starts playing]
+```
+
+#### Scenario 2: User Specifies Everything
+
+```
+User: "polyend synth channel 1, dark drone in A Phrygian, 60 BPM"
+
+AI Analysis:
+- Device specified: Polyend Synth
+- Channel specified: 1
+- Musical: A Phrygian, 60 BPM, drone
+- No questions needed!
+
+AI: "Starting dark drone on Polyend Synth channel 1, 
+     A Phrygian, 60 BPM."
+
+[Music starts immediately]
+```
+
+#### Scenario 3: Progressive Questioning
+
+```
+User: "play some chords"
+
+AI Analysis (via skill-validate-request):
+- Generic request
+- Needs: device, channel, key, type of chords
+- Has: connected devices list
+
+AI: "I can do that. You have:
+     - Polyend Synth (channels 1-3)
+     - Moog Mother-32 (channel 4, monophonic)
+     
+     The Polyend can handle polyphonic chords.
+     Which channel? (Or I can default to channel 2)"
+
+User: "channel 2 is fine"
+
+AI: "Great. What style - ambient, jazzy, simple triads?"
+
+User: "jazzy"
+
+AI: "Jazz chords on Polyend channel 2. Key?"
+
+User: "Bb major"
+
+AI: "Playing jazz voicings in Bb major, moderate tempo. 
+     I'll use some extensions (7ths, 9ths)."
+
+[Music starts]
+```
+
+#### Scenario 4: Intelligent Device Selection
+
+```
+User: "I want glitchy accents on every fourth beat"
+
+AI Analysis:
+- Requirement: Glitchy, rhythmic accents
+- Best device: Polyend MESS (FX pedal with glitch capabilities)
+- Checks: Is MESS configured?
+
+AI: "Perfect use case for the MESS pedal! I'll trigger 
+     glitchy effects on beat 4. The MESS is on channel 5.
+     How intense - subtle or chaotic?"
+
+User: "subtle"
+
+AI: "Setting up MESS for subtle glitch accents on beat 4,
+     using low-intensity parameter automation."
+
+[MESS starts glitching subtly on beat 4]
+```
+
+#### Scenario 5: Multi-Device Orchestration
+
+```
+User: "build something over 3 minutes, start minimal, 
+       get complex, then resolve"
+
+AI Analysis:
+- Structural arc specified
+- No devices specified
+- AI should orchestrate across available devices
+- Needs: key, tempo (can default)
+
+AI: "I'll build a 3-minute arc. Available devices:
+     - Polyend Synth (versatile, 3 engines)
+     - Moog Mother-32 (warm bass)
+     - Polyend MESS (textures/glitch)
+     - Play+ (drums/samples)
+     
+     My plan:
+     [0:00-1:00] Mother-32 bass only (minimal)
+     [1:00-2:00] Add Polyend pads, Play+ subtle percussion
+     [2:00-2:30] Peak: all devices, MESS glitches, complex rhythms
+     [2:30-3:00] Resolve: back to Mother-32 + Polyend pads
+     
+     Key preference? Or I'll default to A minor, 85 BPM."
+
+User: "D Dorian, 78 BPM"
+
+AI: "Perfect. Building 3-minute arc in D Dorian, 78 BPM,
+     orchestrating across all devices."
+
+[Music builds autonomously over 3 minutes]
+```
+
+### Key Principles for Conversational Intelligence
+
+**1. Device Awareness**
+```csharp
+// Session initialization should query devices
+var devices = await skillRegistry.GetSkill("list-devices").ExecuteAsync();
+
+// Store in session context
+sessionManager.SetAvailableDevices(devices);
+
+// AI can reference throughout conversation
+```
+
+**2. Smart Defaults**
+- **Tempo**: Default to 80-90 BPM for ambient, 120 for electronic, 140 for rock
+- **Key**: Default to A minor or C major (most common)
+- **Channel**: Use device's default_roles from config
+- **Intensity**: Default to 5/10 (moderate)
+
+**3. Progressive Disclosure**
+Ask essential questions first, details later:
+```
+Essential: Device selection, key (if not defaultable from context)
+Secondary: Tempo (can default), intensity
+Tertiary: Specific voicings, exact parameters
+```
+
+**4. Context Retention**
+```csharp
+// Remember user preferences
+sessionManager.RememberPreference("bass_device", "moog-mother32-001");
+
+// Next time user says "play bass"
+// AI: "Using Moog Mother-32 like last time..."
+```
+
+**5. Confirmation Before Action**
+For complex operations, confirm:
+```
+User: "randomize everything"
+
+AI: "That will randomize:
+     - All active device parameters
+     - Current chord progression
+     - Tempo and key
+     
+     Continue? (This will change what's playing)"
+```
+
+---
+
+## Implementation: Conversational Skills
+
+### skill-clarify-intent
+**Ask clarifying questions when request is ambiguous**
+
+**Sample Prompts:**
+- *"play something"* (too vague)
+- *"make music"* (needs details)
+
+```yaml
+name: Intent Clarifier
+description: Determines what questions to ask for ambiguous requests
+inputs:
+  user_request: string
+  available_devices: array
+  current_context: object
+outputs:
+  questions: array  # ordered list of questions to ask
+  can_default: object  # what can be assumed
+  critical_missing: array  # must-have information
+```
+
+**Example:**
+```
+Input: "play something"
+Output: {
+  questions: [
+    "What style or mood? (ambient, jazzy, rhythmic, etc.)",
+    "Which device(s)? You have Polyend, Moog, MESS, Play+"
+  ],
+  can_default: {
+    key: "Am",
+    tempo: 85,
+    intensity: 5
+  },
+  critical_missing: ["style", "device"]
+}
+```
+
+### skill-suggest-device
+**Suggest device based on musical requirement**
+
+**Sample Prompts:**
+- *"what's the best device for sub-bass?"*
+- *"which synth should I use for atmospheric pads?"*
+
+```yaml
+name: Device Suggester
+description: Recommends device with reasoning
+inputs:
+  requirement: string  # musical need description
+  available_devices: array
+  context: object
+outputs:
+  suggestions: array  # ranked by suitability
+  reasoning: array  # why each device fits
+```
+
+**Example:**
+```
+Input: "aphex twin-like heartbeat bass, not too thumpy"
+Output: {
+  suggestions: [
+    {
+      device: "moog-mother32-001",
+      rank: 1,
+      reasoning: "Analog warmth ideal for sub-bass, monophonic = focused",
+      suitability: 0.95
+    },
+    {
+      device: "polyend-synth-001",
+      rank: 2,
+      reasoning: "Versatile, can do 808-style bass, more options",
+      suitability: 0.80
+    }
+  ]
+}
+```
+
+### skill-validate-request
+**Check if request is complete and actionable**
+
+**Sample Prompts:**
+- (Internal skill, called automatically)
+
+```yaml
+name: Request Validator
+description: Determines if enough information to proceed
+inputs:
+  user_request: string
+  session_context: object
+  device_states: object
+outputs:
+  is_complete: boolean
+  missing_info: array
+  suggested_defaults: object
+  can_proceed: boolean
 ```
 
 ---
