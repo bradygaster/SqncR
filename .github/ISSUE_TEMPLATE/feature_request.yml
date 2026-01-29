@@ -1,0 +1,90 @@
+name: Feature Request
+description: Suggest a new feature for SqncR
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Let's hear your idea.
+  
+  - type: dropdown
+    id: type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New Skill
+        - New Agent
+        - Device Profile
+        - Music Theory Enhancement
+        - Generation Algorithm
+        - MCP Tool
+        - Documentation
+        - Other
+    validations:
+      required: true
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What feature would you like to see?
+      placeholder: I'd like SqncR to be able to...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: How would you use this feature?
+      placeholder: |
+        When I'm coding and want to...
+        Or when I'm jamming and need to...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: musical-context
+    attributes:
+      label: Musical Context
+      description: How does this relate to music generation?
+      placeholder: This would allow more sophisticated chord voicings, polyrhythmic patterns, etc.
+  
+  - type: textarea
+    id: conversation-example
+    attributes:
+      label: Example Conversation
+      description: Show how you'd interact with this feature
+      placeholder: |
+        You: "analyze this song: Radiohead - Pyramid Song"
+        SqncR: [extracts 5/4 time signature, Phrygian mode, etc.]
+  
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution (Optional)
+      description: Any ideas on how to implement this?
+      placeholder: Could use the Web Search API to find song metadata, then...
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority (Your Opinion)
+      options:
+        - Nice to have
+        - Would improve my workflow
+        - Critical for my use case
+    validations:
+      required: true
+  
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I've searched existing issues/discussions
+          required: true
+        - label: This aligns with SqncR's philosophy (organic, generative, AI-native)
+          required: true

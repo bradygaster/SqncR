@@ -1,0 +1,98 @@
+name: Device Profile Request
+description: Request support for a MIDI device
+title: "[Device]: "
+labels: ["device", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Want SqncR to support your MIDI device? Fill this out!
+  
+  - type: input
+    id: device-name
+    attributes:
+      label: Device Name
+      description: Full name and model
+      placeholder: "Arturia MicroFreak"
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: device-type
+    attributes:
+      label: Device Type
+      options:
+        - Synthesizer
+        - Drum Machine
+        - Sampler
+        - FX Processor
+        - Controller
+        - Sequencer
+        - Lighting/Visual
+        - Other
+    validations:
+      required: true
+  
+  - type: textarea
+    id: midi-capabilities
+    attributes:
+      label: MIDI Capabilities
+      description: What MIDI features does it support?
+      placeholder: |
+        - Channels: 1-16
+        - Polyphony: 4 voices
+        - Supports: Note on/off, CC, Program Change, Aftertouch
+        - Special features: MPE mode
+    validations:
+      required: true
+  
+  - type: textarea
+    id: characteristics
+    attributes:
+      label: Musical Characteristics
+      description: Describe the sound/role of this device
+      placeholder: |
+        - Type: Paraphonic digital synth
+        - Roles: Lead, bass, pads, experimental textures
+        - Timbre: Bright, digital, versatile, glitchy
+        - Synthesis: Wavetable, FM, vowel, modal
+    validations:
+      required: true
+  
+  - type: input
+    id: documentation-link
+    attributes:
+      label: MIDI Implementation Chart (Link)
+      description: Link to official MIDI documentation
+      placeholder: https://www.arturia.com/products/hardware-synths/microfreak/resources
+  
+  - type: textarea
+    id: use-case
+    attributes:
+      label: How Would You Use This?
+      description: What role would this device play in your setup?
+      placeholder: |
+        I'd use it for lead lines and experimental textures, 
+        letting SqncR control the sequencer and modulation matrix
+  
+  - type: dropdown
+    id: ownership
+    attributes:
+      label: Do You Own This Device?
+      options:
+        - "Yes - I can help test"
+        - "No - but I want to use it"
+    validations:
+      required: true
+  
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I've searched existing device profiles
+          required: true
+        - label: I've included MIDI capabilities
+          required: true
+        - label: I can provide MIDI implementation details
+          required: true

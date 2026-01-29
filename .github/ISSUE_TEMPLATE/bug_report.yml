@@ -1,0 +1,103 @@
+name: Bug Report
+description: Report a bug in SqncR
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the sections below.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Clear description of what's broken
+      placeholder: When I do X, Y happens instead of Z
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of SqncR is affected?
+      options:
+        - Skills
+        - Agents
+        - MCP Server
+        - Device Profiles
+        - Music Theory
+        - MIDI I/O
+        - Configuration
+        - Documentation
+        - Other
+    validations:
+      required: true
+  
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Start SqncR MCP server
+        2. Say "list my midi devices"
+        3. Error occurs
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: musical-context
+    attributes:
+      label: Musical Context (if applicable)
+      description: How does this affect music generation?
+      placeholder: The wrong scale is being used, chords are inverted incorrectly, etc.
+  
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Your setup details
+      placeholder: |
+        - OS: Windows 11
+        - Node: v20.10.0
+        - AI Assistant: Claude Desktop 1.2.3
+        - MIDI Devices: Polyend Synth, Moog Mother-32
+    validations:
+      required: true
+  
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Error Messages
+      description: Paste any relevant logs or error messages
+      render: shell
+  
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I've searched existing issues
+          required: true
+        - label: I've included reproduction steps
+          required: true
+        - label: I've included my environment details
+          required: true
