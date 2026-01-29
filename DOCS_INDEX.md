@@ -1,6 +1,6 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026
+**Last Updated:** January 29, 2026 (Updated for .NET + Aspire)
 
 ## Core Documentation
 
@@ -13,6 +13,7 @@
 - [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design and MCP architecture
 - [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Detailed skills, agents, and MCP server specifications
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Music theory foundation, conversational design patterns, and device profiles
+- [OBSERVABILITY.md](OBSERVABILITY.md) - .NET Aspire + OpenTelemetry observability strategy
 
 ## Reference Documentation
 
@@ -88,10 +89,12 @@ MCP servers are documented in:
 - [MCP SDK (TypeScript)](https://github.com/modelcontextprotocol/typescript-sdk) - TypeScript implementation
 
 ### Development Tools
-- [TypeScript](https://www.typescriptlang.org/) - TypeScript language
-- [Rust](https://www.rust-lang.org/) - Rust programming language
-- [Tonal](https://github.com/tonaljs/tonal) - Music theory library for JavaScript
-- [midir](https://github.com/Boddlnagg/midir) - Cross-platform MIDI I/O for Rust
+- [.NET 9 SDK](https://dotnet.microsoft.com/download) - .NET platform
+- [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) - Distributed application framework
+- [OpenTelemetry](https://opentelemetry.io/) - Observability framework
+- [Melanchall.DryWetMidi](https://github.com/melanchall/drywetmidi) - .NET MIDI library
+- [MCP.NET SDK](https://github.com/modelcontextprotocol/csharp-sdk) - Model Context Protocol for C#
+- [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) - Data access
 
 ## Project Status
 
@@ -105,11 +108,13 @@ MCP servers are documented in:
 - ⏳ Agents implementation (not started)
 
 ### Next Steps
-1. Initialize Node.js project structure
-2. Set up TypeScript configuration
-3. Implement basic MCP server scaffold
-4. Create device profile loading system
-5. Build first skill (list-devices)
+1. Initialize .NET 9 solution with Aspire
+2. Create Aspire AppHost project
+3. Set up OpenTelemetry instrumentation
+4. Implement MIDI service with DryWetMidi
+5. Build music theory library with observability
+6. Create MCP server with C# SDK
+7. Test with Aspire Dashboard
 
 ## Contributing
 

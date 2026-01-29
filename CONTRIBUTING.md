@@ -15,22 +15,19 @@
 - Device-agnostic design - no hardcoding for specific hardware
 - Musical intent drives implementation, not device capabilities
 
-**TypeScript/Node.js Standards**
-- Strict TypeScript (`"strict": true`)
-- ESLint + Prettier for consistency
-- No `any` types unless absolutely necessary
-- Functional where possible, classes for agents/stateful services
-
-**Rust Standards**
-- Clippy-clean code
-- Proper error handling (Result types)
-- Keep executables small and focused
-- Cross-platform compatibility required
+**C# / .NET Standards**
+- Use .NET 9+ features
+- Nullable reference types enabled
+- Async/await throughout
+- Value types for performance-critical paths (Note, Interval)
+- Record types for immutable data
+- OpenTelemetry instrumentation everywhere
 
 **Music Theory Standards**
 - Use standard terminology (don't invent new names for scales/chords)
-- Document musical reasoning in comments
+- Document musical reasoning in XML comments
 - Theory implementations must be musically accurate
+- Add OpenTelemetry traces for decisions
 
 ### Commit Messages
 ```
@@ -83,10 +80,11 @@ Was using Locrian intervals by mistake. Now properly uses
 ### Testing Requirements
 
 **Before PR:**
-- [ ] All tests pass
+- [ ] All tests pass (`dotnet test`)
 - [ ] New features have tests
 - [ ] Music theory functions have correctness tests
 - [ ] MIDI output validated (if applicable)
+- [ ] OpenTelemetry traces added for new operations
 - [ ] Documentation updated
 
 **Testing Philosophy:**
@@ -211,20 +209,24 @@ Your thoughts on implementation
 git clone https://github.com/bradygaster/SqncR.git
 cd SqncR
 
-# Install dependencies
-npm install
+# Install .NET 9 SDK
+# https://dotnet.microsoft.com/download
 
-# Copy example config
-cp config.example.json ~/.sqncr/config.json
+# Restore dependencies
+dotnet restore
 
-# Edit config with your MIDI devices
-# (see docs for device configuration)
+# Configure your devices
+cp appsettings.example.json appsettings.json
+# Edit with your MIDI devices
 
 # Run tests
-npm test
+dotnet test
 
-# Start MCP server (for testing)
-npm run dev
+# Start with Aspire (launches all services + dashboard)
+cd src/SqncR.AppHost
+dotnet run
+
+# Aspire Dashboard opens at http://localhost:15888
 ```
 
 **Adding a New Skill:**

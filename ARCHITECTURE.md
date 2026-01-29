@@ -158,45 +158,53 @@ sqncr stop
 
 ## Technical Stack Considerations
 
-### Language Choices
+### Language Choice: C# / .NET 9+
 
-**Option 1: Rust** (Recommended)
-- Low latency MIDI handling
-- Cross-platform
-- Great for system-level tools
-- Can build single executables
-- MCP SDK available
-
-**Option 2: Node.js/TypeScript**
-- Rapid development
-- Good MIDI libraries (node-midi, jzz)
-- Easy MCP integration
-- WebSocket for real-time
-
-**Option 3: Hybrid**
-- Rust for MIDI tools (latency-critical)
-- Node/TS for MCP server (protocol handling)
-- Best of both worlds
+**Why .NET + Aspire:**
+- **Observability First**: OpenTelemetry built-in, Aspire Dashboard for real-time visualization
+- **Performance**: Low-latency MIDI with modern .NET runtime
+- **Type Safety**: Strong typing for music theory, device profiles, MIDI messages
+- **Distributed**: Aspire orchestrates services (MCP server, MIDI handler, theory engine)
+- **Tooling**: Excellent IDE support, hot reload, debugging
+- **Production Ready**: ASP.NET Core, Entity Framework Core, battle-tested
 
 ### Key Libraries
 
-**MIDI:**
-- [`midir`](https://github.com/Boddlnagg/midir) (Rust) or [`node-midi`](https://github.com/justinlatimer/node-midi) (Node)
-- `portmidi` wrapper
-- Virtual MIDI: rtpmidi, [LoopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) integration
+**Aspire & Observability:**
+- [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) - Distributed application framework
+- [OpenTelemetry](https://opentelemetry.io/) - Tracing, metrics, logs
+- [Aspire Dashboard](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard) - Real-time monitoring
 
-**MCP:**
-- [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) (TypeScript)
-- Rust MCP SDK (if available)
+**MIDI:**
+- [Melanchall.DryWetMidi](https://github.com/melanchall/drywetmidi) - Comprehensive .NET MIDI library
+  - Cross-platform MIDI I/O
+  - High-resolution timing
+  - Device management
+  - MIDI file support
+- [NAudio.Midi](https://github.com/naudio/NAudio) - Alternative option
+- Virtual MIDI: [LoopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) (Windows), CoreMIDI (macOS)
+
+**MCP Protocol:**
+- [MCP.NET SDK](https://github.com/modelcontextprotocol/csharp-sdk) - C# implementation
+- ASP.NET Core for server hosting
+- gRPC or SignalR for real-time communication
 
 **Music Theory:**
-- [`tonal`](https://github.com/tonaljs/tonal) (JS) - scales, chords, theory
-- Custom Rust implementation for speed
+- Custom C# library inspired by [`tonal`](https://github.com/tonaljs/tonal)
+- Value types for performance (Note, Interval, Scale, Chord)
+- Immutable data structures
+- Strongly typed throughout
 
-**AI/ML:**
-- Local inference: [ONNX Runtime](https://onnxruntime.ai/)
-- [Magenta.js](https://magenta.tensorflow.org/get-started/#magenta-js) for music ML
-- Or keep it algorithmic initially
+**State Management:**
+- [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) with SQLite
+- Session persistence
+- Device registry
+- User presets
+
+**AI/ML (Future):**
+- [ML.NET](https://dotnet.microsoft.com/en-us/apps/machinelearning-ai/ml-dotnet) - .NET machine learning
+- [ONNX Runtime](https://onnxruntime.ai/) - Cross-platform ML inference
+- Or keep algorithmic initially
 
 ## Service Architecture
 

@@ -877,34 +877,151 @@ interface DeviceProfile {
 
 ## Technology Stack Recommendations
 
-**MCP Servers:** TypeScript/Node.js
-- [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk)
-- Fast development
-- Good MIDI libraries
+**Primary Stack: .NET 9+ with Aspire**
+- **[.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/)** - Cloud-native orchestration
+- **[OpenTelemetry](https://opentelemetry.io/)** - Full observability stack
+- **[Aspire Dashboard](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard)** - Real-time monitoring
+- **C#** - Type-safe, high-performance
 
-**MIDI Layer:** Rust executables
-- [`midir`](https://github.com/Boddlnagg/midir) for low-latency
-- Cross-platform
-- Called as skills from MCP server
+**MIDI Layer: .NET**
+- **[Melanchall.DryWetMidi](https://github.com/melanchall/drywetmidi)** - Comprehensive MIDI library
+  - Cross-platform MIDI I/O
+  - High-resolution timing
+  - MIDI file support
+  - Devices, events, playback
+- **[NAudio.Midi](https://github.com/naudio/NAudio)** - Alternative option
+- **OpenTelemetry Instrumentation**:
+  - Trace every MIDI message sent
+  - Span per note (device, channel, note, velocity, duration)
+  - Metrics: messages/sec, latency, voice allocation
 
-**Music Theory:** TypeScript
-- [`tonal`](https://github.com/tonaljs/tonal) library as foundation
-- Custom extensions for advanced theory
+**MCP Protocol: .NET**
+- **[MCP.NET SDK](https://github.com/modelcontextprotocol/csharp-sdk)** - Official C# implementation
+- **ASP.NET Core** for MCP server hosting
+- **gRPC or SignalR** for real-time bidirectional communication
+- Exposed as Aspire service resource
 
-**State Management:** SQLite or JSON files
+**Music Theory: C#**
+- Custom strongly-typed music theory library
+- Inspired by [`tonal`](https://github.com/tonaljs/tonal) but .NET-native
+- Value types for performance (Note, Scale, Chord, Interval)
+- Immutable data structures
+- Full OpenTelemetry instrumentation
+
+**State Management**
+- **Entity Framework Core** with SQLite
 - Session persistence
 - Device registry
-- User presets
+- User presets and configurations
+- Aspire integration for connection management
 
-**Skills:** Hybrid
-- Simple skills: executables (Rust/Go)
-- Complex skills: TypeScript modules
-- Web-dependent skills: API calls (song analysis)
+**Observability Architecture**
+```
+┌─────────────────────────────────────────────┐
+│  Aspire Dashboard (http://localhost:15888)  │
+│  - Distributed Traces                       │
+│  - Logs (structured)                        │
+│  - Metrics (MIDI throughput, latency)       │
+│  - Resource monitoring                      │
+└─────────────────────────────────────────────┘
+                    ↑
+                    │ OpenTelemetry
+                    │
+┌───────────────────┴─────────────────────────┐
+│  SqncR Aspire AppHost                       │
+│  - Orchestrates all services                │
+│  - Service discovery                        │
+│  - Configuration management                 │
+└───────────────────┬─────────────────────────┘
+                    │
+        ┌───────────┼───────────┐
+        ↓           ↓           ↓
+┌──────────┐ ┌──────────┐ ┌──────────┐
+│MCP Server│ │MIDI Svc  │ │Theory Svc│
+│(ASP.NET) │ │(DryWet)  │ │(C#)      │
+└──────────┘ └──────────┘ └──────────┘
+```
 
-**Agents:** TypeScript classes
-- State machines
-- Event-driven
-- Can be extracted to separate processes if needed
+**OpenTelemetry Traces for MIDI**
+```csharp
+// Example: Every MIDI message is traced
+using var activity = ActivitySource.StartActivity("SendMidiNote");
+activity?.SetTag("midi.device", "Polyend Synth");
+activity?.SetTag("midi.channel", 1);
+activity?.SetTag("midi.note", 60); // C4
+activity?.SetTag("midi.velocity", 100);
+activity?.SetTag("midi.duration_ms", 500);
+activity?.SetTag("musical.role", "bass");
+activity?.SetTag("theory.scale", "A minor");
+activity?.SetTag("theory.chord", "Am7");
+
+await midiDevice.SendNoteAsync(channel: 1, note: 60, velocity: 100);
+```
+
+**Aspire Dashboard Shows:**
+- Every MIDI note as a span
+- Device selection decisions
+- Music theory computations
+- Agent state transitions
+- Generation timelines
+- Performance metrics
+
+**Aspire Service Resources**
+```csharp
+// SqncR.AppHost/Program.cs
+var builder = DistributedApplication.CreateBuilder(args);
+
+var sqlite = builder.AddSqlite("sqlite")
+    .WithDataVolume();
+
+var theoryService = builder.AddProject<Projects.SqncR_Theory>("theory");
+
+var midiService = builder.AddProject<Projects.SqncR_Midi>("midi")
+    .WithReference(theoryService);
+
+var mcpServer = builder.AddProject<Projects.SqncR_McpServer>("mcp-server")
+    .WithReference(midiService)
+    .WithReference(theoryService)
+    .WithReference(sqlite);
+
+builder.Build().Run();
+```
+
+**Why .NET + Aspire + OpenTelemetry?**
+
+1. **Observability First**
+   - See every MIDI message in real-time
+   - Understand why AI made musical decisions
+   - Debug timing and latency issues
+   - Monitor device health
+
+2. **Distributed Services**
+   - MCP server, MIDI handler, theory engine as separate services
+   - Service discovery via Aspire
+   - Scalable architecture
+
+3. **Performance**
+   - .NET 9 runtime performance
+   - Low-latency MIDI with DryWetMidi
+   - Efficient memory management
+   - Async/await throughout
+
+4. **Type Safety**
+   - Strongly-typed music theory (Note, Scale, Chord)
+   - Compile-time device profile validation
+   - No "stringly-typed" code
+
+5. **Developer Experience**
+   - Aspire Dashboard = incredible debugging
+   - Hot reload during development
+   - Excellent IDE support
+   - Rich ecosystem
+
+6. **Production Ready**
+   - OpenTelemetry = industry standard
+   - ASP.NET Core = battle-tested
+   - Easy deployment (Docker, cloud)
+   - Health checks built-in
 
 ---
 

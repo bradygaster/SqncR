@@ -135,12 +135,50 @@ SqncR: [Monitors MIDI input, detects your chords, generates
 
 ## Technology Stack
 
-- **MCP Servers:** TypeScript/Node.js with [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk)
-- **MIDI Layer:** Rust executables ([`midir`](https://github.com/Boddlnagg/midir)) for low-latency
-- **Music Theory:** TypeScript with [`tonal`](https://github.com/tonaljs/tonal) library
-- **State:** SQLite or JSON files
-- **Skills:** Hybrid (executables + modules)
-- **Agents:** TypeScript classes
+**Primary Stack: .NET 9+ with Aspire**
+- **[.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/)** - Distributed application framework
+- **[OpenTelemetry](https://opentelemetry.io/)** - Observability for MIDI signals and generation
+- **[Aspire Dashboard](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard)** - Real-time monitoring and tracing
+- **C#** - Primary language for MCP servers, agents, skills
+
+**MIDI Layer: .NET**
+- **[Melanchall.DryWetMidi](https://github.com/melanchall/drywetmidi)** - Comprehensive .NET MIDI library
+- **[NAudio.Midi](https://github.com/naudio/NAudio)** - Alternative MIDI library
+- Low-latency MIDI I/O with full observability
+
+**Music Theory: .NET**
+- Custom music theory library in C#
+- Or port [`tonal`](https://github.com/tonaljs/tonal) concepts to .NET
+- Strongly-typed scale/chord/progression system
+
+**MCP Protocol: .NET**
+- **[MCP.NET](https://github.com/modelcontextprotocol/csharp-sdk)** - C# SDK for Model Context Protocol
+- ASP.NET Core for MCP server hosting
+- SignalR or gRPC for real-time communication
+
+**State Management**
+- **SQLite** with Entity Framework Core
+- Session persistence
+- Device registry
+- User presets
+
+**Observability Stack**
+- **OpenTelemetry** instrumentation throughout
+- **Aspire Dashboard** for real-time visualization
+- Custom traces for:
+  - MIDI message sending (device, channel, note, velocity)
+  - Music theory computations (scales, chords, progressions)
+  - Generation decisions (why this note, why this timing)
+  - Device selection logic
+  - Agent state transitions
+
+**Why .NET + Aspire?**
+- **Performance**: Low-latency MIDI with modern .NET runtime
+- **Observability**: Built-in OpenTelemetry, see every MIDI message in Aspire Dashboard
+- **Distributed**: Aspire orchestrates multiple services (MCP server, MIDI handler, theory engine)
+- **Strongly Typed**: C# type system for music theory, device profiles, MIDI messages
+- **Tooling**: Excellent IDE support (Visual Studio, Rider, VS Code)
+- **Modern**: .NET 9+ with latest language features
 
 ## Getting Started (Future)
 
@@ -149,23 +187,33 @@ SqncR: [Monitors MIDI input, detects your chords, generates
 git clone https://github.com/bradygaster/SqncR.git
 cd SqncR
 
-# Install dependencies
-npm install
+# Install .NET 9 SDK
+# https://dotnet.microsoft.com/download
+
+# Restore dependencies
+dotnet restore
 
 # Configure your devices
-cp config.example.json ~/.sqncr/config.json
+cp appsettings.example.json appsettings.json
 # Edit with your MIDI setup
 
-# Start MCP server
-npm start
+# Run with Aspire (launches dashboard + all services)
+cd src/SqncR.AppHost
+dotnet run
 
-# Add to Claude Desktop config
+# Aspire Dashboard opens at http://localhost:15888
+# - View MIDI traces in real-time
+# - Monitor music generation
+# - Debug device communication
+
+# MCP server runs at configured port
+# Add to Claude Desktop config:
 # ~/.config/claude/claude_desktop_config.json
 {
   "mcpServers": {
     "sqncr": {
-      "command": "node",
-      "args": ["path/to/SqncR/dist/index.js"]
+      "command": "dotnet",
+      "args": ["run", "--project", "path/to/SqncR.McpServer/SqncR.McpServer.csproj"]
     }
   }
 }
@@ -173,6 +221,12 @@ npm start
 # Talk to Claude
 "list my midi devices"
 "start an ambient piece"
+
+# Watch the Aspire Dashboard to see:
+# - MIDI messages being sent (device, channel, note, velocity, timing)
+# - Music theory computations (scale selection, chord voicing)
+# - Agent decisions (why this device, why this note)
+# - Generation state changes
 ```
 
 ## Documentation
