@@ -1,6 +1,6 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026 (Added sprint plans)
+**Last Updated:** January 29, 2026 (Added visual architecture guide)
 
 ## Core Documentation
 
@@ -11,6 +11,7 @@
 ### Architecture & Design
 - [CONCEPT.md](CONCEPT.md) - High-level vision, philosophy, and example workflows
 - [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design and MCP architecture
+- [DIAGRAMS.md](DIAGRAMS.md) - Visual architecture guide with flowcharts and telemetry maps
 - [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Detailed skills, agents, and MCP server specifications
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Music theory foundation, conversational design patterns, and device profiles
 - [OBSERVABILITY.md](OBSERVABILITY.md) - .NET Aspire + OpenTelemetry observability strategy

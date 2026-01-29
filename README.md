@@ -254,6 +254,7 @@ dotnet run
 - [README.md](README.md) - Project overview and getting started
 - [CONCEPT.md](CONCEPT.md) - High-level vision and philosophy
 - [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design
+- [DIAGRAMS.md](DIAGRAMS.md) - Visual architecture guide with Mermaid diagrams
 - [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Skills, Agents, MCP details
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Theory concepts and conversational design
 - [OBSERVABILITY.md](OBSERVABILITY.md) - Aspire + OpenTelemetry observability
