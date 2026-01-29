@@ -1,11 +1,13 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026 (Added visual architecture guide)
+**Last Updated:** January 29, 2026 (Added PROJECT_STATUS.md and SDK version policy)
 
 ## Core Documentation
 
 ### Getting Started
 - [README.md](README.md) - Project overview, installation, and quick start guide
+- [PROJECT_STATUS.md](PROJECT_STATUS.md) - **NEW!** Complete project breakdown with metrics and status
+- [START_HERE.md](START_HERE.md) - Complete reorganization guide
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Development workflow, standards, and community guidelines
 
 ### Architecture & Design
@@ -27,6 +29,13 @@
 - [Sprint 04: API & SDK](sprints/sprint_04_api-and-sdk.md) - REST API and SDK library
 - [Sprint 05: Advanced Skills](sprints/sprint_05_advanced-skills.md) - Advanced skills and agents
 - [Sprint 06: Production](sprints/sprint_06_production.md) - Device-specific skills and polish
+
+### AI Memory System (.sqncr/)
+- [.sqncr/README.md](.sqncr/README.md) - AI memory system overview
+- [.sqncr/memory/architecture.md](.sqncr/memory/architecture.md) - Key architectural decisions
+- [.sqncr/memory/conventions.md](.sqncr/memory/conventions.md) - **UPDATED!** Coding standards with SDK version policy
+- [.sqncr/commands/README.md](.sqncr/commands/README.md) - Slash commands reference
+- [.sqncr/todos/README.md](.sqncr/todos/README.md) - Todo management system
 
 ## Reference Documentation
 
