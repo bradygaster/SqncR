@@ -4,6 +4,8 @@
 
 Skills are discrete, composable, stateless capabilities that can be called by the AI assistant to perform specific tasks. Each skill is focused on a single responsibility and can be combined to create complex musical workflows.
 
+**Total Skills Documented:** 40+ (including device-specific)
+
 ---
 
 ## Table of Contents
@@ -15,6 +17,8 @@ Skills are discrete, composable, stateless capabilities that can be called by th
 - [Transformation Skills](#transformation-skills)
 - [Session Management Skills](#session-management-skills)
 - [Utility Skills](#utility-skills)
+- [Device-Specific Skills](#device-specific-skills)
+- [Future Skills](#future-skills)
 
 ---
 
@@ -22,6 +26,12 @@ Skills are discrete, composable, stateless capabilities that can be called by th
 
 ### skill-vibe-to-music
 **Translate abstract concepts to musical parameters**
+
+**Sample Prompts:**
+- *"make it darker"*
+- *"I want it to sound like Rothko makes you feel"*
+- *"give it a film noir vibe"*
+- *"make it brighter and more uplifting"*
 
 ```yaml
 name: Vibe-to-Music
@@ -75,6 +85,12 @@ Output: {
 ### skill-chord-progression
 **Generate harmonically sophisticated chord progressions**
 
+**Sample Prompts:**
+- *"generate a dark minor progression in A minor, 4 bars"*
+- *"create a jazzy chord progression with lots of extensions"*
+- *"give me something ambient with slow chord changes"*
+- *"build a progression that creates tension"*
+
 ```yaml
 name: Chord Progression Generator
 description: Creates chord progressions based on music theory principles
@@ -108,6 +124,11 @@ Output: {
 
 ### skill-voice-leading
 **Optimize chord voicings for smooth transitions**
+
+**Sample Prompts:**
+- *"optimize the voice leading for smoother transitions"*
+- *"make these chord changes sound more connected"*
+- *"voice these chords with minimal movement"*
 
 ```yaml
 name: Voice Leading Optimizer
@@ -143,6 +164,11 @@ Output: {
 ### skill-scale-selector
 **Select appropriate scale for given musical context**
 
+**Sample Prompts:**
+- *"what scale should I use for a mysterious mood in D?"*
+- *"suggest a scale for sad jazz in F minor"*
+- *"pick a scale that sounds exotic"*
+
 ```yaml
 name: Scale Selector
 description: Chooses optimal scale based on mood, genre, and context
@@ -160,6 +186,11 @@ outputs:
 
 ### skill-harmonic-analysis
 **Analyze harmonic relationships and functions**
+
+**Sample Prompts:**
+- *"analyze the harmonic function of these chords"*
+- *"what are the borrowed chords in this progression?"*
+- *"where are the modulations in this sequence?"*
 
 ```yaml
 name: Harmonic Analyzer
@@ -180,6 +211,11 @@ outputs:
 
 ### skill-list-devices
 **List all available MIDI devices**
+
+**Sample Prompts:**
+- *"list my midi devices"*
+- *"what MIDI hardware do I have connected?"*
+- *"show me all available devices"*
 
 ```yaml
 name: List MIDI Devices
@@ -208,6 +244,12 @@ outputs:
 
 ### skill-device-selector
 **Select optimal device for musical role**
+
+**Sample Prompts:**
+- *"pick the best device for bass"*
+- *"which synth should handle the pads?"*
+- *"choose something analog and warm for the bassline"*
+- *"what device is best for glitchy textures?"*
 
 ```yaml
 name: Device Selector
@@ -249,6 +291,11 @@ Output: {
 ### skill-send-midi
 **Send MIDI messages to devices**
 
+**Sample Prompts:**
+- *"send a C4 note to the Polyend on channel 1"*
+- *"play an Am7 chord on the Moog"*
+- *"send program change 5 to the MESS"*
+
 ```yaml
 name: Send MIDI Message
 description: Sends MIDI messages with OpenTelemetry tracing
@@ -264,6 +311,11 @@ outputs:
 
 ### skill-configure-midi-routing
 **Set up MIDI routing between devices**
+
+**Sample Prompts:**
+- *"route MIDI from channel 1 to channel 4"*
+- *"send my keyboard input to both the Polyend and Moog"*
+- *"set up MIDI thru from the Play+ to the MESS"*
 
 ```yaml
 name: Configure MIDI Routing
@@ -284,6 +336,12 @@ outputs:
 
 ### skill-analyze-song
 **Extract musical data from song descriptions or audio**
+
+**Sample Prompts:**
+- *"analyze that Cream song from The Breakfast Club"*
+- *"what key and tempo is Pyramid Song by Radiohead?"*
+- *"extract the chord progression from Blue in Green"*
+- *"tell me about the harmonic structure of this track"*
 
 ```yaml
 name: Song Analyzer
@@ -326,6 +384,11 @@ Output: {
 ### skill-detect-key
 **Detect key from MIDI input or audio**
 
+**Sample Prompts:**
+- *"listen and detect what key I'm playing in"*
+- *"what key is this in?"*
+- *"analyze the key from my MIDI input"*
+
 ```yaml
 name: Key Detector
 description: Analyzes notes to determine key and mode
@@ -342,6 +405,11 @@ outputs:
 ### skill-detect-tempo
 **Detect tempo from MIDI input or audio**
 
+**Sample Prompts:**
+- *"what tempo am I playing?"*
+- *"detect the BPM from this recording"*
+- *"analyze the tempo from my performance"*
+
 ```yaml
 name: Tempo Detector
 description: Analyzes timing to determine tempo
@@ -356,6 +424,12 @@ outputs:
 
 ### skill-analyze-harmony
 **Analyze harmonic content of MIDI input**
+
+**Sample Prompts:**
+- *"what chord am I playing right now?"*
+- *"analyze the harmony of this section"*
+- *"identify these chord extensions"*
+- *"what notes would complement what I'm playing?"*
 
 ```yaml
 name: Harmony Analyzer
@@ -377,6 +451,12 @@ outputs:
 
 ### skill-polyrhythm-generator
 **Create complex polyrhythmic patterns**
+
+**Sample Prompts:**
+- *"add some polyrhythms, 3 against 4"*
+- *"create a polyrhythmic layer"*
+- *"generate 5 against 4 patterns across bass and chords"*
+- *"make it more polyrhythmic"*
 
 ```yaml
 name: Polyrhythm Generator
@@ -414,6 +494,11 @@ Output: {
 ### skill-arpeggio-generator
 **Generate arpeggiated patterns**
 
+**Sample Prompts:**
+- *"arpeggiate this chord upward"*
+- *"create an up-down arpeggio pattern over 2 octaves"*
+- *"add arpeggiated chords to the background"*
+
 ```yaml
 name: Arpeggio Generator
 description: Creates arpeggio patterns from chords
@@ -431,6 +516,12 @@ outputs:
 ### skill-bass-line-generator
 **Generate walking bass lines**
 
+**Sample Prompts:**
+- *"generate a walking bass line for this progression"*
+- *"create a sparse bass pattern"*
+- *"add a rhythmic bass line"*
+- *"give me a bass line that follows the chords"*
+
 ```yaml
 name: Bass Line Generator
 description: Creates bass lines that follow chord progressions
@@ -446,6 +537,12 @@ outputs:
 
 ### skill-melody-generator
 **Generate melodic lines**
+
+**Sample Prompts:**
+- *"create a melody over this progression"*
+- *"generate a stepwise melodic line"*
+- *"give me a memorable melodic phrase"*
+- *"improvise a melody using mostly leaps"*
 
 ```yaml
 name: Melody Generator
@@ -464,6 +561,12 @@ outputs:
 
 ### skill-rhythm-generator
 **Generate rhythmic patterns**
+
+**Sample Prompts:**
+- *"create a swing rhythm pattern"*
+- *"generate syncopated drums"*
+- *"give me a shuffle feel"*
+- *"make a sparse rhythmic pattern"*
 
 ```yaml
 name: Rhythm Generator
@@ -486,6 +589,11 @@ outputs:
 ### skill-transpose
 **Transpose notes or progressions**
 
+**Sample Prompts:**
+- *"transpose this up a fifth"*
+- *"move everything down 3 semitones"*
+- *"transpose to the key of E"*
+
 ```yaml
 name: Transposer
 description: Transposes musical content to different key
@@ -500,6 +608,11 @@ outputs:
 
 ### skill-invert-chord
 **Invert chord voicings**
+
+**Sample Prompts:**
+- *"invert this chord"*
+- *"play this in first inversion"*
+- *"voice this chord with the 3rd in the bass"*
 
 ```yaml
 name: Chord Inverter
@@ -516,6 +629,11 @@ outputs:
 ### skill-quantize
 **Quantize timing to grid**
 
+**Sample Prompts:**
+- *"quantize this to 16th notes"*
+- *"tighten up the timing"*
+- *"quantize with 50% strength and some swing"*
+
 ```yaml
 name: Quantizer
 description: Aligns notes to rhythmic grid
@@ -531,6 +649,11 @@ outputs:
 ### skill-humanize
 **Add human-like timing variations**
 
+**Sample Prompts:**
+- *"humanize the timing"*
+- *"make it feel less robotic"*
+- *"add some natural variation to the performance"*
+
 ```yaml
 name: Humanizer
 description: Adds natural timing and velocity variations
@@ -545,6 +668,11 @@ outputs:
 
 ### skill-modal-interchange
 **Borrow chords from parallel modes**
+
+**Sample Prompts:**
+- *"suggest some borrowed chords to make this darker"*
+- *"what chords can I borrow from the parallel minor?"*
+- *"add some modal interchange for more color"*
 
 ```yaml
 name: Modal Interchange
@@ -566,6 +694,11 @@ outputs:
 ### skill-save-session
 **Save current session state**
 
+**Sample Prompts:**
+- *"save this session as 'ambient drone 1'"*
+- *"save what we're doing right now"*
+- *"remember this setup"*
+
 ```yaml
 name: Save Session
 description: Persists current musical session
@@ -581,6 +714,11 @@ outputs:
 ### skill-load-session
 **Load previous session**
 
+**Sample Prompts:**
+- *"load session 'ambient drone 1'"*
+- *"restore my last session"*
+- *"bring back that setup from yesterday"*
+
 ```yaml
 name: Load Session
 description: Restores saved musical session
@@ -595,6 +733,11 @@ outputs:
 ### skill-list-sessions
 **List all saved sessions**
 
+**Sample Prompts:**
+- *"what sessions have I saved?"*
+- *"show me my saved setups"*
+- *"list all my previous sessions"*
+
 ```yaml
 name: List Sessions
 description: Returns all available saved sessions
@@ -605,6 +748,11 @@ outputs:
 
 ### skill-export-midi
 **Export generation as MIDI file**
+
+**Sample Prompts:**
+- *"export this as a MIDI file"*
+- *"save the last 8 bars as MIDI"*
+- *"export this session to 'ambient_track.mid'"*
 
 ```yaml
 name: MIDI File Exporter
@@ -628,6 +776,11 @@ outputs:
 ### skill-configure-lights
 **Configure MIDI-controlled lighting**
 
+**Sample Prompts:**
+- *"sync the lights to the beat"*
+- *"map chord changes to color shifts"*
+- *"set up lights to follow the intensity"*
+
 ```yaml
 name: Light Show Configurator
 description: Maps musical events to MIDI lighting control
@@ -644,6 +797,10 @@ outputs:
 ### skill-calculate-interval
 **Calculate interval between notes**
 
+**Sample Prompts:**
+- *"what interval is between C and G?"*
+- *"calculate the interval from MIDI note 60 to 67"*
+
 ```yaml
 name: Interval Calculator
 description: Determines musical interval between two notes
@@ -659,6 +816,10 @@ outputs:
 ### skill-note-to-frequency
 **Convert MIDI note to frequency**
 
+**Sample Prompts:**
+- *"what frequency is A4?"*
+- *"convert MIDI note 60 to Hz"*
+
 ```yaml
 name: Note to Frequency Converter
 description: Converts MIDI note numbers to Hz
@@ -672,6 +833,11 @@ outputs:
 
 ### skill-tempo-tap
 **Calculate tempo from tap input**
+
+**Sample Prompts:**
+- *"tap tempo for me"*
+- *"I'll tap the beat, you figure out the BPM"*
+- *"detect tempo from my tapping"*
 
 ```yaml
 name: Tempo Tap
@@ -789,9 +955,226 @@ var result = await skill.ExecuteAsync(new SkillInput
 
 ---
 
+## Device-Specific Skills
+
+These skills target specific devices in your studio for specialized control.
+
+### skill-polyend-synth-engine-select
+**Select and configure Polyend Synth engines**
+
+**Sample Prompts:**
+- *"set Polyend engine 1 to wavetable synthesis"*
+- *"configure the Polyend engines: bass on 1, pads on 2, lead on 3"*
+- *"switch Polyend channel 2 to granular mode"*
+
+```yaml
+name: Polyend Synth Engine Selector
+description: Configure the 3 engines on Polyend Synth
+inputs:
+  engine: number  # 1, 2, or 3
+  synthesis_type: string  # "wavetable", "granular", "fm", "va", "physical_modeling"
+  role: string  # "bass", "chords", "pads", "lead"
+  channel: number
+outputs:
+  configuration: object
+  voice_allocation: number
+```
+
+### skill-polyend-mess-preset
+**Control Polyend MESS presets and sequencer**
+
+**Sample Prompts:**
+- *"switch MESS to preset 12"*
+- *"activate the MESS sequencer"*
+- *"set MESS to lofi degradation mode"*
+- *"randomize MESS parameters"*
+
+```yaml
+name: Polyend MESS Controller
+description: Control MESS FX pedal via MIDI
+inputs:
+  action: string  # "preset", "parameter", "sequencer"
+  preset_number: number (optional)  # 0-127
+  parameters: object (optional)  # CC mappings
+  sequencer_control: string (optional)  # "start", "stop", "sync"
+outputs:
+  midi_messages: array
+  current_state: object
+```
+
+### skill-polyend-play-pattern
+**Control Polyend Play+ patterns and tracks**
+
+**Sample Prompts:**
+- *"trigger pattern A on the Play+"*
+- *"set Play+ track 3 to play a kick drum pattern"*
+- *"load a different sample on Play+ track 8"*
+- *"sync Play+ sequencer to our tempo"*
+
+```yaml
+name: Polyend Play+ Controller
+description: Control Play+ sampler/sequencer
+inputs:
+  action: string  # "pattern", "track", "sample", "sync"
+  track: number (optional)  # 1-16
+  pattern: string (optional)
+  sample_slot: number (optional)
+outputs:
+  configuration: object
+  active_tracks: array
+```
+
+### skill-moog-mother32-sequence
+**Program Moog Mother-32's internal sequencer**
+
+**Sample Prompts:**
+- *"program a sequence into the Mother-32"*
+- *"set Mother-32 to play this melodic pattern"*
+- *"create a 16-step sequence on the Moog"*
+
+```yaml
+name: Moog Mother-32 Sequencer
+description: Program Mother-32's built-in sequencer via MIDI
+inputs:
+  notes: array  # up to 32 steps
+  gate_lengths: array (optional)
+  cv_modulation: array (optional)
+outputs:
+  sequence_data: object
+  sequence_length: number
+```
+
+### skill-moog-dfam-pattern
+**Control Moog DFAM via MAFD adapter**
+
+**Sample Prompts:**
+- *"trigger DFAM step 3"*
+- *"play a pattern on the DFAM using steps 1, 4, 5, 8"*
+- *"send velocity modulation to the DFAM"*
+- *"create a drum pattern on the DFAM"*
+
+```yaml
+name: Moog DFAM Controller (via MAFD)
+description: Control DFAM's 8 steps via Sonoclast MAFD
+inputs:
+  steps: array  # which of 8 steps to trigger (1-8)
+  velocity: array  # velocity per step (0-127)
+  pressure: array (optional)  # aftertouch/modulation per step
+  pattern: array (optional)  # rhythmic pattern
+outputs:
+  midi_notes: array  # 8 adjacent notes mapped to steps
+  cv_values: object  # velocity/pressure CV outputs
+```
+
+### skill-mess-glitch-automation
+**Automate Polyend MESS for glitch effects**
+
+**Sample Prompts:**
+- *"automate the MESS to create glitchy accents"*
+- *"have the MESS add random stutters"*
+- *"modulate MESS parameters over time"*
+- *"create chaotic variations with the MESS"*
+
+```yaml
+name: MESS Glitch Automator
+description: Automated parameter modulation for MESS pedal
+inputs:
+  automation_style: string  # "random", "rhythmic", "build", "chaotic"
+  parameters: array  # which parameters to modulate
+  intensity: number  # 0-10
+  sync_to_beat: boolean
+outputs:
+  cc_automation: array  # CC messages over time
+  sequencer_pattern: object (optional)
+```
+
+### skill-polyend-synth-aftertouch
+**Control Polyend Synth expression via aftertouch**
+
+**Sample Prompts:**
+- *"add aftertouch modulation to the Polyend pads"*
+- *"use pressure to control filter cutoff"*
+- *"enable polyphonic aftertouch on the Polyend"*
+
+```yaml
+name: Polyend Synth Aftertouch Controller
+description: Configure channel and poly aftertouch
+inputs:
+  mode: string  # "channel", "polyphonic"
+  modulation_target: string  # "filter", "vibrato", "volume"
+  amount: number  # 0-127
+outputs:
+  aftertouch_config: object
+  midi_mapping: object
+```
+
+### skill-mother32-cv-routing
+**Configure Moog Mother-32 CV outputs**
+
+**Sample Prompts:**
+- *"use Mother-32's CV out to control external modules"*
+- *"route Mother-32 gate to trigger the DFAM"*
+- *"send Mother-32's velocity CV to another device"*
+
+```yaml
+name: Mother-32 CV Router
+description: Configure CV/Gate outputs for modular integration
+inputs:
+  cv_source: string  # "pitch", "velocity", "mod", "assign"
+  destination: string  # external device/module
+  scaling: number (optional)
+outputs:
+  routing_config: object
+  note: string  # CV outputs are hardware, MIDI just triggers
+```
+
+### skill-play-plus-track-mute
+**Mute/unmute tracks on Polyend Play+**
+
+**Sample Prompts:**
+- *"mute tracks 5-8 on the Play+"*
+- *"unmute the kick track"*
+- *"solo track 3 on Play+"*
+- *"mute everything except drums"*
+
+```yaml
+name: Play+ Track Mute Controller
+description: Control track muting on Play+
+inputs:
+  action: string  # "mute", "unmute", "solo"
+  tracks: array  # track numbers
+outputs:
+  track_states: object
+  active_tracks: array
+```
+
+### skill-mess-sequencer-pattern
+**Program patterns into MESS's step sequencer**
+
+**Sample Prompts:**
+- *"program a 16-step pattern into the MESS"*
+- *"set MESS sequencer to alternate between two presets"*
+- *"create a glitch pattern on the MESS every 4 bars"*
+
+```yaml
+name: MESS Sequencer Programmer
+description: Program MESS's 16-step sequencer
+inputs:
+  steps: array  # 16 steps with parameter values
+  tempo_sync: boolean
+  loop_mode: string  # "forward", "reverse", "pendulum", "random"
+outputs:
+  sequencer_data: object
+  pattern_length: number
+```
+
+---
+
 ## Future Skills
 
 **Planned for future development:**
+
+### General Skills
 - `skill-style-transfer` - Apply style of one piece to another
 - `skill-auto-mastering` - Adjust MIDI velocities for balanced mix
 - `skill-chord-substitution` - Suggest alternate chord choices
@@ -802,6 +1185,14 @@ var result = await skill.ExecuteAsync(new SkillInput
 - `skill-groove-extractor` - Extract rhythmic feel from audio
 - `skill-scale-degrees-to-notes` - Convert scale degree notation to notes
 - `skill-lyrics-to-rhythm` - Generate rhythm from lyric syllables
+
+### Device-Specific Future Skills
+- `skill-polyend-synth-macro` - Control macro parameters
+- `skill-play-plus-sample-loader` - Load samples into Play+
+- `skill-mess-reverb-control` - Deep control of MESS reverb parameters
+- `skill-dfam-analog-modulation` - Control DFAM's analog mod paths
+- `skill-multi-device-sync` - Sync multiple Polyend devices
+- `skill-eurorack-integration` - Control modular systems via Mother-32
 
 ---
 
