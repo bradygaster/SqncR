@@ -1,6 +1,6 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026 (Added comprehensive skills catalog)
+**Last Updated:** January 29, 2026 (Added implementation roadmap)
 
 ## Core Documentation
 
@@ -15,6 +15,7 @@
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Music theory foundation, conversational design patterns, and device profiles
 - [OBSERVABILITY.md](OBSERVABILITY.md) - .NET Aspire + OpenTelemetry observability strategy
 - [SKILLS.md](SKILLS.md) - Complete catalog of all available skills
+- [ROADMAP.md](ROADMAP.md) - Implementation roadmap and TODO lists
 
 ## Reference Documentation
 
