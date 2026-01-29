@@ -218,12 +218,15 @@ outputs:
 - *"what MIDI hardware do I have connected?"*
 - *"show me all available devices"*
 
+**How MIDI Device Names Work:**
+When scanning MIDI devices, the operating system returns both the **device name** (as reported by the device/driver) and an **index** (port number). This means users can reference devices by name directly without manual configuration.
+
 ```yaml
 name: List MIDI Devices
-description: Scans and returns all connected MIDI devices
+description: Scans and returns all connected MIDI devices with names and indices
 inputs: none
 outputs:
-  devices: array  # array of device objects
+  devices: array  # array of device objects with names and indices
 ```
 
 **Output Format:**
@@ -231,17 +234,82 @@ outputs:
 {
   "devices": [
     {
-      "id": "polyend-synth-001",
-      "name": "Polyend Synth MIDI 1",
-      "profile": "polyend-synth",
+      "index": 0,
+      "port_name": "Polyend Synth MIDI 1",  // OS-reported name
+      "manufacturer": "Polyend",
+      "profile_match": "polyend-synth",  // matched to SqncR profile
       "type": "synth",
-      "channels": [1, 2, 3],
+      "channels": [1, 2, 3],  // from profile
       "polyphony": 8,
+      "status": "connected",
+      "capabilities": ["note_on", "note_off", "cc", "aftertouch"]
+    },
+    {
+      "index": 1,
+      "port_name": "Moog Mother-32",  // OS-reported name
+      "manufacturer": "Moog",
+      "profile_match": "moog-mother32",
+      "type": "synth",
+      "channels": [1],  // user configurable
+      "polyphony": 1,
+      "status": "connected",
+      "capabilities": ["note_on", "note_off", "cc", "pitchbend"]
+    },
+    {
+      "index": 2,
+      "port_name": "MAFD",  // Sonoclast MAFD USB
+      "manufacturer": "Sonoclast",
+      "profile_match": "sonoclast-mafd",
+      "controls_device": "moog-dfam",
+      "type": "controller",
+      "status": "connected"
+    },
+    {
+      "index": 3,
+      "port_name": "Polyend MESS",
+      "manufacturer": "Polyend",
+      "profile_match": "polyend-mess",
+      "type": "fx",
+      "channels": [1],
       "status": "connected"
     }
   ]
 }
 ```
+
+**This means users can say:**
+- *"use the Polyend Synth"* (AI matches to index 0, "Polyend Synth MIDI 1")
+- *"play bass on the Moog Mother-32"* (AI matches to index 1)
+- *"trigger the DFAM"* (AI knows to use MAFD at index 2)
+- *"use the MESS"* (AI matches to index 3, "Polyend MESS")
+
+**Automatic Name Matching:**
+```csharp
+// Device registry can match fuzzy names
+var device = deviceRegistry.FindByName("polyend synth");
+// Matches: "Polyend Synth MIDI 1" at index 0
+
+var device = deviceRegistry.FindByName("moog");
+// Matches: "Moog Mother-32" at index 1
+
+var device = deviceRegistry.FindByName("mess");
+// Matches: "Polyend MESS" at index 3
+```
+
+**Profile Matching:**
+SqncR maintains device profiles (polyend-synth, moog-mother32, etc.) and automatically matches them to connected devices by name pattern recognition. When a device is detected:
+
+1. Get device name from OS (e.g., "Polyend Synth MIDI 1")
+2. Match to profile (polyend-synth) using pattern matching
+3. Load profile capabilities (channels, polyphony, roles)
+4. User can reference by any reasonable name variation
+
+**Channel Configuration:**
+While device name and index come from MIDI spec, **channel assignments** are user-configurable:
+- Stored in `~/.sqncr/config.json` or session state
+- User can say: *"set the Moog to channel 4"*
+- Or detected from first usage: *"play bass on Moog channel 4"*
+- Remembered for future sessions
 
 ### skill-device-selector
 **Select optimal device for musical role**
