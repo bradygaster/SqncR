@@ -1,6 +1,6 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026 (Updated for .NET + Aspire)
+**Last Updated:** January 29, 2026 (Added comprehensive skills catalog)
 
 ## Core Documentation
 
@@ -14,6 +14,7 @@
 - [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Detailed skills, agents, and MCP server specifications
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Music theory foundation, conversational design patterns, and device profiles
 - [OBSERVABILITY.md](OBSERVABILITY.md) - .NET Aspire + OpenTelemetry observability strategy
+- [SKILLS.md](SKILLS.md) - Complete catalog of all available skills
 
 ## Reference Documentation
 
@@ -31,18 +32,18 @@ Device profiles are documented in:
 - [Sonoclast MAFD](https://sonoclast.com/products/mafd/) - MIDI adapter for Moog DFAM
 
 ### Skills Documentation
-Skills are documented in:
+Complete skill catalog documented in:
+- [SKILLS.md](SKILLS.md) - All available skills with examples
 - [AGENTIC_ARCHITECTURE.md - Layer 1: Skills](AGENTIC_ARCHITECTURE.md#layer-1-skills-discrete-composable-tasks)
 
-**Planned Skills:**
-- `skill-analyze-song` - Extract musical data from song descriptions
-- `skill-vibe-to-music` - Translate abstract concepts to musical parameters
-- `skill-chord-progression` - Generate theory-based chord progressions
-- `skill-device-selector` - Choose optimal device for musical role
-- `skill-polyrhythm-generator` - Create complex polyrhythmic patterns
-- `skill-list-devices` - List available MIDI devices
-- `skill-send-midi` - Send MIDI messages
-- `skill-configure-lights` - Sync visual elements to music
+**Skill Categories:**
+- **Musical Intelligence** - vibe-to-music, chord-progression, voice-leading, scale-selector, harmonic-analysis
+- **Device Control** - list-devices, device-selector, send-midi, configure-midi-routing
+- **Analysis** - analyze-song, detect-key, detect-tempo, analyze-harmony
+- **Generation** - polyrhythm-generator, arpeggio-generator, bass-line-generator, melody-generator, rhythm-generator
+- **Transformation** - transpose, invert-chord, quantize, humanize, modal-interchange
+- **Session Management** - save-session, load-session, list-sessions, export-midi
+- **Utility** - configure-lights, calculate-interval, note-to-frequency, tempo-tap
 
 ### Agents Documentation
 Agents are documented in:

@@ -256,6 +256,8 @@ dotnet run
 - [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design
 - [AGENTIC_ARCHITECTURE.md](AGENTIC_ARCHITECTURE.md) - Skills, Agents, MCP details
 - [MUSIC_THEORY.md](MUSIC_THEORY.md) - Theory concepts and conversational design
+- [OBSERVABILITY.md](OBSERVABILITY.md) - Aspire + OpenTelemetry observability
+- [SKILLS.md](SKILLS.md) - Complete catalog of all available skills
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines and ground rules
 - [DOCS_INDEX.md](DOCS_INDEX.md) - Complete documentation index
 
