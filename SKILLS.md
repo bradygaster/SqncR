@@ -4,7 +4,7 @@
 
 Skills are discrete, composable, stateless capabilities that can be called by the AI assistant to perform specific tasks. Each skill is focused on a single responsibility and can be combined to create complex musical workflows.
 
-**Total Skills Documented:** 43+ (general + device-specific + conversational)
+**Total Skills Documented:** 45+ (general + device-specific + conversational)
 
 ---
 
@@ -682,6 +682,161 @@ outputs:
   groove: string  # groove classification
 ```
 
+### skill-drum-pattern-generator
+**Generate complex drum patterns with per-element MIDI channel mapping**
+
+**Sample Prompts:**
+- *"my drums are laid out like so: kick on channel 1, snare on 2, closed hat on 3, open hat on 4. please play me a photek-style drum'n'bass loop that runs for 128 beats at 174 bpm. it shouldn't be overpowering, should be a mix of tricky (as in massive attack's trip hop style off kilter) and photek, the king of the same thing. the hats and snares should be light, but have a 60-80% gate randomization. only lay down the drums, i'll bring in instruments in a moment."*
+- *"generate a 90s jungle breakbeat across my modular drum machine. kick on channel 1, snare 2, hat 3, 4 bars at 170bpm"*
+- *"create an aphex twin style glitchy drum pattern. my eurorack has: kick ch1, snare ch2, clap ch3, closed hat ch4, open hat ch5, rim ch6. 8 bars, 130bpm, lots of stuttering and breaks"*
+- *"photek-style dnb, 16 bars, 174bpm, sparse and precise. kick=1, snare=2, hat=3"*
+
+**Conversational Flow:**
+```
+User: "my drums are laid out like so: kick on channel 1, snare on 2, closed hat on 3, 
+       open hat on 4. please play me a photek-style drum'n'bass loop that runs for 
+       128 beats at 174 bpm. it shouldn't be overpowering, should be a mix of tricky 
+       and photek. the hats and snares should be light, but have a 60-80% gate 
+       randomization."
+
+AI calls skill-drum-pattern-generator with:
+- drum_map: {kick: 1, snare: 2, closed_hat: 3, open_hat: 4}
+- style: ["photek_dnb", "tricky_trip_hop"]
+- duration_beats: 128
+- tempo: 174
+- intensity: "moderate" (not overpowering)
+- element_properties: {
+    hats: {velocity: "light", gate_randomization: [60, 80]},
+    snare: {velocity: "light", gate_randomization: [60, 80]}
+  }
+- device_index: [from drum machine in setup]
+
+Pattern starts playing with:
+- Complex off-kilter rhythms (Photek/Tricky influence)
+- Light, randomized hats and snares
+- Precise kick placement
+- Subtle fills and breaks
+- 128-beat loop at 174 BPM
+```
+
+```yaml
+name: Drum Pattern Generator
+description: Generates style-specific drum patterns with custom MIDI channel mapping
+inputs:
+  drum_map: object  # {kick: 1, snare: 2, closed_hat: 3, open_hat: 4, ...}
+  style: array  # ["photek_dnb", "tricky_trip_hop", "jungle", "techno", "breakbeat"]
+  tempo: number  # BPM
+  duration_beats: number  # total length in beats
+  time_signature: string  # default "4/4"
+  intensity: string  # "subtle", "moderate", "heavy"
+  element_properties: object (optional)  # per-element velocity, gate, swing
+  device_index: number  # which device to send to
+  device_channel_offset: number (optional)  # base channel if needed
+outputs:
+  pattern: array  # MIDI events with timing, channel, note, velocity, gate
+  style_analysis: string  # "photek dnb: sparse kick, syncopated snare, rolling hats"
+  loop_length_ms: number
+  complexity_score: number  # 0-10
+  timing_grid: string  # "16th", "32nd", "triplets"
+```
+
+**Style Characteristics:**
+
+**Photek (Drum & Bass):**
+- Sparse, precise kick placement
+- Syncopated snare hits (not on 2 & 4)
+- Rolling hi-hats with subtle velocity variations
+- Minimal fills, maximum groove
+- 170-175 BPM
+- Off-beat emphasis creates tension
+- Example: "Modus Operandi", "Ni Ten Ichi Ryu"
+
+**Tricky / Massive Attack (Trip Hop):**
+- Off-kilter, deliberately imperfect timing
+- Heavy use of swing and humanization
+- Sparse kick/snare patterns
+- Atmospheric, not aggressive
+- 85-95 BPM (or half-time DNB)
+- Example: "Karmacoma", "Hell Is Round The Corner"
+
+**Jungle (Classic 90s):**
+- Amen break-inspired
+- Fast, complex snare rolls
+- Syncopated kick patterns
+- 160-180 BPM
+- Dense hi-hat work
+- Example: Grooverider, Goldie era
+
+**Techno:**
+- Four-on-the-floor kick
+- Repetitive, hypnotic
+- Minimal variation
+- 120-135 BPM
+- Emphasis on groove over complexity
+
+**Element Properties:**
+```yaml
+element_properties:
+  kick:
+    velocity: [80, 120]  # range or single value
+    gate: 100  # percentage of note length
+    swing: 0  # 0-100%
+  snare:
+    velocity: "light"  # converts to [40, 60]
+    gate_randomization: [60, 80]  # randomize between 60-80%
+    accent_probability: 0.2  # 20% chance of accent hit
+  closed_hat:
+    velocity: [30, 50]
+    gate: 50  # short, staccato
+    roll_probability: 0.15  # occasional rolls
+  open_hat:
+    velocity: [40, 70]
+    gate: 80
+    probability: 0.3  # sparse placement
+```
+
+**Advanced Features:**
+- **Gate randomization** - Each hit varies duration within range
+- **Velocity humanization** - Subtle variations per hit
+- **Probability-based placement** - Some elements don't hit every time
+- **Style mixing** - Blend characteristics of multiple styles
+- **Fills and breaks** - Auto-generate at phrase boundaries
+- **Ghost notes** - Very quiet snare/hat hits for groove
+
+**Examples:**
+```
+Input: {
+  drum_map: {kick: 1, snare: 2, closed_hat: 3, open_hat: 4},
+  style: ["photek_dnb"],
+  tempo: 174,
+  duration_beats: 128,
+  intensity: "moderate",
+  element_properties: {
+    snare: {velocity: "light", gate_randomization: [60, 80]},
+    closed_hat: {velocity: "light", gate_randomization: [60, 80]}
+  }
+}
+Output: {
+  pattern: [
+    // Beat 0 - Kick
+    {time_ms: 0, channel: 1, note: 36, velocity: 100, gate: 100},
+    // Beat 0.5 - Closed hat
+    {time_ms: 172, channel: 3, note: 42, velocity: 45, gate: 62},
+    // Beat 1 - Snare (off-beat)
+    {time_ms: 345, channel: 2, note: 38, velocity: 52, gate: 71},
+    // ... continues for 128 beats
+  ],
+  style_analysis: "Photek DNB: Sparse kick (every 3-4 beats), syncopated snare, 
+                   rolling hats with subtle randomization",
+  loop_length_ms: 44137,  // 128 beats at 174 BPM
+  complexity_score: 7,
+  timing_grid: "32nd"
+}
+```
+
+**Use with Eurorack/Modular:**
+Perfect for software Eurorack emulators (VCV Rack, Bitwig Grid, etc.) where each drum element is on a separate channel/trigger input.
+
 ---
 
 ## Transformation Skills
@@ -863,6 +1018,202 @@ inputs:
   include_devices: array (optional)
   start_bar: number (optional)
   end_bar: number (optional)
+outputs:
+  file_path: string
+  duration: number  # in seconds
+  tracks: number
+```
+
+### skill-save-pattern-to-device
+**Save generated pattern to hardware sequencer memory**
+
+**Sample Prompts:**
+- *"save this sequence to the play+ as a new pattern"*
+- *"save this drum pattern to my keystep pro's channel 1 slot"*
+- *"store this on the polyend play pattern 4"*
+- *"save this to keystep pro bank B, pattern 7, track 2"*
+- *"remember this pattern on my external sequencer"*
+
+**Conversational Flow:**
+```
+User: "save this drum pattern to my keystep pro's channel 1 slot"
+
+AI: "Which pattern slot on the KeyStep Pro? (1-64)"
+
+User: "pattern 12"
+
+AI calls skill-save-pattern-to-device with:
+- device: "keystep-pro-001"  // from device registry
+- pattern_data: [current drum pattern MIDI events]
+- target: {bank: "A", pattern: 12, track: 1}
+
+AI: "Pattern saved to KeyStep Pro Bank A, Pattern 12, Track 1. 
+     The pattern is 128 beats at 174 BPM.
+     Would you like me to save to another slot as a backup?"
+```
+
+```yaml
+name: Save Pattern to Device
+description: Stores generated patterns directly to hardware sequencer memory
+inputs:
+  device_id: string  # which sequencer
+  pattern_data: array  # MIDI events with timing
+  target_location: object  # device-specific addressing
+  pattern_metadata: object  # tempo, length, name, etc.
+outputs:
+  success: boolean
+  device_location: string  # "Bank A, Pattern 12, Track 1"
+  device_feedback: string  # confirmation from device
+  sysex_sent: array (optional)  # for debugging
+```
+
+**Supported Devices & Addressing:**
+
+**Polyend Play+ / Play:**
+```yaml
+target_location:
+  pattern: number  # 1-128 (Play+) or 1-64 (Play)
+  track: number  # 1-8
+  bank: string (optional)  # future firmware
+addressing: "Pattern {pattern}, Track {track}"
+method: "MIDI data over USB"
+```
+
+**Arturia KeyStep Pro:**
+```yaml
+target_location:
+  bank: string  # "A", "B", "C", "D"
+  pattern: number  # 1-16 per bank
+  track: number  # 1-4
+addressing: "Bank {bank}, Pattern {pattern}, Track {track}"
+method: "SysEx + MIDI data"
+```
+
+**Elektron Digitakt/Digitone:**
+```yaml
+target_location:
+  bank: string  # "A", "B", "C", "D", ...
+  pattern: number  # 1-16 per bank
+  track: number  # 1-8 (Digitakt) or 1-4 (Digitone)
+addressing: "Bank {bank}{pattern:02d}, Track {track}"
+method: "SysEx pattern dump"
+```
+
+**Novation Circuit Tracks:**
+```yaml
+target_location:
+  session: number  # 1-8
+  pattern: number  # 1-8 per session
+  track: number  # 1-4
+addressing: "Session {session}, Pattern {pattern}, Track {track}"
+method: "MIDI + Components web transfer"
+```
+
+**Implementation Approaches:**
+
+**Method 1: Real-time MIDI Recording (Universal)**
+Most sequencers can record incoming MIDI in real-time:
+```
+1. AI selects target pattern slot on device
+2. AI puts device in record mode (if possible via MIDI CC)
+3. AI plays generated pattern at tempo
+4. Device records MIDI data
+5. AI stops recording
+6. Pattern saved to device memory
+```
+
+**Method 2: SysEx Pattern Dump (Device-Specific)**
+Some devices support pattern upload via SysEx:
+```
+1. Convert pattern to device-specific SysEx format
+2. Send SysEx pattern dump to device
+3. Device stores pattern directly
+4. Faster, no real-time recording needed
+```
+
+**Method 3: Hybrid Approaches**
+- **KeyStep Pro**: Can receive MIDI + SysEx metadata
+- **Polyend Play+**: MIDI over USB + pattern save command
+- **Elektron**: SysEx pattern structure documented
+
+**Challenges & Solutions:**
+
+**Challenge 1: Device-Specific Formats**
+*Solution:* Device profile includes pattern format specification and save protocol.
+
+**Challenge 2: Tempo/Length Metadata**
+*Solution:* Store as SysEx, or encode in pattern name if device supports.
+
+**Challenge 3: No Direct API**
+*Solution:* Fall back to real-time MIDI recording method.
+
+**Challenge 4: Verification**
+*Solution:* Device sends confirmation (if supported), or AI reads back pattern.
+
+**Device Profile Extensions:**
+
+```yaml
+# Example: KeyStep Pro device profile
+pattern_storage:
+  supported: true
+  method: "sysex_and_realtime"
+  addressing:
+    bank: ["A", "B", "C", "D"]
+    pattern_per_bank: 16
+    tracks: 4
+  sysex:
+    manufacturer_id: [0x00, 0x20, 0x6B]
+    device_id: 0x7F
+    pattern_dump_command: 0x42
+  realtime_record:
+    start_cc: {channel: 1, cc: 102, value: 127}
+    stop_cc: {channel: 1, cc: 102, value: 0}
+    select_pattern_cc: {channel: 1, cc: 103, value: "pattern_number"}
+  pattern_length_max: 64  # steps
+  timing_resolution: "24ppqn"
+```
+
+**User Experience:**
+
+**Scenario 1: Simple Save**
+```
+User: "save this to the play+ pattern 5"
+AI: Saves to Polyend Play+, Pattern 5 (uses track 1 by default)
+```
+
+**Scenario 2: Explicit Addressing**
+```
+User: "save to keystep pro bank B, pattern 7, track 2"
+AI: Saves exactly as specified
+```
+
+**Scenario 3: AI Suggestion**
+```
+User: "save this drum pattern somewhere"
+AI: "I can save to:
+     1. Polyend Play+ (8 tracks, 128 patterns)
+     2. KeyStep Pro (4 tracks, 64 patterns)
+     Which would you prefer?"
+```
+
+**Scenario 4: Batch Save**
+```
+User: "save this pattern to all my sequencers as a backup"
+AI: Saves to Play+ Pattern 10, KeyStep Bank A Pattern 10, Circuit Session 2 Pattern 3
+```
+
+**Future Extensions:**
+- **Pattern naming** (if device supports)
+- **Pattern chains** (save multiple patterns as sequence)
+- **Project save** (entire session across multiple patterns)
+- **Pattern recall** ("load pattern 12 from keystep and play it here")
+
+**Priority:** Medium-High (v1.5)
+- MVP: Real-time MIDI recording method (works universally)
+- v1.0: Add SysEx support for KeyStep Pro and Play+
+- v1.5: Full device library with all major sequencers
+
+---
 outputs:
   file_path: string
   duration_seconds: number
