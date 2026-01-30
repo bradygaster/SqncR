@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "7HS0VzKszB4=",
+  "success": true,
+  "projectFilePath": "C:\\src\\SqncR\\src\\SqncR.Midi\\SqncR.Midi.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\brady\\.nuget\\packages\\melanchall.drywetmidi\\8.0.3\\melanchall.drywetmidi.8.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

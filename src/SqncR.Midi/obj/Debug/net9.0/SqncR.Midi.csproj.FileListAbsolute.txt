@@ -1,0 +1,16 @@
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.csproj.AssemblyReference.cache
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.GeneratedMSBuildEditorConfig.editorconfig
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.AssemblyInfoInputs.cache
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.AssemblyInfo.cs
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.csproj.CoreCompileInputs.cache
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.sourcelink.json
+C:\src\SqncR\src\SqncR.Midi\bin\Debug\net9.0\Melanchall_DryWetMidi_Native32.dll
+C:\src\SqncR\src\SqncR.Midi\bin\Debug\net9.0\Melanchall_DryWetMidi_Native64.dll
+C:\src\SqncR\src\SqncR.Midi\bin\Debug\net9.0\Melanchall_DryWetMidi_Native64.dylib
+C:\src\SqncR\src\SqncR.Midi\bin\Debug\net9.0\SqncR.Midi.deps.json
+C:\src\SqncR\src\SqncR.Midi\bin\Debug\net9.0\SqncR.Midi.dll
+C:\src\SqncR\src\SqncR.Midi\bin\Debug\net9.0\SqncR.Midi.pdb
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.dll
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\refint\SqncR.Midi.dll
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\SqncR.Midi.pdb
+C:\src\SqncR\src\SqncR.Midi\obj\Debug\net9.0\ref\SqncR.Midi.dll

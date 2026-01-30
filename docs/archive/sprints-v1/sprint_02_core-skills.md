@@ -483,6 +483,103 @@ public async Task GenerateAmbientDrone_ShouldPlayOnPolyendSynth()
 
 ---
 
+### Task 10: Implement Sequence Format Parser
+
+**File:** `src/SqncR.Core/Formats/SequenceFormat.cs`
+
+```csharp
+namespace SqncR.Core.Formats;
+
+/// <summary>
+/// Parser and serializer for .sqnc.yaml sequence format.
+/// See examples/README.md for format specification.
+/// </summary>
+public class SequenceFormat
+{
+    public static Sequence Parse(string yaml);
+    public static Sequence Load(string filePath);
+    public static string Serialize(Sequence sequence);
+    public static void Save(Sequence sequence, string filePath);
+}
+
+public record Sequence
+{
+    public SequenceMeta Meta { get; init; }
+    public List<string> Intent { get; init; }
+    public Dictionary<string, DeviceMapping> Devices { get; init; }
+    public Dictionary<string, Pattern> Patterns { get; init; }
+    public Dictionary<string, Automation> Automation { get; init; }
+    public Dictionary<string, Groove> Grooves { get; init; }
+    public Dictionary<string, Section> Sections { get; init; }
+    public List<ArrangeItem> Arrange { get; init; }
+}
+
+public record SequenceMeta
+{
+    public string Title { get; init; }
+    public string? Artist { get; init; }
+    public int Tempo { get; init; }
+    public string Key { get; init; }
+    public TimeSignature Time { get; init; }
+    public string? Swing { get; init; }
+    public int Tpq { get; init; } = 480;
+    public DateTime Created { get; init; }
+}
+
+public record TimeSignature(int Beats, int Division);
+```
+
+**Checklist:**
+- [ ] Define Sequence model classes
+- [ ] Implement YAML parser using YamlDotNet
+- [ ] Implement serializer
+- [ ] Handle randomization types (range, choice, prob)
+- [ ] Validate format on load
+- [ ] Unit tests for parsing example files
+- [ ] Unit tests for round-trip (parse → serialize → parse)
+
+**Estimated Time:** 6 hours
+
+---
+
+### Task 11: Implement Sequence Playback Engine
+
+**File:** `src/SqncR.Core/Playback/SequencePlayer.cs`
+
+```csharp
+public class SequencePlayer
+{
+    private readonly IMidiService _midiService;
+    
+    public async Task PlayAsync(Sequence sequence, CancellationToken ct)
+    {
+        // Resolve patterns to events
+        // Apply randomization (range, choice, prob)
+        // Apply grooves
+        // Interpolate automation curves
+        // Schedule MIDI events
+    }
+    
+    public void Stop();
+    public void Pause();
+    public void Resume();
+    public TimeSpan Position { get; }
+}
+```
+
+**Checklist:**
+- [ ] Implement pattern resolution
+- [ ] Implement randomization resolution
+- [ ] Implement groove application
+- [ ] Implement automation curve interpolation
+- [ ] Implement scheduling with high-resolution timer
+- [ ] Unit tests for each resolution step
+- [ ] Integration test with real MIDI output
+
+**Estimated Time:** 8 hours
+
+---
+
 ## Demo Script
 
 1. Run Aspire: `dotnet run` in AppHost
@@ -494,7 +591,9 @@ public async Task GenerateAmbientDrone_ShouldPlayOnPolyendSynth()
    - skill-chord-progression generated Am progression
    - MIDI notes sent to Polyend
 5. **Hear ambient drone from Polyend Synth**
-6. Run tests: `dotnet test` - all green
+6. Save session: `sqncr session save "my-drone"`
+7. Show saved file: `~/.sqncr/sessions/my-drone.sqnc.yaml`
+8. Run tests: `dotnet test` - all green
 
 ---
 

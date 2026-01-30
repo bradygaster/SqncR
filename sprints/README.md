@@ -1,181 +1,121 @@
 # SqncR Sprint Plans
 
-**Implementation broken into 6 focused sprints**
+**Priority-based implementation.** Wow moments first.
 
 ---
 
-## Sprint Overview
+## Sprint Structure
 
-| Sprint | Duration | Focus | Status |
+| Sprint | Priority | Focus | Status |
 |--------|----------|-------|--------|
-| [Sprint 00](sprint_00_foundation.md) | 2 weeks | Foundation & Project Setup | 🔲 Not Started |
-| [Sprint 01](sprint_01_theory-and-midi.md) | 2 weeks | Music Theory & MIDI Foundation | 🔲 Not Started |
-| [Sprint 02](sprint_02_core-skills.md) | 2 weeks | Core Skills & Service Facade | 🔲 Not Started |
-| [Sprint 03](sprint_03_cli-and-mcp.md) | 2 weeks | CLI & MCP Transports | 🔲 Not Started |
-| [Sprint 04](sprint_04_api-and-sdk.md) | 2 weeks | REST API & SDK Library | 🔲 Not Started |
-| [Sprint 05](sprint_05_advanced-skills.md) | 3 weeks | Advanced Skills & Agents | 🔲 Not Started |
-| [Sprint 06](sprint_06_production.md) | 2 weeks | Device-Specific Skills & Polish | 🔲 Not Started |
-
-**Total Duration:** ~15 weeks to v1.0
+| [P0-play-songs](./P0-play-songs.md) | **First** | Play .sqnc.yaml to hardware | Ready |
+| [P1-save-sessions](./P1-save-sessions.md) | 1 | Save/load sessions | Waiting for P0 |
+| [P2-music-theory](./P2-music-theory.md) | 2 | Note, Scale, Chord types | Waiting for P1 |
+| [P3-first-generation](./P3-first-generation.md) | 3 | Generate music from text | Waiting for P2 |
+| [P4-transports](./P4-transports.md) | 4 | CLI polish, MCP server | Waiting for P3 |
+| [P5-production](./P5-production.md) | 5 | Tests, CI/CD, release | Waiting for P4 |
 
 ---
 
-## Sprint 00: Foundation & Project Setup
-**Goal:** Initialize .NET solution with Aspire
+## Philosophy
 
-**Key Deliverables:**
-- .NET 9 solution with all projects
-- Aspire AppHost running
-- OpenTelemetry configured
-- Development workflow established
+**Wow moments first.**
 
-**[View Sprint Plan →](sprint_00_foundation.md)**
+P0 gets music playing through hardware in ~1 week. Everything else builds on that foundation.
+
+Each sprint depends on the previous one. Complete P0 before starting P1.
 
 ---
 
-## Sprint 01: Music Theory & MIDI Foundation
-**Goal:** Build core music theory library and MIDI service
+## What Changed
 
-**Key Deliverables:**
-- Note, Scale, Chord, Interval value types
-- MIDI device scanning with DryWetMidi
-- Device profile system
-- Polyend Synth profile working
-- Send MIDI notes with < 10ms latency
+Previous structure had 7 sequential sprints (sprint_00 through sprint_06) that frontloaded infrastructure before any wow moments.
 
-**[View Sprint Plan →](sprint_01_theory-and-midi.md)**
+New structure:
+- **P0:** Play files → immediate demo value
+- **P1:** Save sessions → persistence
+- **P2:** Music theory → unlocks generation
+- **P3:** First generation → the real magic
+- **P4:** MCP/CLI → talk to Claude
+- **P5:** Production → ship it
 
----
-
-## Sprint 02: Core Skills & Service Facade
-**Goal:** Implement MVP skills and service layer
-
-**Key Deliverables:**
-- Skill framework (ISkill, SkillBase, SkillRegistry)
-- 6 core skills implemented
-- SqncRService facade
-- "Generate ambient drone" works end-to-end
-
-**[View Sprint Plan →](sprint_02_core-skills.md)**
+Previous sprint docs archived at [../docs/archive/sprints-v1/](../docs/archive/sprints-v1/).
 
 ---
 
-## Sprint 03: CLI & MCP Transports
-**Goal:** Build CLI tool and MCP server
+## Estimated Timeline
 
-**Key Deliverables:**
-- sqncr.exe CLI tool
-- MCP server for Claude/Copilot
-- Both use same SqncR.Core
-- Verified transport independence
+| Sprint | Duration | Cumulative |
+|--------|----------|------------|
+| P0 | ~1 week | Week 1 |
+| P1 | ~1 week | Week 2 |
+| P2 | ~1-2 weeks | Week 3-4 |
+| P3 | ~2 weeks | Week 5-6 |
+| P4 | ~2 weeks | Week 7-8 |
+| P5 | ~2 weeks | Week 9-10 |
 
-**[View Sprint Plan →](sprint_03_cli-and-mcp.md)**
-
----
-
-## Sprint 04: REST API & SDK Library
-**Goal:** Complete all 4 transport layers
-
-**Key Deliverables:**
-- REST API with Swagger
-- .NET SDK with fluent API
-- All 4 transports operational (CLI, MCP, API, SDK)
-- Transport independence verified
-
-**[View Sprint Plan →](sprint_04_api-and-sdk.md)**
+**v1.0 target:** ~10 weeks from start of P0.
 
 ---
 
-## Sprint 05: Advanced Skills & Agents
-**Goal:** Advanced skills and autonomous agents
+## How to Use This
 
-**Key Deliverables:**
-- 15+ advanced skills (analysis, generation, transformation)
-- All 4 agents (SessionManager, Composition, Listener, DeviceOrchestrator)
-- Complex multi-device workflows
-- Real-time jamming capability
+1. Start with [P0-play-songs](./P0-play-songs.md)
+2. Complete all tasks in order
+3. Validate definition of done
+4. Move to next sprint
 
-**[View Sprint Plan →](sprint_05_advanced-skills.md)**
-
----
-
-## Sprint 06: Device-Specific Skills & Polish
-**Goal:** Production ready with all devices supported
-
-**Key Deliverables:**
-- All 6 device profiles complete
-- 10+ device-specific skills
-- Production packaging (Docker, NuGet, executables)
-- Complete documentation
-- CI/CD pipeline
-- v1.0 Release
-
-**[View Sprint Plan →](sprint_06_production.md)**
+Each sprint doc contains:
+- Goal and wow moment
+- Tasks with code examples
+- Definition of done
+- Dependencies on previous sprints
 
 ---
 
 ## Milestones
 
-### Milestone 1: Foundation (End of Sprint 00)
-- ✅ .NET solution compiles
-- ✅ Aspire Dashboard runs
-- ✅ Development workflow established
+### Milestone 1: First Sound (End of P0)
+- [ ] `sqncr play` outputs MIDI to hardware
+- [ ] Can list devices, select by name or index
+- [ ] Example files play correctly
 
-### Milestone 2: MVP (End of Sprint 02)
-- ✅ Music theory library working
-- ✅ MIDI I/O working
-- ✅ Basic generation functional
-- ✅ Observable in dashboard
+### Milestone 2: Persistence (End of P1)
+- [ ] Sessions saved to SQLite
+- [ ] Load sessions and resume
+- [ ] Device preferences remembered
 
-### Milestone 3: Multi-Transport (End of Sprint 04)
-- ✅ All 4 transports operational
-- ✅ Same Core used by all
-- ✅ Transport independence verified
+### Milestone 3: Generation (End of P3)
+- [ ] Natural language → MIDI output
+- [ ] Skill framework operational
+- [ ] 6 MVP skills working
 
-### Milestone 4: Production (End of Sprint 06)
-- ✅ All features complete
-- ✅ All devices supported
-- ✅ Production packaged
-- ✅ Documentation complete
-- ✅ v1.0 Released
+### Milestone 4: AI Integration (End of P4)
+- [ ] MCP server working
+- [ ] Claude Desktop can control playback
+- [ ] Interactive REPL mode
 
----
-
-## Working Agreement
-
-**Sprint Duration:** 2 weeks (3 weeks for Sprint 05)
-
-**Sprint Cadence:**
-- **Day 1:** Sprint planning, task breakdown
-- **Daily:** Standup (async via commits)
-- **Day 10:** Mid-sprint check-in
-- **Day 14:** Sprint review & demo
-- **Day 14:** Retrospective
-- **Day 14:** Next sprint planning
-
-**Definition of Done (All Sprints):**
-- All tasks complete
-- Tests passing
-- Code reviewed
-- Documentation updated
-- Aspire Dashboard shows features working
-- Demo prepared
+### Milestone 5: v1.0 (End of P5)
+- [ ] Full test coverage
+- [ ] CI/CD pipeline
+- [ ] Published packages
+- [ ] Documentation complete
 
 ---
 
 ## Current Sprint
 
-**Active:** None (planning phase)  
-**Next:** Sprint 00 - Foundation & Project Setup
+**Active:** None (starting P0)
+**Next:** P0 - Play Songs
 
 ---
 
 ## See Also
 
-- [ROADMAP.md](../ROADMAP.md) - Overall implementation roadmap
-- [CONTRIBUTING.md](../CONTRIBUTING.md) - Development guidelines
-- [ARCHITECTURE.md](../ARCHITECTURE.md) - Architecture details
+- [../docs/000-INDEX.md](../docs/000-INDEX.md) - Documentation index
+- [../docs/003-ARCHITECTURE.md](../docs/003-ARCHITECTURE.md) - Architecture details
+- [../CONTRIBUTING.md](../CONTRIBUTING.md) - Development guidelines
 
 ---
 
-**Updated:** January 29, 2026
+*Last updated: January 29, 2026*

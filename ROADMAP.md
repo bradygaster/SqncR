@@ -135,13 +135,25 @@ SqncR/
 │   │   │   └── GenerationConfig.cs
 │   │   └── SqncRDbContext.cs
 │   │
+│   ├── SqncR.Formats/                    # ⭐ Sequence file format
+│   │   ├── SequenceFormat.cs             # Parser/serializer for .sqnc.yaml
+│   │   ├── Models/
+│   │   │   ├── Sequence.cs               # Root model
+│   │   │   ├── Pattern.cs                # Pattern with events
+│   │   │   ├── Section.cs                # Loopable sections
+│   │   │   ├── Automation.cs             # CC curves
+│   │   │   ├── Groove.cs                 # Swing templates
+│   │   │   └── Randomization.cs          # Range, Choice, Prob
+│   │   └── SequencePlayer.cs             # Playback engine
+│   │
 │   ├── SqncR.Cli/                        # ⭐ CLI transport
 │   │   ├── Program.cs                    # sqncr.exe
 │   │   ├── Commands/
 │   │   │   ├── ListDevicesCommand.cs
 │   │   │   ├── GenerateCommand.cs
 │   │   │   ├── ModifyCommand.cs
-│   │   │   └── StopCommand.cs
+│   │   │   ├── StopCommand.cs
+│   │   │   └── SessionCommands.cs        # save, load, list, export
 │   │   └── Uses: System.CommandLine
 │   │
 │   ├── SqncR.McpServer/                  # ⭐ MCP transport
@@ -179,8 +191,37 @@ SqncR/
 └── examples/
     ├── cli-examples.sh
     ├── mcp-config.json
-    └── api-examples.http
+    ├── api-examples.http
+    ├── chill-ambient.sqnc.yaml           # Example sequence files
+    ├── seven-nation-army.sqnc.yaml
+    ├── little-fluffy-clouds.sqnc.yaml
+    ├── another-brick-in-the-wall.sqnc.yaml
+    └── README.md                         # Full .sqnc.yaml format spec
 ```
+
+---
+
+## Sequence File Format (.sqnc.yaml)
+
+SqncR uses a custom YAML-based format for persisting sequences. See [examples/README.md](examples/README.md) for the full specification.
+
+**Key capabilities:**
+- Pattern-centric design (reusable building blocks)
+- Built-in randomization (`range`, `choice`, `prob`)
+- Automation curves (filter sweeps, volume swells)
+- Groove templates (swing, humanization)
+- Multi-section arrangements with looping
+- Intent preservation (captures AI conversation)
+
+**Implementation tasks:**
+- [ ] Define Sequence model classes (`SqncR.Formats`)
+- [ ] Implement YAML parser using YamlDotNet
+- [ ] Implement serializer
+- [ ] Implement playback engine with randomization
+- [ ] Add CLI commands (save, load, export)
+- [ ] Add MCP tools (session.save, session.load)
+- [ ] Add API endpoints (/api/sessions)
+- [ ] Add SDK methods (Sessions.SaveAsync)
 
 ---
 

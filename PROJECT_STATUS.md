@@ -45,6 +45,13 @@ SqncR is in the **documentation and planning phase**, with all architectural dec
 - ✅ `CHANGELOG.md` - Version tracking (empty but ready)
 - ✅ `DOCS_INDEX.md` - Complete documentation index
 
+**Sequence File Format (.sqnc.yaml):**
+- ✅ `examples/README.md` - Full format specification
+- ✅ `examples/chill-ambient.sqnc.yaml` - Simple ambient example
+- ✅ `examples/seven-nation-army.sqnc.yaml` - Full feature demo
+- ✅ `examples/little-fluffy-clouds.sqnc.yaml` - Ambient house example
+- ✅ `examples/another-brick-in-the-wall.sqnc.yaml` - Classic rock example
+
 **Visual Documentation:**
 - ✅ `DIAGRAMS.md` - Comprehensive Mermaid diagrams
   - System overview
@@ -67,7 +74,7 @@ SqncR is in the **documentation and planning phase**, with all architectural dec
 - ✅ `.sqncr/todos/README.md` - Todo management guide
 - ✅ `.sqncr/commands/README.md` - Slash commands reference
 
-**Total:** 20+ comprehensive markdown documents
+**Total:** 25+ comprehensive markdown documents
 
 ### 🔲 Code (Not Started)
 

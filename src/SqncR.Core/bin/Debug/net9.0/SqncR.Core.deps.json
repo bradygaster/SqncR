@@ -1,0 +1,73 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "SqncR.Core/1.0.0": {
+        "dependencies": {
+          "SqncR.Midi": "1.0.0",
+          "YamlDotNet": "16.3.0"
+        },
+        "runtime": {
+          "SqncR.Core.dll": {}
+        }
+      },
+      "Melanchall.DryWetMidi/8.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Melanchall.DryWetMidi.dll": {
+            "assemblyVersion": "8.0.3.0",
+            "fileVersion": "8.0.3.0"
+          }
+        }
+      },
+      "YamlDotNet/16.3.0": {
+        "runtime": {
+          "lib/net8.0/YamlDotNet.dll": {
+            "assemblyVersion": "16.0.0.0",
+            "fileVersion": "16.3.0.0"
+          }
+        }
+      },
+      "SqncR.Midi/1.0.0": {
+        "dependencies": {
+          "Melanchall.DryWetMidi": "8.0.3"
+        },
+        "runtime": {
+          "SqncR.Midi.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SqncR.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Melanchall.DryWetMidi/8.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-U+Ubol4MhieY2xgZGqcI8H2F/4HWzWKq8/WPHd1SXS7WXaHyEWMnj56vtxKOJFM5FLbj+NOUny5+X2KAzI0YUg==",
+      "path": "melanchall.drywetmidi/8.0.3",
+      "hashPath": "melanchall.drywetmidi.8.0.3.nupkg.sha512"
+    },
+    "YamlDotNet/16.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SgMOdxbz8X65z8hraIs6hOEdnkH6hESTAIUa7viEngHOYaH+6q5XJmwr1+yb9vJpNQ19hCQY69xbFsLtXpobQA==",
+      "path": "yamldotnet/16.3.0",
+      "hashPath": "yamldotnet.16.3.0.nupkg.sha512"
+    },
+    "SqncR.Midi/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -412,6 +412,125 @@ dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
 
 ---
 
+### Task 10: Implement Session Commands (CLI)
+
+**File:** `src/SqncR.Cli/Commands/SessionCommands.cs`
+
+```csharp
+public class SessionSaveCommand : Command
+{
+    public SessionSaveCommand() : base("save", "Save current session to .sqnc.yaml")
+    {
+        var nameArg = new Argument<string>("name", "Session name");
+        AddArgument(nameArg);
+        
+        var includeHistoryOption = new Option<bool>("--history", "Include conversation history");
+        AddOption(includeHistoryOption);
+        
+        this.SetHandler(ExecuteAsync, nameArg, includeHistoryOption);
+    }
+    
+    private async Task ExecuteAsync(string name, bool includeHistory)
+    {
+        var service = CreateSqncRService();
+        var result = await service.SaveSessionAsync(name, includeHistory);
+        
+        AnsiConsole.MarkupLine($"[green]✓[/] Session saved to: {result.FilePath}");
+    }
+}
+
+public class SessionLoadCommand : Command
+{
+    public SessionLoadCommand() : base("load", "Load session from .sqnc.yaml")
+    {
+        var nameArg = new Argument<string>("name", "Session name or file path");
+        AddArgument(nameArg);
+        
+        this.SetHandler(ExecuteAsync, nameArg);
+    }
+}
+
+public class SessionListCommand : Command
+{
+    // Lists all .sqnc.yaml files in ~/.sqncr/sessions/
+}
+```
+
+**CLI Usage:**
+```bash
+sqncr session save "my-ambient"
+# Saved to ~/.sqncr/sessions/my-ambient.sqnc.yaml
+
+sqncr session load "my-ambient"
+# Loaded, playback ready
+
+sqncr session list
+# Lists all saved sessions
+
+sqncr session export "my-ambient" --format midi --output "ambient.mid"
+# Exports to standard MIDI
+```
+
+**Checklist:**
+- [ ] Implement session save command
+- [ ] Implement session load command
+- [ ] Implement session list command
+- [ ] Implement session export command (MIDI)
+- [ ] Implement session import command (MIDI)
+- [ ] Add to root command
+- [ ] Test round-trip (generate → save → load → play)
+
+**Estimated Time:** 4 hours
+
+---
+
+### Task 11: Implement Session Tools (MCP)
+
+**File:** `src/SqncR.McpServer/Tools/SessionTools.cs`
+
+```csharp
+public class SessionSaveTool : IMcpTool
+{
+    public string Name => "sqncr.session.save";
+    public string Description => "Save current session to .sqnc.yaml format";
+    
+    public async Task<McpToolResult> ExecuteAsync(Dictionary<string, object> parameters)
+    {
+        var name = parameters["name"].ToString();
+        var includeHistory = parameters.GetValueOrDefault("include_history", true);
+        
+        var result = await _sqncr.SaveSessionAsync(name, includeHistory);
+        
+        return new McpToolResult
+        {
+            Content = $"Session saved to {result.FilePath}"
+        };
+    }
+}
+```
+
+**MCP Tools:**
+- `sqncr.session.save` - Save current session
+- `sqncr.session.load` - Load session
+- `sqncr.session.list` - List saved sessions
+- `sqncr.session.export` - Export to MIDI
+
+**MCP Resources:**
+- `sqncr://sessions` - List of saved sessions
+- `sqncr://session/{name}` - Session details (parsed .sqnc.yaml)
+
+**Checklist:**
+- [ ] Implement session.save tool
+- [ ] Implement session.load tool
+- [ ] Implement session.list tool
+- [ ] Implement session.export tool
+- [ ] Add sessions resource
+- [ ] Test in Claude Desktop
+
+**Estimated Time:** 4 hours
+
+---
+
 ## Demo Script
 
 **CLI Demo:**
@@ -425,8 +544,17 @@ sqncr generate "ambient drone in A minor, 60 BPM, Polyend Synth channel 1"
 sqncr modify "darker"
 # Music shifts to Phrygian
 
+sqncr session save "dark-ambient"
+# Saved to ~/.sqncr/sessions/dark-ambient.sqnc.yaml
+
 sqncr stop
 # Music stops
+
+sqncr session load "dark-ambient"
+# Session restored
+
+sqncr play
+# Music plays again (with slight randomization variations)
 ```
 
 **MCP Demo in Claude:**
@@ -434,6 +562,7 @@ sqncr stop
 You: "list my midi devices"
 You: "start an ambient drone on the Polyend"
 You: "make it darker"
+You: "save this session as 'late-night-ambient'"
 You: "stop"
 ```
 

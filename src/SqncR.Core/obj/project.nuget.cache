@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "1TPiAhMHPZ8=",
+  "success": true,
+  "projectFilePath": "C:\\src\\SqncR\\src\\SqncR.Core\\SqncR.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\brady\\.nuget\\packages\\melanchall.drywetmidi\\8.0.3\\melanchall.drywetmidi.8.0.3.nupkg.sha512",
+    "C:\\Users\\brady\\.nuget\\packages\\yamldotnet\\16.3.0\\yamldotnet.16.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}

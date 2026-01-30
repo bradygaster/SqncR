@@ -116,9 +116,32 @@ Documentation is not optional. It's part of the Definition of Done for every tas
 - [ ] Update SKILLS.md if adding/changing skills
 - [ ] Update relevant sprint plan if in active sprint
 
-**4. Always Update**
+**4. File Format Documentation**
+- [ ] Update examples/README.md if changing .sqnc.yaml format
+- [ ] Add example files for new format features
+- [ ] Ensure format spec and code stay in sync
+
+**5. Always Update**
 - [ ] DOCS_INDEX.md - Add new documents to index
 - [ ] CHANGELOG.md - Add entry for user-visible changes
+
+### Sequence Format (.sqnc.yaml) Guidelines
+
+When working with the sequence file format:
+
+**Adding New Features:**
+1. Update the format specification in `examples/README.md`
+2. Add the feature to at least one example file
+3. Update the parser in `SqncR.Formats`
+4. Add unit tests for parsing and serialization
+5. Ensure round-trip works (parse → serialize → parse)
+
+**Format Design Principles:**
+- Keep YAML-compliant (no custom syntax inside values)
+- Use explicit types over array overloading (`{ range: [0, 10] }` not `[0, 10]`)
+- Avoid `/` in values (use `{ beats: 4, division: 4 }` not `4/4`)
+- Preserve randomization parameters (don't flatten on save)
+- Capture intent alongside data
 
 #### Documentation Checklist Template
 

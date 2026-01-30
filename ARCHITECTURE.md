@@ -407,11 +407,52 @@ SqncR: Adds subtle textural layer on another instrument
 
 ## Open Questions
 
-1. **State persistence**: SQLite? JSON files? In-memory only?
+1. ~~**State persistence**: SQLite? JSON files? In-memory only?~~ → **SQLite + `.sqnc.yaml` file format**
 2. **ML models**: Local ONNX? Cloud API? Start without?
 3. **Virtual MIDI**: Bundle driver? User installs separately?
 4. **Web UI**: Optional dashboard for visual feedback?
 5. **DAW integration**: Also target Ableton Link, VST hosting?
+
+## Sequence File Format
+
+SqncR uses the `.sqnc.yaml` format for persisting sequences. See [examples/README.md](examples/README.md) for the full specification.
+
+**Key features:**
+- Pattern-centric (reusable building blocks)
+- Built-in randomization (`range`, `choice`, `prob`)
+- Automation curves (filter sweeps, volume swells)
+- Groove templates (swing, humanization)
+- Intent preservation (captures AI prompts that generated it)
+
+**Example:**
+```yaml
+meta:
+  title: "Late Night Ambient"
+  tempo: 70
+  key: Cm
+  time: { beats: 4, division: 4 }
+
+patterns:
+  bass_Cm:
+    length: 7680
+    defaults:
+      vel: { range: [65, 75] }
+      t_rand: { range: [-20, 20] }
+    events:
+      - { t: 0, type: note, note: C2, dur: 1920 }
+      - { t: 1920, type: note, note: C2, dur: 1920 }
+
+sections:
+  verse:
+    loopable: true
+    tracks:
+      - ch: 1
+        sequence:
+          - { at: 0, pattern: bass_Cm, repeat: 4 }
+
+arrange:
+  - { at: 0, section: verse }
+```
 
 ## Next: MVP Definition
 

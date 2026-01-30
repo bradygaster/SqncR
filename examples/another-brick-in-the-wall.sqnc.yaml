@@ -1,0 +1,259 @@
+# another-brick-in-the-wall.sqnc.yaml
+# SqncR Sequence Format v1
+# Example: classic rock - iconic bass line, disco drums, minor tonality
+
+meta:
+  title: "Another Brick in the Wall (Part 2)"
+  artist: "Pink Floyd"
+  tempo: 104
+  key: Dm
+  time: { beats: 4, division: 4 }
+  tpq: 480
+  created: 2026-01-29T20:42:00Z
+
+intent:
+  - "dark, driving, 104bpm"
+  - "iconic bass riff in D minor"
+  - "disco-influenced drums"
+
+devices:
+  bass: { name: "Moog Sub 37", ch: 1 }
+  guitar: { name: "Polyend Synth", ch: 2 }
+  keys: { name: "Polyend Synth", ch: 3 }
+  drums: { name: "Polyend Play", ch: 10 }
+
+patterns:
+  # THE bass line - D minor pentatonic groove
+  bass_main:
+    length: 3840  # 2 bars
+    defaults:
+      vel: { range: [95, 110] }
+      t_rand: { range: [-8, 8] }
+    events:
+      # bar 1
+      - { t: 0,    type: note, note: D2, dur: 240 }
+      - { t: 480,  type: note, note: D2, dur: 240 }
+      - { t: 720,  type: note, note: F2, dur: 240 }
+      - { t: 960,  type: note, note: G2, dur: 240 }
+      - { t: 1200, type: note, note: A2, dur: 480 }
+      - { t: 1680, type: note, note: G2, dur: 240 }
+      # bar 2
+      - { t: 1920, type: note, note: F2, dur: 480 }
+      - { t: 2400, type: note, note: D2, dur: 240 }
+      - { t: 2880, type: note, note: D2, dur: 240 }
+      - { t: 3120, type: note, note: D2, dur: 240 }
+      - { t: 3360, type: note, note: D2, dur: 240 }
+      - { t: 3600, type: note, note: D2, dur: 240 }
+
+  bass_variation:
+    length: 3840
+    defaults:
+      vel: { range: [90, 105] }
+      t_rand: { range: [-10, 10] }
+    events:
+      # bar 1 - slight variation
+      - { t: 0,    type: note, note: D2, dur: 240 }
+      - { t: 480,  type: note, note: D2, dur: 240 }
+      - { t: 720,  type: note, note: F2, dur: 240 }
+      - { t: 960,  type: note, note: G2, dur: 240 }
+      - { t: 1200, type: note, note: A2, dur: 240 }
+      - { t: 1440, type: note, note: A2, dur: 240 }
+      - { t: 1680, type: note, note: G2, dur: 240 }
+      # bar 2
+      - { t: 1920, type: note, note: F2, dur: 720 }
+      - { t: 2640, type: note, note: D2, dur: 240 }
+      - { t: 2880, type: note, note: D2, dur: 480 }
+      - { t: 3360, type: note, note: { choice: [D2, A1] }, dur: 480 }
+
+  # guitar arpeggios - Dm
+  guitar_Dm:
+    length: 1920
+    defaults:
+      vel: { range: [60, 75] }
+    events:
+      - { t: 0,    type: note, note: D4, dur: 400 }
+      - { t: 480,  type: note, note: A4, dur: 400 }
+      - { t: 960,  type: note, note: D5, dur: 400 }
+      - { t: 1440, type: note, note: F5, dur: 400 }
+
+  guitar_F:
+    length: 1920
+    defaults:
+      vel: { range: [60, 75] }
+    events:
+      - { t: 0,    type: note, note: F4, dur: 400 }
+      - { t: 480,  type: note, note: A4, dur: 400 }
+      - { t: 960,  type: note, note: C5, dur: 400 }
+      - { t: 1440, type: note, note: F5, dur: 400 }
+
+  guitar_C:
+    length: 1920
+    defaults:
+      vel: { range: [60, 75] }
+    events:
+      - { t: 0,    type: note, note: C4, dur: 400 }
+      - { t: 480,  type: note, note: G4, dur: 400 }
+      - { t: 960,  type: note, note: C5, dur: 400 }
+      - { t: 1440, type: note, note: E5, dur: 400 }
+
+  # sustained chord pads
+  pad_Dm:
+    length: 3840
+    defaults:
+      vel: { range: [45, 60] }
+    events:
+      - { t: 0, type: note, note: D3, dur: 3840 }
+      - { t: 0, type: note, note: F3, dur: 3840 }
+      - { t: 0, type: note, note: A3, dur: 3840 }
+
+  pad_F:
+    length: 3840
+    defaults:
+      vel: { range: [45, 60] }
+    events:
+      - { t: 0, type: note, note: F3, dur: 3840 }
+      - { t: 0, type: note, note: A3, dur: 3840 }
+      - { t: 0, type: note, note: C4, dur: 3840 }
+
+  pad_C:
+    length: 3840
+    defaults:
+      vel: { range: [45, 60] }
+    events:
+      - { t: 0, type: note, note: C3, dur: 3840 }
+      - { t: 0, type: note, note: E3, dur: 3840 }
+      - { t: 0, type: note, note: G3, dur: 3840 }
+
+  # disco-influenced drums
+  kick_disco:
+    length: 1920
+    events:
+      - { t: 0,    type: note, note: C1, vel: 110, dur: 100 }
+      - { t: 480,  type: note, note: C1, vel: 100, dur: 100 }
+      - { t: 960,  type: note, note: C1, vel: 108, dur: 100 }
+      - { t: 1440, type: note, note: C1, vel: 100, dur: 100 }
+
+  snare_backbeat:
+    length: 1920
+    defaults:
+      vel: { range: [100, 115] }
+      t_rand: { range: [-5, 5] }
+    events:
+      - { t: 480,  type: note, note: D1, dur: 100 }
+      - { t: 1440, type: note, note: D1, dur: 100 }
+
+  hats_disco:
+    length: 1920
+    defaults:
+      vel: { range: [55, 75] }
+      t_rand: { range: [-8, 8] }
+    events:
+      # 8th notes with accents on offbeats
+      - { t: 0,    type: note, note: F#1, dur: 60, vel: { range: [40, 55] } }
+      - { t: 240,  type: note, note: F#1, dur: 60, vel: { range: [65, 80] } }  # accent
+      - { t: 480,  type: note, note: F#1, dur: 60, vel: { range: [40, 55] } }
+      - { t: 720,  type: note, note: F#1, dur: 60, vel: { range: [65, 80] } }
+      - { t: 960,  type: note, note: F#1, dur: 60, vel: { range: [40, 55] } }
+      - { t: 1200, type: note, note: F#1, dur: 60, vel: { range: [65, 80] } }
+      - { t: 1440, type: note, note: F#1, dur: 60, vel: { range: [40, 55] } }
+      - { t: 1680, type: note, note: F#1, dur: 60, vel: { range: [65, 80] } }
+
+  hats_open:
+    length: 1920
+    events:
+      # open hat on the "and" of 2 and 4
+      - { t: 720,  type: note, note: Bb1, vel: 75, dur: 200 }
+      - { t: 1680, type: note, note: Bb1, vel: 75, dur: 200 }
+
+  # fill
+  fill_tom:
+    length: 1920
+    defaults:
+      vel: { range: [90, 110] }
+    events:
+      - { t: 960,  type: note, note: G1, dur: 120 }  # high tom
+      - { t: 1200, type: note, note: E1, dur: 120 }  # mid tom
+      - { t: 1440, type: note, note: D1, dur: 120 }  # snare
+      - { t: 1560, type: note, note: A0, dur: 120 }  # low tom
+      - { t: 1680, type: note, note: A0, dur: 120 }
+      - { t: 1800, type: note, note: C1, dur: 100 }  # kick into next bar
+
+sections:
+  intro:
+    length: 15360  # 8 bars
+    loopable: true
+    tracks:
+      - ch: 1
+        sequence:
+          - { at: 0, pattern: bass_main, repeat: 4 }
+      - ch: 10
+        sequence:
+          - { at: 0, pattern: kick_disco, repeat: 8 }
+          - { at: 0, pattern: hats_disco, repeat: 8 }
+
+  verse:
+    length: 30720  # 16 bars
+    loopable: true
+    tracks:
+      - ch: 1
+        sequence:
+          - at: 0
+            pattern: { choice: [bass_main, bass_variation], weights: [3, 1] }
+            repeat: 8
+      - ch: 2
+        sequence:
+          # Dm - Dm - F - C progression (2 bars each = 8 bars, repeat)
+          - { at: 0,     pattern: guitar_Dm, repeat: 2 }
+          - { at: 3840,  pattern: guitar_Dm, repeat: 2 }
+          - { at: 7680,  pattern: guitar_F,  repeat: 2 }
+          - { at: 11520, pattern: guitar_C,  repeat: 2 }
+          - { at: 15360, pattern: guitar_Dm, repeat: 2 }
+          - { at: 19200, pattern: guitar_Dm, repeat: 2 }
+          - { at: 23040, pattern: guitar_F,  repeat: 2 }
+          - { at: 26880, pattern: guitar_C,  repeat: 2 }
+      - ch: 3
+        sequence:
+          - { at: 0,     pattern: pad_Dm }
+          - { at: 3840,  pattern: pad_Dm }
+          - { at: 7680,  pattern: pad_F }
+          - { at: 11520, pattern: pad_C }
+          - { at: 15360, pattern: pad_Dm }
+          - { at: 19200, pattern: pad_Dm }
+          - { at: 23040, pattern: pad_F }
+          - { at: 26880, pattern: pad_C }
+      - ch: 10
+        sequence:
+          - { at: 0, pattern: kick_disco, repeat: 16 }
+          - { at: 0, pattern: snare_backbeat, repeat: 16 }
+          - { at: 0, pattern: hats_disco, repeat: 16 }
+          - { at: 0, pattern: hats_open, repeat: 16 }
+          # fill at end
+          - { at: 28800, pattern: fill_tom }
+
+  chorus:
+    length: 30720
+    loopable: true
+    tracks:
+      - ch: 1
+        sequence:
+          - { at: 0, pattern: bass_main, repeat: 8 }
+      - ch: 2
+        sequence:
+          - { at: 0, pattern: guitar_Dm, repeat: 16 }
+      - ch: 3
+        sequence:
+          - { at: 0, pattern: pad_Dm, repeat: 8 }
+      - ch: 10
+        sequence:
+          - { at: 0, pattern: kick_disco, repeat: 16 }
+          - { at: 0, pattern: snare_backbeat, repeat: 16 }
+          - { at: 0, pattern: hats_disco, repeat: 16 }
+          - { at: 0, pattern: hats_open, repeat: 16 }
+
+arrange:
+  - { at: 0,      section: intro }
+  - { at: 15360,  section: verse }
+  - { at: 46080,  section: chorus }
+  - { at: 76800,  section: verse }
+  - { at: 107520, section: chorus }
+  - { at: 138240, section: chorus }  # extended outro

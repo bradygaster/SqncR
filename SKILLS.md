@@ -946,8 +946,10 @@ outputs:
 
 ## Session Management Skills
 
+Sessions are persisted using the `.sqnc.yaml` format. See [examples/README.md](examples/README.md) for the full format specification.
+
 ### skill-save-session
-**Save current session state**
+**Save current session state as `.sqnc.yaml` file**
 
 **Sample Prompts:**
 - *"save this session as 'ambient drone 1'"*
@@ -956,18 +958,25 @@ outputs:
 
 ```yaml
 name: Save Session
-description: Persists current musical session
+description: Persists current musical session to .sqnc.yaml format
 inputs:
   session_name: string
-  include_history: boolean
+  include_history: boolean  # Include intent/conversation history
+  include_randomization: boolean  # Preserve randomization parameters (default: true)
 outputs:
   session_id: string
-  file_path: string
+  file_path: string  # e.g., ~/.sqncr/sessions/ambient-drone-1.sqnc.yaml
   timestamp: string
 ```
 
+**Output format:**
+- Patterns extracted from active generation
+- Randomization parameters preserved (`range`, `choice`, `prob`)
+- Intent history captured if requested
+- Device mappings saved
+
 ### skill-load-session
-**Load previous session**
+**Load previous session from `.sqnc.yaml` file**
 
 **Sample Prompts:**
 - *"load session 'ambient drone 1'"*
@@ -976,13 +985,15 @@ outputs:
 
 ```yaml
 name: Load Session
-description: Restores saved musical session
+description: Restores saved musical session from .sqnc.yaml
 inputs:
-  session_id: string
+  session_id: string  # or file_path
+  remap_devices: boolean  # Remap to currently available devices (default: true)
 outputs:
   session: object
-  devices: array
+  devices: array  # Mapped devices (may differ from saved if remapped)
   musical_context: object
+  warnings: array  # e.g., "Device 'Moog Sub 37' not found, remapped to 'Virtual MIDI'"
 ```
 
 ### skill-list-sessions
@@ -998,11 +1009,17 @@ name: List Sessions
 description: Returns all available saved sessions
 inputs: none
 outputs:
-  sessions: array  # session metadata
+  sessions: array  # session metadata from .sqnc.yaml files
+    - id: string
+    - title: string
+    - tempo: number
+    - key: string
+    - created: timestamp
+    - file_path: string
 ```
 
 ### skill-export-midi
-**Export generation as MIDI file**
+**Export generation as standard MIDI file**
 
 **Sample Prompts:**
 - *"export this as a MIDI file"*
@@ -1011,10 +1028,11 @@ outputs:
 
 ```yaml
 name: MIDI File Exporter
-description: Exports current or generated music as MIDI file
+description: Exports current session or .sqnc.yaml to standard MIDI file
 inputs:
-  session_id: string (optional)
-  file_path: string
+  session_id: string (optional)  # or file_path to .sqnc.yaml
+  file_path: string  # output .mid path
+  flatten_randomization: boolean  # Resolve all random values (default: true)
   include_devices: array (optional)
   start_bar: number (optional)
   end_bar: number (optional)
@@ -1022,6 +1040,30 @@ outputs:
   file_path: string
   duration: number  # in seconds
   tracks: number
+```
+
+**Note:** MIDI export "flattens" the sequence - randomization is resolved to concrete values. The `.sqnc.yaml` format preserves randomization for re-generation.
+
+### skill-import-midi
+**Import standard MIDI file to `.sqnc.yaml` format**
+
+**Sample Prompts:**
+- *"import this MIDI file"*
+- *"convert drums.mid to a session"*
+- *"load 'beat.mid' and let me modify it"*
+
+```yaml
+name: MIDI File Importer
+description: Converts standard MIDI file to .sqnc.yaml format
+inputs:
+  file_path: string  # .mid file path
+  detect_patterns: boolean  # Try to identify repeating patterns (default: true)
+  detect_sections: boolean  # Try to identify song sections (default: true)
+outputs:
+  session_id: string
+  file_path: string  # output .sqnc.yaml path
+  patterns_detected: number
+  sections_detected: number
 ```
 
 ### skill-save-pattern-to-device

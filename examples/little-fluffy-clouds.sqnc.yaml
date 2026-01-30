@@ -1,0 +1,238 @@
+# little-fluffy-clouds.sqnc.yaml
+# SqncR Sequence Format v1
+# Example: ambient house - arpeggios, pads, 90s vibes
+
+meta:
+  title: "Little Fluffy Clouds"
+  artist: "The Orb"
+  tempo: 118
+  key: F
+  time: { beats: 4, division: 4 }
+  tpq: 480
+  created: 2026-01-29T20:40:00Z
+
+intent:
+  - "ambient house, dreamy, 118bpm"
+  - "arpeggiated synths over warm pads"
+  - "hypnotic, repetitive, blissful"
+
+devices:
+  bass: { name: "Moog Sub 37", ch: 1 }
+  arp: { name: "Polyend Synth", ch: 2 }
+  pads: { name: "Polyend Synth", ch: 3 }
+  drums: { name: "Polyend Play", ch: 10 }
+
+patterns:
+  # the hypnotic arpeggio - F major broken chord
+  arp_main:
+    length: 1920  # 1 bar
+    defaults:
+      vel: { range: [70, 90] }
+      t_rand: { range: [-10, 10] }
+    events:
+      - { t: 0,    type: note, note: F4, dur: 200 }
+      - { t: 240,  type: note, note: A4, dur: 200 }
+      - { t: 480,  type: note, note: C5, dur: 200 }
+      - { t: 720,  type: note, note: A4, dur: 200 }
+      - { t: 960,  type: note, note: F4, dur: 200 }
+      - { t: 1200, type: note, note: A4, dur: 200 }
+      - { t: 1440, type: note, note: C5, dur: 200 }
+      - { t: 1680, type: note, note: A4, dur: 200 }
+
+  arp_high:
+    length: 1920
+    defaults:
+      vel: { range: [60, 80] }
+      t_rand: { range: [-10, 10] }
+    events:
+      - { t: 0,    type: note, note: F5, dur: 200, prob: 0.9 }
+      - { t: 240,  type: note, note: A5, dur: 200 }
+      - { t: 480,  type: note, note: C6, dur: 200 }
+      - { t: 720,  type: note, note: A5, dur: 200 }
+      - { t: 960,  type: note, note: F5, dur: 200 }
+      - { t: 1200, type: note, note: A5, dur: 200, prob: 0.8 }
+      - { t: 1440, type: note, note: C6, dur: 200 }
+      - { t: 1680, type: note, note: A5, dur: 200 }
+
+  arp_variation:
+    length: 1920
+    defaults:
+      vel: { range: [65, 85] }
+      t_rand: { range: [-15, 15] }
+    events:
+      - { t: 0,    type: note, note: { choice: [F4, A4] }, dur: 200 }
+      - { t: 240,  type: note, note: A4, dur: 200 }
+      - { t: 480,  type: note, note: C5, dur: 200 }
+      - { t: 720,  type: note, note: { choice: [A4, C5] }, dur: 200 }
+      - { t: 960,  type: note, note: F4, dur: 200, prob: 0.7 }
+      - { t: 1200, type: note, note: A4, dur: 200 }
+      - { t: 1440, type: note, note: { choice: [C5, E5] }, dur: 200 }
+      - { t: 1680, type: note, note: A4, dur: 200 }
+
+  # warm pad - Fmaj7
+  pad_Fmaj7:
+    length: 7680  # 4 bars
+    defaults:
+      vel: { range: [40, 55] }
+    events:
+      - { t: 0, type: note, note: F3,  dur: 7680 }
+      - { t: 0, type: note, note: A3,  dur: 7680 }
+      - { t: 0, type: note, note: C4,  dur: 7680 }
+      - { t: 0, type: note, note: E4,  dur: 7680, prob: 0.7 }
+
+  # Dm7 for variation
+  pad_Dm7:
+    length: 7680
+    defaults:
+      vel: { range: [40, 55] }
+    events:
+      - { t: 0, type: note, note: D3,  dur: 7680 }
+      - { t: 0, type: note, note: F3,  dur: 7680 }
+      - { t: 0, type: note, note: A3,  dur: 7680 }
+      - { t: 0, type: note, note: C4,  dur: 7680, prob: 0.7 }
+
+  # sub bass - simple root
+  bass_F:
+    length: 1920
+    events:
+      - { t: 0, type: note, note: F1, vel: 90, dur: 1440 }
+
+  bass_D:
+    length: 1920
+    events:
+      - { t: 0, type: note, note: D1, vel: 90, dur: 1440 }
+
+  # classic house kick
+  kick_4x4:
+    length: 1920
+    events:
+      - { t: 0,    type: note, note: C1, vel: 110, dur: 100 }
+      - { t: 480,  type: note, note: C1, vel: 105, dur: 100 }
+      - { t: 960,  type: note, note: C1, vel: 108, dur: 100 }
+      - { t: 1440, type: note, note: C1, vel: 105, dur: 100 }
+
+  # offbeat hats
+  hats_offbeat:
+    length: 1920
+    defaults:
+      vel: { range: [50, 70] }
+      t_rand: { range: [-5, 5] }
+    events:
+      - { t: 240,  type: note, note: F#1, dur: 60 }
+      - { t: 720,  type: note, note: F#1, dur: 60 }
+      - { t: 1200, type: note, note: F#1, dur: 60 }
+      - { t: 1680, type: note, note: F#1, dur: 60 }
+
+  hats_16ths:
+    length: 1920
+    defaults:
+      vel: { range: [30, 50] }
+      t_rand: { range: [-8, 8] }
+    events:
+      - { t: 0,    type: note, note: F#1, dur: 50, prob: 0.6 }
+      - { t: 120,  type: note, note: F#1, dur: 50 }
+      - { t: 240,  type: note, note: F#1, dur: 50, vel: { range: [50, 70] } }
+      - { t: 360,  type: note, note: F#1, dur: 50, prob: 0.5 }
+      - { t: 480,  type: note, note: F#1, dur: 50, prob: 0.6 }
+      - { t: 600,  type: note, note: F#1, dur: 50 }
+      - { t: 720,  type: note, note: F#1, dur: 50, vel: { range: [50, 70] } }
+      - { t: 840,  type: note, note: F#1, dur: 50, prob: 0.5 }
+      - { t: 960,  type: note, note: F#1, dur: 50, prob: 0.6 }
+      - { t: 1080, type: note, note: F#1, dur: 50 }
+      - { t: 1200, type: note, note: F#1, dur: 50, vel: { range: [50, 70] } }
+      - { t: 1320, type: note, note: F#1, dur: 50, prob: 0.5 }
+      - { t: 1440, type: note, note: F#1, dur: 50, prob: 0.6 }
+      - { t: 1560, type: note, note: F#1, dur: 50 }
+      - { t: 1680, type: note, note: F#1, dur: 50, vel: { range: [50, 70] } }
+      - { t: 1800, type: note, note: F#1, dur: 50, prob: 0.5 }
+
+automation:
+  filter_wash:
+    length: 30720  # 16 bars
+    curves:
+      - cc: 74
+        points:
+          - { t: 0, value: 40 }
+          - { t: 15360, value: 100 }
+          - { t: 30720, value: 50 }
+        shape: sine
+
+  slow_swell:
+    length: 61440  # 32 bars
+    curves:
+      - cc: 7  # volume
+        points:
+          - { t: 0, value: 60 }
+          - { t: 30720, value: 100 }
+          - { t: 61440, value: 70 }
+        shape: linear
+
+sections:
+  intro:
+    length: 15360  # 8 bars
+    loopable: true
+    tracks:
+      - ch: 2
+        sequence:
+          - { at: 0, pattern: arp_main, repeat: 8 }
+      - ch: 3
+        sequence:
+          - { at: 0, pattern: pad_Fmaj7 }
+          - { at: 7680, pattern: pad_Fmaj7 }
+
+  verse:
+    length: 30720  # 16 bars
+    loopable: true
+    tracks:
+      - ch: 1
+        sequence:
+          - { at: 0, pattern: bass_F, repeat: 8 }
+          - { at: 15360, pattern: bass_D, repeat: 4 }
+          - { at: 23040, pattern: bass_F, repeat: 4 }
+      - ch: 2
+        sequence:
+          - at: 0
+            pattern: { choice: [arp_main, arp_variation], weights: [3, 1] }
+            repeat: 16
+      - ch: 3
+        sequence:
+          - { at: 0, pattern: pad_Fmaj7 }
+          - { at: 7680, pattern: pad_Fmaj7 }
+          - { at: 15360, pattern: pad_Dm7 }
+          - { at: 23040, pattern: pad_Fmaj7 }
+      - ch: 10
+        sequence:
+          - { at: 0, pattern: kick_4x4, repeat: 16 }
+          - { at: 0, pattern: hats_offbeat, repeat: 16 }
+
+  build:
+    length: 30720
+    loopable: true
+    tracks:
+      - ch: 1
+        sequence:
+          - { at: 0, pattern: bass_F, repeat: 16 }
+      - ch: 2
+        sequence:
+          - { at: 0, pattern: arp_main, repeat: 8 }
+          - { at: 15360, pattern: arp_high, repeat: 8 }
+        automation:
+          - { at: 0, curve: filter_wash }
+      - ch: 3
+        sequence:
+          - { at: 0, pattern: pad_Fmaj7, repeat: 4 }
+        automation:
+          - { at: 0, curve: slow_swell }
+      - ch: 10
+        sequence:
+          - { at: 0, pattern: kick_4x4, repeat: 16 }
+          - { at: 0, pattern: hats_16ths, repeat: 16 }
+
+arrange:
+  - { at: 0,     section: intro }
+  - { at: 15360, section: intro }
+  - { at: 30720, section: verse }
+  - { at: 61440, section: build }
+  - { at: 92160, section: verse }
+  - { at: 122880, section: build }
+  - { at: 153600, section: intro }  # outro

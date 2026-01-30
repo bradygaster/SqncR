@@ -1,12 +1,12 @@
 # SqncR Documentation Index
 
-**Last Updated:** January 29, 2026 (Added PROJECT_STATUS.md and SDK version policy)
+**Last Updated:** January 29, 2026 (Added .sqnc.yaml format specification)
 
 ## Core Documentation
 
 ### Getting Started
 - [README.md](README.md) - Project overview, installation, and quick start guide
-- [PROJECT_STATUS.md](PROJECT_STATUS.md) - **NEW!** Complete project breakdown with metrics and status
+- [PROJECT_STATUS.md](PROJECT_STATUS.md) - Complete project breakdown with metrics and status
 - [START_HERE.md](START_HERE.md) - Complete reorganization guide
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Development workflow, standards, and community guidelines
 
@@ -19,6 +19,13 @@
 - [OBSERVABILITY.md](OBSERVABILITY.md) - .NET Aspire + OpenTelemetry observability strategy
 - [SKILLS.md](SKILLS.md) - Complete catalog of all available skills
 - [ROADMAP.md](ROADMAP.md) - Implementation roadmap and TODO lists
+
+### Sequence File Format
+- [examples/README.md](examples/README.md) - **Full .sqnc.yaml format specification**
+- [examples/chill-ambient.sqnc.yaml](examples/chill-ambient.sqnc.yaml) - Simple ambient example
+- [examples/seven-nation-army.sqnc.yaml](examples/seven-nation-army.sqnc.yaml) - Full feature demo
+- [examples/little-fluffy-clouds.sqnc.yaml](examples/little-fluffy-clouds.sqnc.yaml) - Ambient house example
+- [examples/another-brick-in-the-wall.sqnc.yaml](examples/another-brick-in-the-wall.sqnc.yaml) - Classic rock example
 
 ### Sprint Plans
 - [sprints/README.md](sprints/README.md) - Sprint overview and index
@@ -69,8 +76,22 @@ Complete skill catalog documented in:
 - **Analysis** - analyze-song, detect-key, detect-tempo, analyze-harmony
 - **Generation** - polyrhythm-generator, arpeggio-generator, bass-line-generator, melody-generator, rhythm-generator
 - **Transformation** - transpose, invert-chord, quantize, humanize, modal-interchange
-- **Session Management** - save-session, load-session, list-sessions, export-midi
+- **Session Management** - save-session, load-session, list-sessions, export-midi, import-midi
 - **Utility** - configure-lights, calculate-interval, note-to-frequency, tempo-tap
+
+### File Format Documentation
+The `.sqnc.yaml` sequence format is documented in:
+- [examples/README.md](examples/README.md) - Full format specification
+
+**Format Sections:**
+- `meta` - Song metadata (tempo, key, time signature)
+- `intent` - AI prompts that generated the sequence
+- `devices` - MIDI device mappings
+- `patterns` - Reusable event patterns with randomization
+- `automation` - Continuous CC/pitch bend curves
+- `grooves` - Swing and timing templates
+- `sections` - Loopable song parts
+- `arrange` - Timeline of sections
 
 ### Agents Documentation
 Agents are documented in:

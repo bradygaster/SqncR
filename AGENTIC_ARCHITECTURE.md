@@ -1094,6 +1094,8 @@ builder.Build().Run();
     "default_key": "Am",
     "default_tempo": 80,
     "auto_save_sessions": true,
+    "session_format": "sqnc.yaml",
+    "sessions_path": "~/.sqncr/sessions/",
     "smooth_transitions": true,
     "transition_time_ms": 2000
   },
@@ -1109,6 +1111,17 @@ builder.Build().Run();
   }
 }
 ```
+
+### Session Persistence
+
+Sessions are automatically saved to `.sqnc.yaml` format when `auto_save_sessions` is enabled. The format captures:
+
+- **Patterns** - All generated patterns with randomization parameters
+- **Intent** - The conversation that created the session
+- **Device mappings** - Which devices were used
+- **Arrangement** - How patterns were combined into sections
+
+See [examples/README.md](examples/README.md) for the full `.sqnc.yaml` format specification.
 
 ---
 
