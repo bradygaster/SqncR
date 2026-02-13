@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SqncR.Midi\SqncR.Midi.csproj" />
+    <ProjectReference Include="..\SqncR.Theory\SqncR.Theory.csproj" />
   </ItemGroup>
 
   <ItemGroup>

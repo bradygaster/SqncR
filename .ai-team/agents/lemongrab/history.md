@@ -31,3 +31,14 @@ The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, 
 
 📌 Team update (2026-02-15): NoteEvent deserialization model evolution planned — M0 proof-of-life logged
 M0 milestone complete. Your 59 new SequenceParser tests + expanded NoteParser coverage establishes confidence baseline (85 tests passing, up from 13). Known limitation filed: NoteEvent.Note must support object types for `{ choice: [...] }` constructs to parse 2 of 5 example files. Model evolution planned for M1 before full fixture validation. Session logged to `.ai-team/log/2026-02-13-m0-proof-of-life.md`.
+
+📌 M1 MIDI output capture test framework complete (issue #11)
+- Extracted `IMidiOutput` interface from `MidiService` (SendNoteOn, SendNoteOff, AllNotesOff, CurrentDeviceName)
+- Created `MockMidiOutput` — thread-safe test double using `ConcurrentQueue<CapturedMidiEvent>` + `Stopwatch` for relative timing
+- `MidiService` now implements `IMidiOutput` (no behavioral change)
+- `SequencePlayer` constructor accepts `IMidiOutput` instead of `MidiService` — enables mock injection
+- Created `tests/SqncR.Midi.Tests/` project (xUnit, added to SqncR.slnx)
+- 17 unit tests for MockMidiOutput: NoteOn/NoteOff capture, event ordering, timing, channel separation, thread safety, interface contract, reset, parameterized edge cases
+- 3 integration tests: SequencePlayer + MockMidiOutput playing real .sqnc.yaml files (seven-nation-army, chill-ambient) and a programmatic sequence
+- All 20 new tests pass. All 122 existing Core tests pass. Zero warnings. No hardware required; CI/CD ready.
+- Key learning: SequencePlayer.PlayAsync uses real-time Task.Delay, so integration tests with real YAML files must use short cancellation timeouts and catch OperationCanceledException to avoid minute-long test runs

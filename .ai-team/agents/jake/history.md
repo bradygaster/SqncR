@@ -40,3 +40,6 @@ Microsoft.Extensions.Http.Resilience 9.10.0, Microsoft.Extensions.ServiceDiscove
 
 📌 Team update (2026-02-15): M0 session complete — Aspire infrastructure established — M0 proof-of-life logged
 M0 milestone complete. Your Aspire AppHost + ServiceDefaults + global.json + Directory.Build.props work provides foundation for M1 MCP server. Build is clean (0 warnings), 85 tests passing (up from 13). Telemetry plumbing ready for Banana Guard's ActivitySource integration. Session logged to `.ai-team/log/2026-02-13-m0-proof-of-life.md`.
+
+📌 M1 MCP Server scaffold created (issue #4) — 2026-02-15
+Created `src/SqncR.McpServer/` using the official `ModelContextProtocol` C# SDK (v0.8.0-preview.1). Stdio transport via `WithStdioServerTransport()`. Two tools registered: `ping` (health check) and `list_devices` (MIDI enumeration via MidiService DI). OpenTelemetry wired with `SqncR.McpServer` ActivitySource + existing Midi/Playback sources. Added to solution (.slnx) and Aspire AppHost as `sqncr-mcp`. Build clean, 102 tests passing. The SDK uses `Microsoft.Extensions.Hosting` + `AddMcpServer()` pattern — tools are auto-discovered via `[McpServerToolType]` + `[McpServerTool]` attributes on static classes. Logs routed to stderr (required for stdio MCP transport). The `ModelContextProtocol` package is still in preview (0.8.0-preview.1) — expect breaking changes before 1.0.

@@ -2,12 +2,13 @@ using System.Diagnostics;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Multimedia;
+using SqncR.Midi.Testing;
 
 namespace SqncR.Midi;
 
 public record MidiDeviceInfo(int Index, string Name);
 
-public class MidiService : IDisposable
+public class MidiService : IMidiOutput
 {
     internal static readonly ActivitySource ActivitySource = new("SqncR.Midi");
 

@@ -3,11 +3,15 @@
     <Project Path="src/SqncR.AppHost/SqncR.AppHost.csproj" />
     <Project Path="src/SqncR.Cli/SqncR.Cli.csproj" />
     <Project Path="src/SqncR.Core/SqncR.Core.csproj" />
+    <Project Path="src/SqncR.McpServer/SqncR.McpServer.csproj" />
     <Project Path="src/SqncR.Midi/SqncR.Midi.csproj" />
     <Project Path="src/SqncR.ServiceDefaults/SqncR.ServiceDefaults.csproj" />
+    <Project Path="src/SqncR.Theory/SqncR.Theory.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/SqncR.Core.Tests/SqncR.Core.Tests.csproj" />
+    <Project Path="tests/SqncR.Midi.Tests/SqncR.Midi.Tests.csproj" />
     <Project Path="tests/SqncR.Specs/SqncR.Specs.csproj" />
+    <Project Path="tests/SqncR.Theory.Tests/SqncR.Theory.Tests.csproj" />
   </Folder>
 </Solution>

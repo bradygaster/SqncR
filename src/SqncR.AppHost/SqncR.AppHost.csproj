@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SqncR.Cli\SqncR.Cli.csproj" />
+    <ProjectReference Include="..\SqncR.McpServer\SqncR.McpServer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using SqncR.Core.Models;
-using SqncR.Midi;
+using SqncR.Midi.Testing;
 
 namespace SqncR.Core;
 
@@ -8,9 +8,9 @@ public class SequencePlayer
 {
     internal static readonly ActivitySource ActivitySource = new("SqncR.Playback");
 
-    private readonly MidiService _midi;
+    private readonly IMidiOutput _midi;
 
-    public SequencePlayer(MidiService midi)
+    public SequencePlayer(IMidiOutput midi)
     {
         _midi = midi;
     }
