@@ -28,6 +28,8 @@ public sealed class GenerationEngine : BackgroundService
     private readonly HealthMonitor _healthMonitor;
     private readonly SessionTelemetry _sessionTelemetry = new();
     private readonly ChannelRouter _channelRouter;
+    private readonly InstrumentTelemetry _instrumentTelemetry = new();
+    private readonly PerInstrumentNoteTracker _perInstrumentNoteTracker = new();
 
     /// <summary>Writer for enqueuing commands from external callers (MCP tools).</summary>
     public ChannelWriter<GenerationCommand> Commands => _commandChannel.Writer;
@@ -527,6 +529,8 @@ public sealed class GenerationEngine : BackgroundService
             {
                 _midiOutput.SendNoteOff(planned.Channel, lastNote.Value);
                 _noteTracker.NoteOff(planned.Channel, lastNote.Value);
+                if (planned.InstrumentId != null)
+                    _perInstrumentNoteTracker.NoteOff(planned.InstrumentId, planned.Channel, lastNote.Value);
                 GenerationMetrics.ActiveVoices.Add(-1);
             }
 
@@ -544,9 +548,27 @@ public sealed class GenerationEngine : BackgroundService
             GenerationMetrics.ActiveVoices.Add(1);
             _sessionTelemetry.RecordNote();
             eventsInCurrentMeasure++;
+
+            // Per-instrument telemetry
+            if (planned.InstrumentId != null)
+            {
+                using var noteSpan = _instrumentTelemetry.TraceNoteSent(
+                    planned.InstrumentId, planned.Channel, planned.Note, planned.Velocity);
+                _perInstrumentNoteTracker.NoteOn(planned.InstrumentId, planned.Channel, planned.Note);
+
+                var instrument = _state.Instruments.Get(planned.InstrumentId);
+                if (instrument != null)
+                {
+                    int activeCount = _perInstrumentNoteTracker.GetActiveCount(planned.InstrumentId);
+                    _instrumentTelemetry.RecordPolyphony(
+                        planned.InstrumentId, activeCount, instrument.Capabilities.MaxPolyphony);
+                }
+            }
         }
         catch (Exception ex)
         {
+            if (planned.InstrumentId != null)
+                _instrumentTelemetry.RecordError(planned.InstrumentId);
             _logger.LogError(ex, "Failed to send routed note on channel {Channel}, note {Note}",
                 planned.Channel, planned.Note);
         }

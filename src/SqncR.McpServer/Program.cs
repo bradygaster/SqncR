@@ -35,7 +35,8 @@ builder.Services.AddOpenTelemetry()
             .AddSource("SqncR.Generation")
             .AddSource("SqncR.Session")
             .AddSource("SqncR.SonicPi")
-            .AddSource("SqncR.VcvRack");
+            .AddSource("SqncR.VcvRack")
+            .AddSource("SqncR.Instruments");
     })
     .WithMetrics(metrics =>
     {
@@ -43,7 +44,8 @@ builder.Services.AddOpenTelemetry()
             .AddMeter("SqncR.Generation")
             .AddMeter("SqncR.Session")
             .AddMeter("SqncR.SonicPi")
-            .AddMeter("SqncR.VcvRack");
+            .AddMeter("SqncR.VcvRack")
+            .AddMeter("SqncR.Instruments");
     });
 
 var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];

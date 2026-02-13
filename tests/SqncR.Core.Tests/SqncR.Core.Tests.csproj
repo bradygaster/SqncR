@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SqncR.Core\SqncR.Core.csproj" />
+    <ProjectReference Include="..\..\src\SqncR.Midi\SqncR.Midi.csproj" />
   </ItemGroup>
 
 </Project>

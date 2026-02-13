@@ -106,7 +106,7 @@ public sealed class ChannelRouter
         int durationTicks = halfNoteRhythm ? ppq * 2 : ppq;
         int velocity = 70 + _random.Next(20); // 70-89
 
-        return new PlannedNote(instrument.MidiChannel, note, velocity, durationTicks);
+        return new PlannedNote(instrument.MidiChannel, note, velocity, durationTicks, instrument.Id);
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ public sealed class ChannelRouter
         int durationTicks = changeInterval;
         int velocity = 50 + _random.Next(20); // 50-69, softer for pads
 
-        return new PlannedNote(instrument.MidiChannel, note, velocity, durationTicks);
+        return new PlannedNote(instrument.MidiChannel, note, velocity, durationTicks, instrument.Id);
     }
 
     /// <summary>
@@ -171,7 +171,7 @@ public sealed class ChannelRouter
             int velocity = 75 + _random.Next(25); // 75-99
             int durationTicks = ppq; // quarter note
 
-            return new PlannedNote(instrument.MidiChannel, note, velocity, durationTicks);
+            return new PlannedNote(instrument.MidiChannel, note, velocity, durationTicks, instrument.Id);
         }
         finally
         {
