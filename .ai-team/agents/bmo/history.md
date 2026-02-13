@@ -40,3 +40,6 @@ Comprehensive research complete on SuperCollider, Sonic Pi, VCV Rack 2, Surge XT
 
 📌 Team update (2026-02-14): Hardware MIDI deferred to final milestone — decided by Finn
 Your unified Instrument abstraction remains the core architectural pattern. However, hardware MIDI device setup and multi-channel routing move to M4. M0–M3 prove the system works entirely in software (Sonic Pi, VCV Rack paths); M4 integrates hardware via device profiles and conversational setup. The abstraction scales from software-only (M2–M3) to multi-instrument hardware (M4) without design changes.
+
+📌 Team update (2026-02-13): Roadmap decomposed into 36 work-item GitHub issues — decided by Finn
+The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, one per logical work unit. M0 has 2 issues, M1 has 10 issues, M2 has 7 issues, M3 has 8 issues, M4 has 9 issues. Each issue has clear context, acceptance criteria, and agent ownership labels. You have been assigned to M1 issues on architecture and design. Issue tracking is now granular and actionable.

@@ -269,3 +269,36 @@ sustain_pedal_on_cc64: false
 **By:** Brady (via Copilot)
 **What:** Recast entire team from Firefly universe to Adventure Time. Also added two new roles: Audio/MIDI Test Engineer (Peppermint Butler) for timing-sensitive testing, and Audio Interface Dev (Banana Guard) for OS-level audio I/O and streaming audio routing.
 **Why:** User request — captured for team memory
+
+### 2026-02-13: Roadmap decomposed into 36 work-item GitHub issues
+
+**By:** Finn (Lead)
+
+**What:** The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, one per logical work unit. Each milestone was broken down as follows:
+- **M0 (Proof of Life):** 2 issues — CLI verification, OpenTelemetry plumbing
+- **M1 (The Engine Room):** 10 issues — MCP server scaffold, generation loop, core tools, music theory, rhythm, telemetry, MIDI testing
+- **M2 (Software Synths):** 7 issues — Sonic Pi integration, VCV Rack integration, MCP tools, synth telemetry, spectral analysis, audio tests
+- **M3 (Stream-Ready):** 8 issues — session persistence, smooth transitions, variety engine, stability, scenes, session telemetry, long-running tests
+- **M4 (Know Your Gear):** 9 issues — instrument abstraction, device profiles, conversational setup, multi-channel generation, role-aware selection, drum sequencing, hardware telemetry, signal chain tests
+
+Each issue follows a consistent structure:
+- **Context:** References parent roadmap (issue #1)
+- **What:** Brief description of the work
+- **Acceptance Criteria:** Checkboxes derived from roadmap items
+- **Owner(s):** Agent names and roles
+
+All issues are labeled with:
+- Milestone label (M0, M1, M2, M3, M4)
+- Agent ownership label(s) (agent:jake, agent:bmo, agent:marceline, agent:bubblegum, agent:lemongrab, agent:rainicorn, agent:simon, agent:peppermint-butler, agent:banana-guard)
+
+Issue #1 (the original roadmap) is now labeled as "design" to distinguish it as a planning document.
+
+**Why:** 
+1. **Actionability:** Roadmap checkboxes are not granular enough for issue tracking. Individual issues allow agents to claim work, track progress, and close items incrementally.
+2. **Ownership clarity:** Each issue has explicit agent assignments. No ambiguity about who owns what.
+3. **Progress visibility:** 36 closed issues is more satisfying and legible than 5 milestone checkboxes.
+4. **Dependencies:** Issues can reference each other. Example: MCP tools depend on generation loop; tests depend on implementation.
+5. **Prioritization:** Issues can be reordered, delayed, or cut without restructuring the entire roadmap.
+6. **Team coordination:** Multiple agents can work in parallel without merge conflicts or stepping on toes.
+
+This decomposition makes the roadmap *executable* rather than aspirational. Each issue is small enough to complete in a focused work session, large enough to deliver value. The team now has a backlog.
