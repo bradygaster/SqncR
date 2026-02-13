@@ -19,3 +19,13 @@ You are responsible for M4 observability and profiling in collaboration with Pep
 
 📌 Team update (2026-02-13): Roadmap decomposed into 36 work-item GitHub issues — decided by Finn
 The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, one per logical work unit. M0 has 2 issues, M1 has 10 issues, M2 has 7 issues, M3 has 8 issues, M4 has 9 issues. Each issue has clear context, acceptance criteria, and agent ownership labels. You have been assigned to M0 and M4 issues on observability infrastructure and profiling. Issue tracking is now granular and actionable.
+
+📌 M0 OpenTelemetry plumbing implemented (issue #3)
+- `SqncR.Midi/MidiService.cs` has `ActivitySource("SqncR.Midi")` wrapping SendNoteOn, SendNoteOff, AllNotesOff
+- `SqncR.Core/SequencePlayer.cs` has `ActivitySource("SqncR.Playback")` wrapping PlayAsync (parent span) and each note event (child spans)
+- Library projects use only `System.Diagnostics` — no OTel SDK dependency in libraries
+- CLI project (`SqncR.Cli`) has OpenTelemetry SDK packages: `OpenTelemetry`, `OpenTelemetry.Exporter.OpenTelemetryProtocol`, `OpenTelemetry.Extensions.Hosting` (all 1.11.2)
+- CLI `Program.cs` creates `TracerProvider` with OTLP exporter pointed at `OTEL_EXPORTER_OTLP_ENDPOINT` env var (default `http://localhost:4317`)
+- CLI emits a `cli.startup` test trace on every invocation for pipeline verification
+- Pattern: ActivitySources are `internal static readonly` fields on the class that owns the operations. Tags follow `{subsystem}.{attribute}` naming (e.g., `midi.channel`, `note.name`)
+- The `TracerProvider` is explicitly disposed before CLI exit to flush pending spans

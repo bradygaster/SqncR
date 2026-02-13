@@ -70,4 +70,58 @@ public class NoteParserTests
         Assert.Equal(48, NoteParser.Parse("C3"));
         Assert.Equal(72, NoteParser.Parse("C5"));
     }
+
+    [Theory]
+    [InlineData("E#4", 65)]  // E# = F
+    [InlineData("Fb4", 64)]  // Fb = E
+    public void Parse_EnharmonicEquivalents_ReturnsCorrectMidiNumber(string note, int expected)
+    {
+        Assert.Equal(expected, NoteParser.Parse(note));
+    }
+
+    [Fact]
+    public void Parse_BSharpAndCFlat_DoNotWrapOctave()
+    {
+        // Known limitation: B#3 should theoretically equal C4 (60) but parser
+        // doesn't handle octave wrapping, so B#3 = offset 0 + (3+1)*12 = 48.
+        // Cb4 should theoretically equal B3 (59) but computes as 71.
+        // Documenting actual behavior — fix requires source code change.
+        Assert.Equal(48, NoteParser.Parse("B#3"));
+        Assert.Equal(71, NoteParser.Parse("Cb4"));
+    }
+
+    [Theory]
+    [InlineData("A#9")]   // would be 130 — out of range
+    [InlineData("C-2")]   // would be -12 — out of range
+    public void Parse_OutOfMidiRange_ThrowsArgumentException(string note)
+    {
+        Assert.Throws<ArgumentException>(() => NoteParser.Parse(note));
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(128)]
+    public void ToNoteName_OutOfRange_ThrowsArgumentOutOfRangeException(int midi)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => NoteParser.ToNoteName(midi));
+    }
+
+    [Theory]
+    [InlineData("C4")]
+    [InlineData("A4")]
+    [InlineData("F#2")]
+    [InlineData("G9")]
+    [InlineData("C-1")]
+    public void RoundTrip_ParseThenToNoteName_PreservesNote(string note)
+    {
+        var midi = NoteParser.Parse(note);
+        var result = NoteParser.ToNoteName(midi);
+        Assert.Equal(note, result);
+    }
+
+    [Fact]
+    public void Parse_WhitespaceAroundNote_IsHandled()
+    {
+        Assert.Equal(60, NoteParser.Parse("  C4  "));
+    }
 }

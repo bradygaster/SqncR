@@ -1,16 +1,43 @@
+using System.Diagnostics;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using SqncR.Core;
 using SqncR.Midi;
+
+// Configure OpenTelemetry tracing
+var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("SqncR.Cli"))
+    .AddSource("SqncR.Midi")
+    .AddSource("SqncR.Playback")
+    .AddSource("SqncR.Cli")
+    .AddOtlpExporter(opt =>
+    {
+        opt.Endpoint = new Uri(
+            Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT")
+            ?? "http://localhost:4317");
+    })
+    .Build();
+
+// Emit a test trace on startup
+var cliActivitySource = new ActivitySource("SqncR.Cli");
+using (var startupActivity = cliActivitySource.StartActivity("cli.startup"))
+{
+    startupActivity?.SetTag("cli.args", string.Join(" ", args));
+    startupActivity?.SetTag("cli.version", "0.1.0");
+}
 
 // Simple arg parsing - no external dependencies
 if (args.Length == 0)
 {
     ShowHelp();
+    tracerProvider?.Dispose();
     return 0;
 }
 
 var command = args[0].ToLowerInvariant();
 
-return command switch
+var result = command switch
 {
     "list-devices" => ListDevices(),
     "play" => await PlaySequence(args.Skip(1).ToArray()),
@@ -18,6 +45,9 @@ return command switch
     "--help" or "-h" or "help" => ShowHelp(),
     _ => UnknownCommand(command)
 };
+
+tracerProvider?.Dispose();
+return result;
 
 static int ShowHelp()
 {

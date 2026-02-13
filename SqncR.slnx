@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SqncR.AppHost/SqncR.AppHost.csproj" />
+    <Project Path="src/SqncR.Cli/SqncR.Cli.csproj" />
+    <Project Path="src/SqncR.Core/SqncR.Core.csproj" />
+    <Project Path="src/SqncR.Midi/SqncR.Midi.csproj" />
+    <Project Path="src/SqncR.ServiceDefaults/SqncR.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SqncR.Core.Tests/SqncR.Core.Tests.csproj" />
+    <Project Path="tests/SqncR.Specs/SqncR.Specs.csproj" />
+  </Folder>
+</Solution>

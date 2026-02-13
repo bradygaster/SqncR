@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Multimedia;
@@ -8,6 +9,8 @@ public record MidiDeviceInfo(int Index, string Name);
 
 public class MidiService : IDisposable
 {
+    internal static readonly ActivitySource ActivitySource = new("SqncR.Midi");
+
     private OutputDevice? _outputDevice;
 
     public IReadOnlyList<MidiDeviceInfo> ListOutputDevices()
@@ -49,6 +52,11 @@ public class MidiService : IDisposable
         if (_outputDevice == null)
             throw new InvalidOperationException("No MIDI device open. Call OpenDevice first.");
 
+        using var activity = ActivitySource.StartActivity("midi.note_on");
+        activity?.SetTag("midi.channel", channel);
+        activity?.SetTag("midi.note", note);
+        activity?.SetTag("midi.velocity", velocity);
+
         _outputDevice.SendEvent(new NoteOnEvent(
             (SevenBitNumber)note,
             (SevenBitNumber)velocity)
@@ -62,6 +70,10 @@ public class MidiService : IDisposable
         if (_outputDevice == null)
             throw new InvalidOperationException("No MIDI device open. Call OpenDevice first.");
 
+        using var activity = ActivitySource.StartActivity("midi.note_off");
+        activity?.SetTag("midi.channel", channel);
+        activity?.SetTag("midi.note", note);
+
         _outputDevice.SendEvent(new NoteOffEvent(
             (SevenBitNumber)note,
             (SevenBitNumber)0)
@@ -73,6 +85,9 @@ public class MidiService : IDisposable
     public void AllNotesOff(int channel)
     {
         if (_outputDevice == null) return;
+
+        using var activity = ActivitySource.StartActivity("midi.all_notes_off");
+        activity?.SetTag("midi.channel", channel);
 
         // Send note off for all possible notes
         for (int note = 0; note < 128; note++)

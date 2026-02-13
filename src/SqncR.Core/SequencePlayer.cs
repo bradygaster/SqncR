@@ -6,6 +6,8 @@ namespace SqncR.Core;
 
 public class SequencePlayer
 {
+    internal static readonly ActivitySource ActivitySource = new("SqncR.Playback");
+
     private readonly MidiService _midi;
 
     public SequencePlayer(MidiService midi)
@@ -15,6 +17,11 @@ public class SequencePlayer
 
     public async Task PlayAsync(Sequence sequence, CancellationToken cancellationToken = default)
     {
+        using var playActivity = ActivitySource.StartActivity("playback.play_sequence");
+        playActivity?.SetTag("sequence.title", sequence.Meta.Title);
+        playActivity?.SetTag("sequence.tempo", sequence.Meta.Tempo);
+        playActivity?.SetTag("sequence.key", sequence.Meta.Key);
+
         // Calculate timing
         var tpq = sequence.Meta.Tpq > 0 ? sequence.Meta.Tpq : 480;
         var tempo = sequence.Meta.Tempo > 0 ? sequence.Meta.Tempo : 120;
@@ -58,11 +65,22 @@ public class SequencePlayer
             // Send the event
             if (evt.IsNoteOn)
             {
+                using var noteActivity = ActivitySource.StartActivity("playback.note_on");
+                noteActivity?.SetTag("note.channel", evt.Channel);
+                noteActivity?.SetTag("note.midi", evt.MidiNote);
+                noteActivity?.SetTag("note.name", evt.NoteName);
+                noteActivity?.SetTag("note.velocity", ResolveVelocity(evt.Velocity, random));
+
                 _midi.SendNoteOn(evt.Channel, evt.MidiNote, velocity);
                 Console.WriteLine($"  ON:  Ch{evt.Channel} {evt.NoteName,-4} vel={velocity}");
             }
             else
             {
+                using var noteActivity = ActivitySource.StartActivity("playback.note_off");
+                noteActivity?.SetTag("note.channel", evt.Channel);
+                noteActivity?.SetTag("note.midi", evt.MidiNote);
+                noteActivity?.SetTag("note.name", evt.NoteName);
+
                 _midi.SendNoteOff(evt.Channel, evt.MidiNote);
             }
         }

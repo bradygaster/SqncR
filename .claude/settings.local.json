@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(move sprintssprint_00_foundation.md docsarchivesprints-v1)",
+      "Bash(move sprintssprint_01_theory-and-midi.md docsarchivesprints-v1)",
+      "Bash(move sprintssprint_02_core-skills.md docsarchivesprints-v1)",
+      "Bash(move sprintssprint_03_cli-and-mcp.md docsarchivesprints-v1)",
+      "Bash(move sprintssprint_04_api-and-sdk.md docsarchivesprints-v1)",
+      "Bash(move sprintssprint_05_advanced-skills.md docsarchivesprints-v1)",
+      "Bash(move sprintssprint_06_production.md docsarchivesprints-v1)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet sln add:*)",
+      "Bash(dotnet add reference:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet remove:*)",
+      "Bash(dotnet run:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet test:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
