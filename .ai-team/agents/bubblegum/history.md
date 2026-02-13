@@ -30,3 +30,13 @@ The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, 
 - **Port naming:** ModuleLibrary defines friendly port names (e.g. "V/Oct", "Gate", "Saw") mapped to VCV Rack port indices, enabling the fluent Cable API to resolve connections by name.
 - **loopMIDI:** VcvRackLauncher has configurable `MidiPortName` property (default "loopMIDI Port") for virtual MIDI port awareness on Windows.
 - **Tests:** 21 tests (13 PatchBuilder + 8 Serialization) — all passing. 381 total tests across solution, 0 failures.
+
+### MCP Tool Integration (Issue #17)
+- **VcvRackTool.cs:** Created 5 MCP tools — `generate_patch`, `launch_vcv_rack`, `stop_vcv_rack`, `vcv_rack_status`, `list_templates`. Follows established `[McpServerToolType]` static class pattern with `ActivitySource` tracing and `[Description]` attributes for AI discoverability.
+- **DI Registration:** Added `VcvRackLauncher` as singleton in `Program.cs`, added `SqncR.VcvRack` ActivitySource to OTel tracing config, added project reference from McpServer → VcvRack.
+- **generate_patch flow:** Template name → `PatchTemplates` factory → `VcvPatch.SaveAs()` → returns file path + module list. Defaults to temp directory if no output path specified.
+- **Error handling:** All tools return user-friendly error strings (not exceptions) matching the established pattern in `GenerationTool.cs`.
+- **Build:** 0 errors, 0 warnings. All 381 tests pass (1 pre-existing timing flake in `TempoChange_MidPlay_NotesComeFaster`).
+
+📌 Team update (2026-02-14): VCV Rack Patch Serialization Uses JsonNode API — decided by Bubblegum
+Your VcvPatch.ToJson() uses System.Text.Json.Nodes (JsonObject/JsonArray) for building VCV Rack patch JSON. Source-generated JsonSerializerContext cannot handle Dictionary<string, object> with polymorphic nested values. JsonNode API avoids reflection complexity, gives full control over output structure, and is fully AOT/trimming-compatible. Other team members working with VCV Rack patches should use the same approach. Port names in ModuleLibrary are friendly strings mapped to integer port indices—use PatchBuilder.Cable() for name-based wiring.

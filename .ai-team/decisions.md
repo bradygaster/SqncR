@@ -362,3 +362,72 @@ This decomposition makes the roadmap *executable* rather than aspirational. Each
 **What:** Extracted `IMidiOutput` interface from `MidiService` in `src/SqncR.Midi/Testing/`. The interface covers `SendNoteOn`, `SendNoteOff`, `AllNotesOff`, and `CurrentDeviceName`. `MidiService` now implements `IMidiOutput` with zero behavioral change. `SequencePlayer` constructor changed from `MidiService` to `IMidiOutput`. `MockMidiOutput` is a thread-safe test double that captures every MIDI event with relative timing (Stopwatch from first event, ConcurrentQueue for thread safety). It lives alongside the interface in `src/SqncR.Midi/Testing/`.
 **Why:** MidiService wraps DryWetMidi hardware access — untestable without real devices. The interface lets tests inject MockMidiOutput instead. All new tests run without MIDI hardware, pure software, CI/CD safe. Generation loop runs async; ConcurrentQueue ensures no data races in event capture. Issue #12 (scale-aware validation) and all M1 MIDI tests build on this framework.
 
+### 2026-02-14: Spectral Analysis Uses MathNet.Numerics with Parabolic Interpolation
+**Date:** 2026-02-14
+**Author:** Peppermint Butler (Audio/MIDI Test Engineer)
+**Issue:** #19
+
+## Context
+
+Needed FFT-based frequency detection for audio test assertions. Chose `MathNet.Numerics` for FFT (well-maintained, no native dependencies, CI-friendly). Applied Hanning window before FFT to reduce spectral leakage. Used parabolic interpolation on magnitude peaks for sub-bin frequency resolution.
+
+## Decision
+
+- **Library:** `MathNet.Numerics 5.0.0` — pure .NET, no native deps, runs everywhere without hardware
+- **Window function:** Hanning — good general-purpose choice for music signals
+- **Peak detection:** Local maxima with parabolic interpolation for better frequency accuracy
+- **Default tolerance:** ±5% — works well for single tones and chords at 44100 Hz / 1s duration
+- **Location:** `src/SqncR.Testing/` — shared library, NOT a test project. Test projects reference it.
+- **Assertions:** Throw `Xunit.Sdk.XunitException` with descriptive messages including detected peaks
+
+## Impact
+
+All future audio integration tests (M2, M3, M4) should reference `SqncR.Testing` for spectral analysis. The `AudioAssertions` class provides the primary API for test authors. `ToneGenerator` is useful for self-testing the analysis pipeline without real audio hardware.
+
+### 2026-02-15: Sonic Pi OSC Protocol — No External NuGet
+**By:** Marceline
+**Date:** 2026-02-15
+**Status:** Implemented
+**Issue:** #14
+
+## What
+The Sonic Pi OSC integration uses raw UDP + manual OSC byte encoding rather than an external NuGet package. The `OscMessage` class is ~65 lines of code implementing just enough of OSC 1.0 to send string-argument messages.
+
+## Why
+- Sonic Pi only needs two OSC messages: `/run-code` (two string args: GUID + Ruby code) and `/stop-all-jobs` (no args).
+- The OSC 1.0 wire format for strings is trivial: null-terminated, 4-byte-aligned ASCII.
+- Adding a NuGet dependency for this would be over-engineering. Zero external dependencies keeps the project lean.
+- If we later need richer OSC (e.g., for SuperCollider integration), we can revisit.
+
+## Impact
+- `SqncR.SonicPi` has zero NuGet dependencies (only references `SqncR.Core`).
+- The `OscMessage` class is `internal` — implementation detail, not part of the public API.
+- Anyone adding new OSC endpoints just adds a method to `OscMessage`.
+
+### 2026-02-13: Use Opus for coding tasks
+**By:** Brady (via Copilot)
+**What:** Brady approved using Claude Opus (claude-opus-4.6) for coding tasks. "Feel FREE to use Opus for coding."
+**Why:** User request — quality over cost for code generation. Overrides default sonnet tier for implementation work.
+
+### 2026-02-13: Blog as we go
+**By:** Brady (via Copilot)
+**What:** Brady wants the team to blog about the project as it progresses. Hire a dedicated blogger agent.
+**Why:** User request — live documentation of the build journey. DevRel/content creation running parallel to development.
+
+### 2026-02-14: VCV Rack Patch Serialization Uses JsonNode API
+**Date:** 2026-02-14
+**Author:** Bubblegum (VCV Rack Specialist)
+**Issue:** #16
+
+## Context
+VCV Rack patches require a specific JSON format with nested structures (modules with params arrays, position arrays, cables with port IDs). Attempted source-generated `JsonSerializerContext` but it cannot handle `Dictionary<string, object>` with polymorphic nested values (lists, arrays, dictionaries).
+
+## Decision
+Use `System.Text.Json.Nodes` (`JsonObject` / `JsonArray`) for building VCV Rack patch JSON. This avoids reflection-based serialization complexity while giving full control over the output structure.
+
+## Consequences
+- Clean, readable code in `VcvPatch.ToJson()`
+- No AOT/trimming issues since JsonNode is fully supported
+- Other team members working with VCV Rack patches should use the same approach
+- Port names in ModuleLibrary are friendly strings mapped to integer port indices — use `PatchBuilder.Cable()` for name-based wiring
+

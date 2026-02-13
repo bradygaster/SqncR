@@ -123,3 +123,6 @@ Key decisions:
 - No NuGet dependency for OSC — UDP + manual byte encoding is trivial for Sonic Pi's simple protocol.
 - `OscMessage` is `internal` with `InternalsVisibleTo` for test access.
 - Sonic Pi's `/run-code` requires two string args (GUID, code), not one — discovered from Sonic Pi's OSC API docs.
+
+📌 Team update (2026-02-15): Sonic Pi OSC Protocol — No External NuGet — decided by Marceline
+Your SqncR.SonicPi project uses raw UDP + manual OSC byte encoding. The OscMessage class is ~65 lines implementing just enough of OSC 1.0 to send string-argument messages. Sonic Pi only needs two OSC messages: /run-code (two string args: GUID + Ruby code) and /stop-all-jobs (no args). Zero external dependencies keeps the project lean. OscMessage is internal—implementation detail, not part of the public API.

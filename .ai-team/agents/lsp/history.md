@@ -18,3 +18,9 @@
 - Inaugural blog post written: "Building SqncR: From Zero to Generative Music Engine" — covers vision, architecture, M0/M1 delivery, real code snippets (WeightedNote musical gravity, timing loop, MCP tool pattern, rock pattern)
 - Blog writing strategy: narrative arc (origin → architecture → delivery → code → next), code snippets with explanation, target audience (developer-musicians), 14k words for comprehensive M1 coverage
 - Front matter includes title, date, tags, summary for blog indexing
+
+📌 Team update (2026-02-13): Use Opus for coding tasks — decided by Brady
+Brady approved using Claude Opus (claude-opus-4.6) for coding tasks. "Feel FREE to use Opus for coding." Quality over cost for code generation. Overrides default sonnet tier for implementation work.
+
+📌 Team update (2026-02-13): Blog as we go — decided by Brady
+Brady wants the team to blog about the project as it progresses. Live documentation of the build journey. DevRel/content creation running parallel to development.
