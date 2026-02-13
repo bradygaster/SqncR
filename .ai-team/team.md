@@ -15,7 +15,8 @@
 | Mal | Lead | `.ai-team/agents/mal/charter.md` | ✅ Active |
 | Kaylee | Core Dev | `.ai-team/agents/kaylee/charter.md` | ✅ Active |
 | Wash | MIDI Specialist | `.ai-team/agents/wash/charter.md` | ✅ Active |
-| Inara | Synth/VCV Dev | `.ai-team/agents/inara/charter.md` | ✅ Active |
+| Inara | Sonic Pi Dev | `.ai-team/agents/inara/charter.md` | ✅ Active |
+| River | VCV Rack Specialist | `.ai-team/agents/river/charter.md` | ✅ Active |
 | Jayne | Tester | `.ai-team/agents/jayne/charter.md` | ✅ Active |
 | Zoe | Rhythm & Beats | `.ai-team/agents/zoe/charter.md` | ✅ Active |
 | Book | Music Theorist | `.ai-team/agents/book/charter.md` | ✅ Active |

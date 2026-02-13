@@ -8,3 +8,6 @@
 ## Learnings
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
+
+📌 Team update (2026-02-13): User directive — synth engine scope — decided by Brady
+Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets. Inara specializes in Sonic Pi (Ruby OSC integration). River specializes in VCV Rack (patch generation + MIDI routing).

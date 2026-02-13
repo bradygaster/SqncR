@@ -9,7 +9,8 @@ How to decide who handles what.
 | Architecture & scope | Mal | System design, trade-offs, what to build next, code review |
 | Core engine & C#/.NET | Kaylee | Generative algorithms, sequencer logic, MCP server, data models |
 | MIDI hardware & protocol | Wash | Device discovery, MIDI I/O, routing, latency, device profiles, real-time |
-| VCV Rack & synth engines | Inara | VCV Rack 2 patches, plugin research, synth engine alternatives, OSC/MIDI bridge |
+| Sonic Pi & OSC | Inara | Sonic Pi Ruby code generation, OSC protocol, live_loop patterns, generative music in Sonic Pi |
+| VCV Rack 2 | River | VCV Rack patch generation, module ecosystem, .vcv format, virtual MIDI ports, MIDI-to-CV |
 | Rhythm & beats | Zoe | Drum patterns, beat design, percussion, groove, euclidean rhythms, swing, humanization |
 | Music theory & harmony | Book | Scales, modes, chord progressions, voice leading, vibe-to-parameters translation |
 | Testing & quality | Jayne | Write tests, MIDI protocol validation, edge cases, integration tests |
@@ -25,7 +26,8 @@ How to decide who handles what.
 | `squad:mal` | Architecture and scope decisions | Mal |
 | `squad:kaylee` | Core engine and C#/.NET work | Kaylee |
 | `squad:wash` | MIDI hardware and protocol work | Wash |
-| `squad:inara` | VCV Rack, synth engines, and sound design research | Inara |
+| `squad:inara` | Sonic Pi integration and OSC protocol | Inara |
+| `squad:river` | VCV Rack 2 patches and module ecosystem | River |
 | `squad:jayne` | Testing and quality work | Jayne |
 | `squad:zoe` | Rhythm, beats, and percussion work | Zoe |
 | `squad:book` | Music theory, harmony, and composition work | Book |
@@ -38,7 +40,7 @@ How to decide who handles what.
 4. **When two agents could handle it**, pick the one whose domain is the primary concern.
 5. **"Team, ..." → fan-out.** Spawn all relevant agents in parallel as `mode: "background"`.
 6. **Anticipate downstream work.** If a feature is being built, spawn the tester to write test cases from requirements simultaneously.
-7. **MIDI + synth overlap** — if a task involves both MIDI routing and synth engine integration, spawn both Wash and Inara.
+7. **MIDI + synth overlap** — if a task involves MIDI routing and Sonic Pi, spawn Wash and Inara. If it involves MIDI routing and VCV Rack, spawn Wash and River.
 8. **Research tasks** — Inara and Wash both handle research in their domains. For broad "what are our options" questions, spawn both.
 9. **Musical content generation** — if a task involves both rhythm (Zoe) and melody/harmony (Book), spawn both. They complement each other.
 10. **Vibe translation** — when the user describes a mood or genre, Book translates to theory parameters, Zoe handles the rhythmic feel.

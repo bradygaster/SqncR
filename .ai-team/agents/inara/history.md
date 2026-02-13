@@ -96,3 +96,6 @@ Hardware and software paths converge on single Instrument data model. MCP tool s
 
 📌 Team update (2026-02-13): Device Profile as Data-Driven Architecture — decided by Wash
 Profiles should be YAML/JSON structures (not hard-coded logic). Generator queries profiles at runtime to respect hardware constraints. Profile structure includes device ID, MIDI channel, polyphony limit, velocity response curve, CC mappings, latency estimate. Profiles live at `~/.sqncr/devices/{device_id}.yaml`. This enables device-agnostic generation engine and makes adding new devices trivial—no code changes needed.
+
+📌 Team update (2026-02-13): User directive — synth engine scope — decided by Brady
+Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets. Inara specializes in Sonic Pi (Ruby OSC integration). River specializes in VCV Rack (patch generation + MIDI routing).

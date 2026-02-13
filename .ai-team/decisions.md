@@ -153,3 +153,8 @@ sustain_pedal_on_cc64: false
 **Next Steps:** Brady decides which engine resonates. Inara can build a minimal working example (e.g., SuperCollider → drone, or Sonic Pi → evolving pad).
 
 **Why:** Comprehensive research enabling Path B (software synth) implementation. Provides Brady with informed choices and roadmap for synth engine integration.
+
+### 2026-02-13: User directive — synth engine scope
+**By:** Brady (via Copilot)
+**What:** Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets. Each gets a dedicated specialist.
+**Why:** User request — captured for team memory

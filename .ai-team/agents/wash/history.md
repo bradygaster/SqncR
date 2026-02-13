@@ -14,6 +14,9 @@
 - Setup interview should be hybrid: auto-detect MIDI outputs, then ask per-device conversational questions (character, polyphony, velocity sensitivity). Save profiles for quick recall.
 - **Timing constraint**: 480 TPQ (MIDI standard) at 120 BPM = ~1 ms per tick. Hardware latency (2-10 ms) dominates; don't attempt latency compensation without measuring individual devices.
 
+📌 Team update (2026-02-13): User directive — synth engine scope — decided by Brady
+Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets. Each gets a dedicated specialist. Impacts device profile work—profiles now feed into two generation paths.
+
 ### 2026-02-13: Real-Time Playback Architecture
 - Playback engine should be tick-based, not millisecond-based. Use PeriodicTimer to drive a metronome, increment a global tick counter each cycle.
 - All devices sync to one clock; generator produces independent voices per device (no coordination yet, add later).
