@@ -29,6 +29,9 @@ public sealed class GenerationState
     /// <summary>Base octave for melodic generation.</summary>
     public int Octave { get; set; } = 4;
 
+    /// <summary>Pluggable note generation algorithm.</summary>
+    public INoteGenerator NoteGenerator { get; set; } = new WeightedNoteGenerator();
+
     /// <summary>Index tracking the current position in the scale walk for melody.</summary>
     internal int MelodyScaleIndex { get; set; }
 

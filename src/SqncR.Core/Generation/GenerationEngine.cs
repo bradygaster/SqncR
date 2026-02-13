@@ -235,6 +235,11 @@ public sealed class GenerationEngine : BackgroundService
                     _state.MelodicChannel = setMelodicChannel.Channel;
                     break;
 
+                case GenerationCommand.SetGenerator setGenerator:
+                    _state.NoteGenerator = setGenerator.Generator;
+                    _logger.LogInformation("Generator set to {Generator}", setGenerator.Generator.Name);
+                    break;
+
                 case GenerationCommand.SetDrumChannel setDrumChannel:
                     _state.DrumChannel = setDrumChannel.Channel;
                     break;
@@ -303,37 +308,20 @@ public sealed class GenerationEngine : BackgroundService
         activity?.SetTag("generation.scale", _state.Scale.Name);
         activity?.SetTag("generation.tempo", _state.Tempo);
         activity?.SetTag("generation.pattern", _state.DrumPattern?.Name ?? "none");
-
-        var notes = _state.Scale.GetNotesInOctave(_state.Octave);
-        if (notes.Count == 0) return;
+        activity?.SetTag("generation.generator", _state.NoteGenerator.Name);
 
         // Turn off previous note
         TurnOffMelodyNote(ref lastMelodyNotePlayed);
 
-        // Walk the scale
-        int index = _state.MelodyScaleIndex;
-        if (index >= notes.Count) index = notes.Count - 1;
-        if (index < 0) index = 0;
+        var note = _state.NoteGenerator.NextNote(_state);
+        if (note == null) return; // rest
 
-        int note = notes[index];
-        _midiOutput.SendNoteOn(_state.MelodicChannel, note, 80);
-        lastMelodyNotePlayed = note;
+        int midiNote = note.Value;
+        _midiOutput.SendNoteOn(_state.MelodicChannel, midiNote, 80);
+        lastMelodyNotePlayed = midiNote;
         GenerationMetrics.NotesEmitted.Add(1);
         GenerationMetrics.ActiveVoices.Add(1);
         eventsInCurrentMeasure++;
-
-        // Advance scale walk
-        _state.MelodyScaleIndex += _state.MelodyDirection;
-        if (_state.MelodyScaleIndex >= notes.Count)
-        {
-            _state.MelodyScaleIndex = notes.Count - 2;
-            _state.MelodyDirection = -1;
-        }
-        else if (_state.MelodyScaleIndex < 0)
-        {
-            _state.MelodyScaleIndex = 1;
-            _state.MelodyDirection = 1;
-        }
     }
 
     private void TurnOffMelodyNote(ref int lastMelodyNotePlayed)

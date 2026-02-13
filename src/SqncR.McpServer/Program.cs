@@ -47,7 +47,8 @@ builder.Services.AddSingleton<IMidiOutput>(sp => sp.GetRequiredService<MidiServi
 
 // Register GenerationEngine and its state as singletons
 builder.Services.AddSingleton<GenerationState>();
-builder.Services.AddHostedService<GenerationEngine>();
+builder.Services.AddSingleton<GenerationEngine>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<GenerationEngine>());
 
 // Register the MCP server with stdio transport and auto-discover tools in this assembly
 builder.Services
