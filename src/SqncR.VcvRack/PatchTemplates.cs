@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using SqncR.VcvRack.Models;
 
 namespace SqncR.VcvRack;
@@ -8,12 +9,16 @@ namespace SqncR.VcvRack;
 /// </summary>
 public static class PatchTemplates
 {
+    internal static readonly ActivitySource ActivitySource = new("SqncR.VcvRack");
     /// <summary>
     /// Minimal viable patch: MIDI-CV → VCO → VCF → ADSR → VCA → Audio.
     /// </summary>
     public static VcvPatch BasicSynth()
     {
-        return new PatchBuilder()
+        using var activity = ActivitySource.StartActivity("vcvrack.template.basic_synth");
+        activity?.SetTag("vcvrack.template", "BasicSynth");
+
+        var patch = new PatchBuilder()
             .AddModule(ModuleLibrary.MidiCv(), out var midi)
             .AddModule(ModuleLibrary.Vco(), out var vco)
             .AddModule(ModuleLibrary.Vcf(), out var vcf)
@@ -27,6 +32,11 @@ public static class PatchTemplates
             .Cable(vcf, "LPF", vca, "In")
             .Cable(vca, "Out", audio, "Input 1")
             .Build();
+
+        activity?.SetTag("vcvrack.module_count", patch.Modules.Count);
+        activity?.SetTag("vcvrack.cable_count", patch.Cables.Count);
+
+        return patch;
     }
 
     /// <summary>
@@ -35,6 +45,8 @@ public static class PatchTemplates
     /// </summary>
     public static VcvPatch AmbientPad()
     {
+        using var activity = ActivitySource.StartActivity("vcvrack.template.ambient_pad");
+        activity?.SetTag("vcvrack.template", "AmbientPad");
         var adsr = ModuleLibrary.Adsr() with
         {
             Params = new Dictionary<string, float>
@@ -56,7 +68,7 @@ public static class PatchTemplates
             }
         };
 
-        return new PatchBuilder()
+        var patch = new PatchBuilder()
             .AddModule(ModuleLibrary.MidiCv(), out var midi)
             .AddModule(ModuleLibrary.Vco(), out var vco)
             .AddModule(vcf, out var vcfMod)
@@ -72,6 +84,11 @@ public static class PatchTemplates
             .Cable(vcfMod, "LPF", vca, "In")
             .Cable(vca, "Out", audio, "Input 1")
             .Build();
+
+        activity?.SetTag("vcvrack.module_count", patch.Modules.Count);
+        activity?.SetTag("vcvrack.cable_count", patch.Cables.Count);
+
+        return patch;
     }
 
     /// <summary>
@@ -79,6 +96,9 @@ public static class PatchTemplates
     /// </summary>
     public static VcvPatch BassSynth()
     {
+        using var activity = ActivitySource.StartActivity("vcvrack.template.bass_synth");
+        activity?.SetTag("vcvrack.template", "BassSynth");
+
         var adsr = ModuleLibrary.Adsr() with
         {
             Params = new Dictionary<string, float>
@@ -100,7 +120,7 @@ public static class PatchTemplates
             }
         };
 
-        return new PatchBuilder()
+        var patch = new PatchBuilder()
             .AddModule(ModuleLibrary.MidiCv(), out var midi)
             .AddModule(ModuleLibrary.Vco(), out var vco)
             .AddModule(vcf, out var vcfMod)
@@ -114,5 +134,10 @@ public static class PatchTemplates
             .Cable(vcfMod, "LPF", vca, "In")
             .Cable(vca, "Out", audio, "Input 1")
             .Build();
+
+        activity?.SetTag("vcvrack.module_count", patch.Modules.Count);
+        activity?.SetTag("vcvrack.cable_count", patch.Cables.Count);
+
+        return patch;
     }
 }

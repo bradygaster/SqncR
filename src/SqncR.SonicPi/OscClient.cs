@@ -35,10 +35,12 @@ public class OscClient : IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(rubyCode);
 
         using var activity = ActivitySource.StartActivity("sonicpi.send_code");
-        activity?.SetTag("sonicpi.port", Port);
+        activity?.SetTag("osc.port", Port);
+        activity?.SetTag("osc.endpoint", $"{Host}:{Port}");
         activity?.SetTag("sonicpi.code_length", rubyCode.Length);
 
         var message = OscMessage.CreateRunCode(rubyCode);
+        activity?.SetTag("osc.message_size_bytes", message.Length);
         Send(message);
     }
 
@@ -48,9 +50,11 @@ public class OscClient : IDisposable
     public void StopAll()
     {
         using var activity = ActivitySource.StartActivity("sonicpi.stop_all");
-        activity?.SetTag("sonicpi.port", Port);
+        activity?.SetTag("osc.port", Port);
+        activity?.SetTag("osc.endpoint", $"{Host}:{Port}");
 
         var message = OscMessage.CreateNoArgs("/stop-all-jobs");
+        activity?.SetTag("osc.message_size_bytes", message.Length);
         Send(message);
     }
 
@@ -77,7 +81,13 @@ public class OscClient : IDisposable
     private void Send(byte[] message)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         _udpClient.Send(message, message.Length, _endpoint);
+        sw.Stop();
+
+        SonicPiMetrics.OscMessagesSent.Add(1);
+        SonicPiMetrics.OscLatency.Record(sw.Elapsed.TotalMicroseconds);
     }
 
     public void Dispose()

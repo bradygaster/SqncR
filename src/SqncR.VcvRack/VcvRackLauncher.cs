@@ -34,9 +34,11 @@ public class VcvRackLauncher : IDisposable
             throw new InvalidOperationException("VCV Rack is already running. Call StopAsync() first.");
 
         using var activity = ActivitySource.StartActivity("vcvrack.launch");
-        activity?.SetTag("vcvrack.patch", patchPath);
+        activity?.SetTag("vcvrack.patch_path", patchPath);
         activity?.SetTag("vcvrack.headless", headless);
         activity?.SetTag("vcvrack.midi_port", MidiPortName);
+
+        var launchSw = System.Diagnostics.Stopwatch.StartNew();
 
         var rackPath = FindRackExecutable();
         if (rackPath is null)
@@ -61,6 +63,10 @@ public class VcvRackLauncher : IDisposable
         // Brief delay to let VCV Rack initialize
         await Task.Delay(500);
 
+        launchSw.Stop();
+        VcvRackMetrics.LaunchTime.Record(launchSw.Elapsed.TotalMilliseconds);
+
+        activity?.SetTag("vcvrack.process_id", _process.Id);
         activity?.SetTag("vcvrack.pid", _process.Id);
     }
 

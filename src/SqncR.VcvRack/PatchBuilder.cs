@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using SqncR.VcvRack.Models;
 
 namespace SqncR.VcvRack;
@@ -8,6 +9,7 @@ namespace SqncR.VcvRack;
 /// </summary>
 public class PatchBuilder
 {
+    internal static readonly ActivitySource ActivitySource = new("SqncR.VcvRack");
     private readonly List<VcvModule> _modules = [];
     private readonly List<VcvCable> _cables = [];
     private int _nextModuleId = 1;
@@ -72,11 +74,23 @@ public class PatchBuilder
     /// </summary>
     public VcvPatch Build()
     {
-        return new VcvPatch
+        using var activity = ActivitySource.StartActivity("vcvrack.patch_build");
+        activity?.SetTag("vcvrack.module_count", _modules.Count);
+        activity?.SetTag("vcvrack.cable_count", _cables.Count);
+
+        var sw = Stopwatch.StartNew();
+
+        var patch = new VcvPatch
         {
             Modules = [.. _modules],
             Cables = [.. _cables]
         };
+
+        sw.Stop();
+        VcvRackMetrics.PatchGenerationTime.Record(sw.Elapsed.TotalMilliseconds);
+        VcvRackMetrics.PatchesGenerated.Add(1);
+
+        return patch;
     }
 
     private static readonly string[] CableColors =

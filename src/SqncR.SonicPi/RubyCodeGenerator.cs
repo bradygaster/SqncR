@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace SqncR.SonicPi;
 /// </summary>
 public static class RubyCodeGenerator
 {
+    internal static readonly ActivitySource ActivitySource = new("SqncR.SonicPi");
     /// <summary>
     /// Built-in Sonic Pi synth names.
     /// </summary>
@@ -33,6 +35,10 @@ public static class RubyCodeGenerator
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(synthName);
 
+        using var activity = ActivitySource.StartActivity("sonicpi.generate_synth_setup");
+        activity?.SetTag("sonicpi.synth_name", synthName);
+        var sw = Stopwatch.StartNew();
+
         var sb = new StringBuilder();
         sb.AppendLine($"use_synth :{synthName}");
 
@@ -44,7 +50,12 @@ public static class RubyCodeGenerator
             }
         }
 
-        return sb.ToString().TrimEnd();
+        var result = sb.ToString().TrimEnd();
+
+        sw.Stop();
+        SonicPiMetrics.CodeGenerationTime.Record(sw.Elapsed.TotalMicroseconds);
+
+        return result;
     }
 
     /// <summary>
@@ -60,6 +71,12 @@ public static class RubyCodeGenerator
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentException.ThrowIfNullOrWhiteSpace(synthName);
         ArgumentNullException.ThrowIfNull(notes);
+
+        using var activity = ActivitySource.StartActivity("sonicpi.generate_live_loop");
+        activity?.SetTag("sonicpi.synth_name", synthName);
+        activity?.SetTag("sonicpi.note_count", notes.Length);
+        activity?.SetTag("sonicpi.fx_count", fx?.Count ?? 0);
+        var sw = Stopwatch.StartNew();
 
         var sb = new StringBuilder();
         sb.AppendLine(string.Create(CultureInfo.InvariantCulture, $"use_bpm {bpm}"));
@@ -100,7 +117,12 @@ public static class RubyCodeGenerator
 
         sb.AppendLine("end");
 
-        return sb.ToString().TrimEnd();
+        var result = sb.ToString().TrimEnd();
+
+        sw.Stop();
+        SonicPiMetrics.CodeGenerationTime.Record(sw.Elapsed.TotalMicroseconds);
+
+        return result;
     }
 
     /// <summary>

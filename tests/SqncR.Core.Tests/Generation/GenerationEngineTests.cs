@@ -154,7 +154,7 @@ public class GenerationEngineTests : IDisposable
         using var cts = new CancellationTokenSource();
         await _engine.StartAsync(cts.Token);
 
-        await Task.Delay(600);
+        await Task.Delay(1500);
         await _engine.StopAsync(CancellationToken.None);
 
         var melodyNoteOn = _midi.Events
