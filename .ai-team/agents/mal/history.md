@@ -7,4 +7,14 @@
 
 ## Learnings
 
-<!-- Append new learnings below. Each entry is something lasting about the project. -->
+### 2026-02-14: Two-path model converges on unified Instrument abstraction
+Brady presented two potential UX flows: (A) hardware MIDI discovery and setup, (B) software synth patch generation. Analysis shows these aren't separate pipelines—they're two ways to populate the same data model. Both end with an `Instrument` object (hardware or software) feeding into a unified generation loop. This simplifies architecture dramatically: one set of MCP tools, one generation engine, differentiation only at setup time. MVP should start with Path A (hardware MIDI) as it's simpler and proves the core concept before adding Path B complexity.
+
+### 2026-02-14: Generation loop should be background async, non-blocking
+The "continuously playing" feature requires a background service loop in the MCP server (ticking every ~100ms), not a blocking call. Modifications come through a queue and are read by the loop—user can keep coding while music plays. This is critical for the UX: "play generatively while I code" means the server stays responsive to new commands.
+
+📌 Team update (2026-02-13): Device Profile as Data-Driven Architecture — decided by Wash
+Profiles should be YAML/JSON structures (not hard-coded logic). Generator queries profiles at runtime to respect hardware constraints. Profile structure includes device ID, MIDI channel, polyphony limit, velocity response curve, CC mappings, latency estimate. Profiles live at `~/.sqncr/devices/{device_id}.yaml`. This enables device-agnostic generation engine and makes adding new devices trivial—no code changes needed.
+
+📌 Team update (2026-02-13): Two-Path Model Uses Unified Instrument Abstraction — decided by Mal
+Hardware and software paths converge on single Instrument data model. MCP tool surface is unified (no branching logic). Generation engine is device-agnostic. MVP starts with Path A (hardware MIDI); Path B (software synth) is a later addition reusing the same generation engine.

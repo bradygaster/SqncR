@@ -7,4 +7,28 @@
 
 ## Learnings
 
-<!-- Append new learnings below. Each entry is something lasting about the project. -->
+### 2026-02-13: MIDI Device Discovery & Profile Architecture
+- Device profiles should be **data, not code**: model as YAML/JSON with name, channel, patch description, polyphony limit, velocity response curve, CC mappings, latency estimate.
+- Minimum viable profile: DeviceId, HardwareName, PatchDescription, Role (bass/pad/lead/texture), MidiChannel, PolyphonyLimit, VelocityProfile (curve + dynamic range).
+- VelocityProfile explicitly models the device's response (linear/logarithmic/threshold) because devices vary wildly — a 127 from one device isn't the same as 127 from another.
+- Setup interview should be hybrid: auto-detect MIDI outputs, then ask per-device conversational questions (character, polyphony, velocity sensitivity). Save profiles for quick recall.
+- **Timing constraint**: 480 TPQ (MIDI standard) at 120 BPM = ~1 ms per tick. Hardware latency (2-10 ms) dominates; don't attempt latency compensation without measuring individual devices.
+
+### 2026-02-13: Real-Time Playback Architecture
+- Playback engine should be tick-based, not millisecond-based. Use PeriodicTimer to drive a metronome, increment a global tick counter each cycle.
+- All devices sync to one clock; generator produces independent voices per device (no coordination yet, add later).
+- Polyphony limiting should drop notes silently (safer than note stealing). Track active notes per device/channel.
+- Velocity scaling should respect each device's VelocityProfile — map generated 0-127 to device's actual curve and preferred dynamic range.
+- No external clock support initially; SqncR drives timing. Virtual clock sync can be added when VCV Rack 2 integration happens.
+
+### 2026-02-13: .NET MIDI Library Decision
+- **Stick with DryWetMidi** (already in use, excellent API, MIDI 2.0 ready, actively maintained, MIT licensed).
+- Already using `OutputDevice.GetAll()` for enumeration (good). Add `ControlChangeEvent`, `ProgramChangeEvent`, and `InputDevice` listening for modulation and play-along.
+- Device enumeration is static (doesn't auto-refresh if user hot-plugs); require server restart for new devices (OK for now).
+- Two separate code paths: SMF playback (SequencePlayer) vs. realtime generation (new engine) — don't confuse them.
+
+📌 Team update (2026-02-13): Two-Path Model Uses Unified Instrument Abstraction — decided by Mal
+Hardware and software paths converge on single Instrument data model. MCP tool surface is unified (no branching logic). Generation engine is device-agnostic. MVP starts with Path A (hardware MIDI); Path B (software synth) is a later addition reusing the same generation engine.
+
+📌 Team update (2026-02-13): Synth Engine Integration Paths Research — decided by Inara
+Comprehensive research complete on SuperCollider, Sonic Pi, VCV Rack 2, Surge XT, FluidSynth, CSound. Sonic Pi recommended for simplicity (Ruby OSC integration, lowest barrier to entry). SuperCollider recommended for deep synthesis. VCV Rack 2 best for visual + generative. Inara can build minimal working examples once Brady decides which path resonates.

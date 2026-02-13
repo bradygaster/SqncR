@@ -17,6 +17,8 @@
 | Wash | MIDI Specialist | `.ai-team/agents/wash/charter.md` | ✅ Active |
 | Inara | Synth/VCV Dev | `.ai-team/agents/inara/charter.md` | ✅ Active |
 | Jayne | Tester | `.ai-team/agents/jayne/charter.md` | ✅ Active |
+| Zoe | Rhythm & Beats | `.ai-team/agents/zoe/charter.md` | ✅ Active |
+| Book | Music Theorist | `.ai-team/agents/book/charter.md` | ✅ Active |
 | Scribe | Session Logger | `.ai-team/agents/scribe/charter.md` | 📋 Silent |
 | Ralph | Work Monitor | — | 🔄 Monitor |
 

@@ -10,6 +10,8 @@ How to decide who handles what.
 | Core engine & C#/.NET | Kaylee | Generative algorithms, sequencer logic, MCP server, data models |
 | MIDI hardware & protocol | Wash | Device discovery, MIDI I/O, routing, latency, device profiles, real-time |
 | VCV Rack & synth engines | Inara | VCV Rack 2 patches, plugin research, synth engine alternatives, OSC/MIDI bridge |
+| Rhythm & beats | Zoe | Drum patterns, beat design, percussion, groove, euclidean rhythms, swing, humanization |
+| Music theory & harmony | Book | Scales, modes, chord progressions, voice leading, vibe-to-parameters translation |
 | Testing & quality | Jayne | Write tests, MIDI protocol validation, edge cases, integration tests |
 | Code review | Mal | Review PRs, check quality, suggest improvements |
 | Scope & priorities | Mal | What to build next, trade-offs, decisions |
@@ -25,6 +27,8 @@ How to decide who handles what.
 | `squad:wash` | MIDI hardware and protocol work | Wash |
 | `squad:inara` | VCV Rack, synth engines, and sound design research | Inara |
 | `squad:jayne` | Testing and quality work | Jayne |
+| `squad:zoe` | Rhythm, beats, and percussion work | Zoe |
+| `squad:book` | Music theory, harmony, and composition work | Book |
 
 ## Rules
 
@@ -36,3 +40,5 @@ How to decide who handles what.
 6. **Anticipate downstream work.** If a feature is being built, spawn the tester to write test cases from requirements simultaneously.
 7. **MIDI + synth overlap** — if a task involves both MIDI routing and synth engine integration, spawn both Wash and Inara.
 8. **Research tasks** — Inara and Wash both handle research in their domains. For broad "what are our options" questions, spawn both.
+9. **Musical content generation** — if a task involves both rhythm (Zoe) and melody/harmony (Book), spawn both. They complement each other.
+10. **Vibe translation** — when the user describes a mood or genre, Book translates to theory parameters, Zoe handles the rhythmic feel.
