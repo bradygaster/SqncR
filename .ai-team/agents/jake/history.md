@@ -46,3 +46,6 @@ Created `src/SqncR.McpServer/` using the official `ModelContextProtocol` C# SDK 
 
 📌 Sonic Pi MCP tools implemented (issue #15) — 2026-02-16
 Created `src/SqncR.McpServer/Tools/SonicPiTool.cs` with 5 MCP tools: `setup_software_synth` (creates + activates SonicPiInstrument with optional FX chain), `play_sonic_pi_note` (single note via OscClient, accepts note names or MIDI numbers), `sonic_pi_live_loop` (generates and sends live_loop Ruby code), `stop_sonic_pi` (StopAll), `sonic_pi_status` (IsAvailable check). Registered `OscClient` as singleton in DI and added `SqncR.SonicPi` to OTel tracing sources. All tools follow established `[McpServerToolType]` pattern with ActivitySource spans. Build clean (0 warnings), all 381 tests passing.
+
+📌 Team update (2026-02-16): Sonic Pi OscClient as Singleton in MCP Server DI — decided by Jake
+Register OscClient as a singleton in the DI container with default constructor (port 4560, host 127.0.0.1). All Sonic Pi MCP tools receive it via parameter injection, matching established pattern (MidiService, GenerationEngine). Singleton prevents socket waste and leaks. Default port 4560 is Sonic Pi standard. Configuration override can be added later if needed. FX chain defaults to mix: 0.5.

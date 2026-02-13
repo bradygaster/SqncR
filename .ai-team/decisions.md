@@ -431,3 +431,41 @@ Use `System.Text.Json.Nodes` (`JsonObject` / `JsonArray`) for building VCV Rack 
 - Other team members working with VCV Rack patches should use the same approach
 - Port names in ModuleLibrary are friendly strings mapped to integer port indices — use `PatchBuilder.Cable()` for name-based wiring
 
+
+### 2026-02-14: VCV Rack MCP Tool Design
+**Agent:** Bubblegum  
+**Date:** 2026-02-14  
+**Issue:** #17
+
+## Context
+Needed to expose VCV Rack patch generation and process management to AI assistants via MCP tools.
+
+## Decision
+- All 5 VCV Rack tools live in a single `VcvRackTool.cs` static class (matching `GenerationTool.cs` pattern which groups related tools).
+- `generate_patch` does NOT require `VcvRackLauncher` — it only needs `PatchTemplates` and `VcvPatch.SaveAs()`. This keeps patch generation decoupled from process management.
+- Template selection uses a simple string switch (`basic`/`ambient`/`bass`) rather than an enum, since MCP tool params are strings and the AI needs to pass them by name.
+- Default output path uses `Path.GetTempPath()` so patches can be generated without the user specifying a directory.
+
+## Alternatives Considered
+- Separate tool classes per operation (rejected: too many files for 5 related tools)
+- Accepting a full patch JSON as input (rejected: too complex for AI; templates are the right abstraction)
+
+### 2026-02-16: Sonic Pi OscClient as Singleton in MCP Server DI
+**Date:** 2026-02-16
+**Author:** Jake (Core Dev)
+**Issue:** #15
+
+## Context
+The MCP server needs to communicate with Sonic Pi via OSC. `OscClient` wraps a `UdpClient` and sends messages to `localhost:4560`.
+
+## Decision
+Register `OscClient` as a singleton in the DI container with default constructor (port 4560, host 127.0.0.1). All Sonic Pi MCP tools receive it via parameter injection, matching the established pattern (e.g., `MidiService`, `GenerationEngine`).
+
+## Rationale
+- **Singleton** because `OscClient` holds a `UdpClient` — creating per-request would waste sockets and leak if not disposed.
+- **Default port 4560** is Sonic Pi's standard OSC listen port. Configuration override can be added later if needed.
+- **No factory/options pattern** — keeps it simple for now. If we need configurable ports (e.g., multiple Sonic Pi instances), we can add `IOptions<SonicPiOptions>` later.
+- **FX chain defaults to mix: 0.5** — a reasonable middle ground. Individual mix control can be added as a future enhancement.
+
+## Status
+Implemented and merged into MCP server.

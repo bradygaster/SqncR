@@ -38,5 +38,8 @@ The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, 
 - **Error handling:** All tools return user-friendly error strings (not exceptions) matching the established pattern in `GenerationTool.cs`.
 - **Build:** 0 errors, 0 warnings. All 381 tests pass (1 pre-existing timing flake in `TempoChange_MidPlay_NotesComeFaster`).
 
+📌 Team update (2026-02-14): VCV Rack MCP Tool Design — decided by Bubblegum
+All 5 VCV Rack tools live in single VcvRackTool.cs static class (matching GenerationTool.cs pattern). generate_patch does NOT require VcvRackLauncher—only PatchTemplates and VcvPatch.SaveAs(). Keeps patch generation decoupled from process management. Template selection uses string switch (basic/ambient/bass) rather than enum—MCP params are strings. Default output path uses Path.GetTempPath().
+
 📌 Team update (2026-02-14): VCV Rack Patch Serialization Uses JsonNode API — decided by Bubblegum
 Your VcvPatch.ToJson() uses System.Text.Json.Nodes (JsonObject/JsonArray) for building VCV Rack patch JSON. Source-generated JsonSerializerContext cannot handle Dictionary<string, object> with polymorphic nested values. JsonNode API avoids reflection complexity, gives full control over output structure, and is fully AOT/trimming-compatible. Other team members working with VCV Rack patches should use the same approach. Port names in ModuleLibrary are friendly strings mapped to integer port indices—use PatchBuilder.Cable() for name-based wiring.
