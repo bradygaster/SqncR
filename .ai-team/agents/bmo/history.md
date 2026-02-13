@@ -37,3 +37,6 @@ Hardware and software paths converge on single Instrument data model. MCP tool s
 Comprehensive research complete on SuperCollider, Sonic Pi, VCV Rack 2, Surge XT, FluidSynth, CSound. Sonic Pi recommended for simplicity (Ruby OSC integration, lowest barrier to entry). SuperCollider recommended for deep synthesis. VCV Rack 2 best for visual + generative. Inara can build minimal working examples once Brady decides which path resonates.
 
 📌 Team update (2026-02-13): Full team recast from Firefly to Adventure Time universe. All 8 Firefly agents retired to _alumni. 10 new Adventure Time agents created (8 role transfers + 2 new roles). All histories transferred. Casting state updated with Adventure Time assignment. Policy updated to include Adventure Time universe (capacity 15). — decided by Brady
+
+📌 Team update (2026-02-14): Hardware MIDI deferred to final milestone — decided by Finn
+Your unified Instrument abstraction remains the core architectural pattern. However, hardware MIDI device setup and multi-channel routing move to M4. M0–M3 prove the system works entirely in software (Sonic Pi, VCV Rack paths); M4 integrates hardware via device profiles and conversational setup. The abstraction scales from software-only (M2–M3) to multi-instrument hardware (M4) without design changes.

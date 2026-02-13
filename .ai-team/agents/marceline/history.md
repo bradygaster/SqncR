@@ -101,3 +101,6 @@ Profiles should be YAML/JSON structures (not hard-coded logic). Generator querie
 Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets. Inara specializes in Sonic Pi (Ruby OSC integration). River specializes in VCV Rack (patch generation + MIDI routing).
 
 📌 Team update (2026-02-13): Full team recast from Firefly to Adventure Time universe. All 8 Firefly agents retired to _alumni. 10 new Adventure Time agents created (8 role transfers + 2 new roles). All histories transferred. Casting state updated with Adventure Time assignment. Policy updated to include Adventure Time universe (capacity 15). — decided by Brady
+
+📌 Team update (2026-02-14): Hardware MIDI deferred to final milestone — decided by Finn
+Device profile work (your domain) moves to M4. The v1 roadmap is restructured to prove the generation engine works entirely in software (Sonic Pi, VCV Rack) before adding hardware complexity. M0–M3 focus on software validation; M4 integrates hardware (device profiles, MIDI routing, conversational setup). This is the final integration layer, not the foundation. Rationale: fastest path to validation is MCP server → music generation in pure software → hardware complexity last.

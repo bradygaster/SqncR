@@ -10,3 +10,9 @@
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
 📌 Team update (2026-02-13): Full team recast from Firefly to Adventure Time universe. All 8 Firefly agents retired to _alumni. 10 new Adventure Time agents created (8 role transfers + 2 new roles). All histories transferred. Casting state updated with Adventure Time assignment. Policy updated to include Adventure Time universe (capacity 15). — decided by Brady
+
+📌 Team update (2026-02-14): OpenTelemetry observability is a core requirement from M0 — decided by Finn
+SqncR must emit comprehensive OpenTelemetry telemetry for every musical event. Hierarchical span structure: session → section → measure → beat → note. Per-subsystem ActivitySources: SqncR.Generation, SqncR.Playback, SqncR.Sequencer, SqncR.Midi, SqncR.SonicPi, SqncR.VcvRack. Custom metrics: notes per second, active voices, pattern density, generation latency, MIDI send latency. You are responsible for ActivitySource setup, exporter configuration, and Aspire dashboard integration.
+
+📌 Team update (2026-02-14): Three-layer automated audio testing is a v1 requirement — decided by Finn
+You are responsible for M4 observability and profiling in collaboration with Peppermint Butler. The testing strategy spans M1 (MIDI validation), M2 (audio capture), M3 (spectral analysis), and M4 (long-running stability). Tests don't just check code—they listen to the music. Custom metrics track generation latency, notes per second, active voices, pattern density, and device-specific send latency visible in the Aspire dashboard.
