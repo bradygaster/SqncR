@@ -5,54 +5,124 @@
       "universe": "Firefly",
       "created_at": "2026-02-13T06:22:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "kaylee": {
       "persistent_name": "Kaylee",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:22:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "wash": {
       "persistent_name": "Wash",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:22:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "inara": {
       "persistent_name": "Inara",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:22:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "jayne": {
       "persistent_name": "Jayne",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:22:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "zoe": {
       "persistent_name": "Zoe",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:33:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "book": {
       "persistent_name": "Book",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:33:00Z",
       "legacy_named": false,
-      "status": "active"
+      "status": "retired"
     },
     "river": {
       "persistent_name": "River",
       "universe": "Firefly",
       "created_at": "2026-02-13T06:49:00Z",
+      "legacy_named": false,
+      "status": "retired"
+    },
+    "finn": {
+      "persistent_name": "Finn",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "jake": {
+      "persistent_name": "Jake",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "bmo": {
+      "persistent_name": "BMO",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "marceline": {
+      "persistent_name": "Marceline",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "bubblegum": {
+      "persistent_name": "Bubblegum",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "lemongrab": {
+      "persistent_name": "Lemongrab",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "rainicorn": {
+      "persistent_name": "Rainicorn",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "simon": {
+      "persistent_name": "Simon",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "peppermint-butler": {
+      "persistent_name": "Peppermint Butler",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "banana-guard": {
+      "persistent_name": "Banana Guard",
+      "universe": "Adventure Time",
+      "created_at": "2026-02-13T06:52:00Z",
       "legacy_named": false,
       "status": "active"
     }

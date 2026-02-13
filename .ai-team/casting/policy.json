@@ -20,7 +20,8 @@
     "Attack on Titan",
     "The Lord of the Rings",
     "Succession",
-    "Severance"
+    "Severance",
+    "Adventure Time"
   ],
   "universe_capacity": {
     "The Usual Suspects": 6,
@@ -42,6 +43,7 @@
     "Attack on Titan": 12,
     "The Lord of the Rings": 14,
     "Succession": 10,
-    "Severance": 8
+    "Severance": 8,
+    "Adventure Time": 15
   }
 }
