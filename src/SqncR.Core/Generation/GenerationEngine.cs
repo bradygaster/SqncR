@@ -25,6 +25,7 @@ public sealed class GenerationEngine : BackgroundService
     private readonly TransitionEngine _transition;
     private readonly NoteTracker _noteTracker;
     private readonly HealthMonitor _healthMonitor;
+    private readonly SessionTelemetry _sessionTelemetry = new();
 
     /// <summary>Writer for enqueuing commands from external callers (MCP tools).</summary>
     public ChannelWriter<GenerationCommand> Commands => _commandChannel.Writer;
@@ -34,6 +35,9 @@ public sealed class GenerationEngine : BackgroundService
 
     /// <summary>Provides access to the health monitor for health reporting.</summary>
     public HealthMonitor HealthMonitor => _healthMonitor;
+
+    /// <summary>Provides access to session telemetry for observability.</summary>
+    public SessionTelemetry SessionTelemetry => _sessionTelemetry;
 
     public GenerationEngine(
         GenerationState state,
@@ -68,6 +72,8 @@ public sealed class GenerationEngine : BackgroundService
         int eventsInCurrentMeasure = 0;
         Activity? sessionActivity = null;
         Activity? measureActivity = null;
+        int _lastHealthSnapshotMeasure = -1;
+        const int HealthSnapshotIntervalMeasures = 40; // ~5 min at 120 BPM (4/4)
 
         try
         {
@@ -174,7 +180,38 @@ public sealed class GenerationEngine : BackgroundService
                     eventsInCurrentMeasure = 0;
 
                     // Trigger variety engine on measure boundary
-                    _state.Variety?.OnMeasureBoundary(_state, measureNumber);
+                    if (_state.Variety != null)
+                    {
+                        int prevOctave = _state.Octave;
+                        int prevVelocityDrift = _state.Variety.VelocityDrift;
+                        bool prevRest = _state.Variety.RestInsertionActive;
+
+                        _state.Variety.OnMeasureBoundary(_state, measureNumber);
+
+                        if (_state.Octave != prevOctave)
+                        {
+                            using var vSpan = _sessionTelemetry.TraceVarietyDecision(
+                                "octave_drift", $"octave changed to {_state.Octave}", measureNumber);
+                        }
+                        if (_state.Variety.VelocityDrift != prevVelocityDrift)
+                        {
+                            using var vSpan = _sessionTelemetry.TraceVarietyDecision(
+                                "velocity_drift", $"drift={_state.Variety.VelocityDrift}", measureNumber);
+                        }
+                        if (_state.Variety.RestInsertionActive != prevRest)
+                        {
+                            using var vSpan = _sessionTelemetry.TraceVarietyDecision(
+                                "rest_insertion", $"active={_state.Variety.RestInsertionActive}", measureNumber);
+                        }
+                    }
+
+                    // Periodic health snapshot
+                    if (measureNumber - _lastHealthSnapshotMeasure >= HealthSnapshotIntervalMeasures)
+                    {
+                        var snapshot = _healthMonitor.GetHealth();
+                        using var hSpan = _sessionTelemetry.RecordHealthSnapshot(snapshot);
+                        _lastHealthSnapshotMeasure = measureNumber;
+                    }
 
                     // Start new measure span as child of session
                     measureActivity = ActivitySource.StartActivity("Measure",
@@ -219,6 +256,7 @@ public sealed class GenerationEngine : BackgroundService
             SendAllNotesOff();
             measureActivity?.Dispose();
             sessionActivity?.Dispose();
+            _sessionTelemetry.EndSession();
             stopwatch.Stop();
             _logger.LogInformation("GenerationEngine stopped");
         }
@@ -314,6 +352,10 @@ public sealed class GenerationEngine : BackgroundService
                     sessionActivity = ActivitySource.StartActivity("Session", ActivityKind.Internal);
                     sessionActivity?.SetTag("generation.tempo", _state.Tempo);
                     sessionActivity?.SetTag("generation.scale", _state.Scale.Name);
+                    _sessionTelemetry.StartSession(
+                        Guid.NewGuid().ToString("N"),
+                        _state.Tempo,
+                        _state.Scale.Name);
                     measureNumber = 0;
                     eventsInCurrentMeasure = 0;
                     _logger.LogInformation("Playback started");
@@ -326,6 +368,7 @@ public sealed class GenerationEngine : BackgroundService
                     measureActivity = null;
                     sessionActivity?.Dispose();
                     sessionActivity = null;
+                    _sessionTelemetry.EndSession();
                     _logger.LogInformation("Playback stopped");
                     break;
 
@@ -367,6 +410,7 @@ public sealed class GenerationEngine : BackgroundService
                 _midiOutput.SendNoteOn(_state.DrumChannel, midiNote, evt.Velocity);
                 GenerationMetrics.NotesEmitted.Add(1);
                 GenerationMetrics.ActiveVoices.Add(1);
+                _sessionTelemetry.RecordNote();
             }
             catch (Exception ex)
             {
@@ -417,6 +461,7 @@ public sealed class GenerationEngine : BackgroundService
             lastMelodyNotePlayed = midiNote;
             GenerationMetrics.NotesEmitted.Add(1);
             GenerationMetrics.ActiveVoices.Add(1);
+            _sessionTelemetry.RecordNote();
             eventsInCurrentMeasure++;
         }
         catch (Exception ex)

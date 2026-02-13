@@ -32,6 +32,7 @@ builder.Services.AddOpenTelemetry()
             .AddSource("SqncR.Midi")
             .AddSource("SqncR.Playback")
             .AddSource("SqncR.Generation")
+            .AddSource("SqncR.Session")
             .AddSource("SqncR.SonicPi")
             .AddSource("SqncR.VcvRack");
     })
@@ -39,6 +40,7 @@ builder.Services.AddOpenTelemetry()
     {
         metrics
             .AddMeter("SqncR.Generation")
+            .AddMeter("SqncR.Session")
             .AddMeter("SqncR.SonicPi")
             .AddMeter("SqncR.VcvRack");
     });
@@ -61,6 +63,9 @@ builder.Services.AddSingleton<OscClient>();
 
 // Register SessionStore for session persistence
 builder.Services.AddSingleton<SessionStore>();
+
+// Register SceneStore for scene presets
+builder.Services.AddSingleton<SceneStore>();
 
 // Register GenerationEngine and its state as singletons
 builder.Services.AddSingleton<GenerationState>();
