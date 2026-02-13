@@ -29,3 +29,6 @@ The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, 
 - CLI emits a `cli.startup` test trace on every invocation for pipeline verification
 - Pattern: ActivitySources are `internal static readonly` fields on the class that owns the operations. Tags follow `{subsystem}.{attribute}` naming (e.g., `midi.channel`, `note.name`)
 - The `TracerProvider` is explicitly disposed before CLI exit to flush pending spans
+
+📌 Team update (2026-02-15): M0 session complete — OTel instrumentation pattern documented — M0 proof-of-life logged
+M0 milestone complete. Your OTel ActivitySources in MidiService + SequencePlayer + OTLP exporter in CLI provides foundation for M1 telemetry expansion. Build is clean (0 warnings), 85 tests passing (up from 13). Pattern established: libraries use only System.Diagnostics, CLI is composition root for SDK packages. Session logged to `.ai-team/log/2026-02-13-m0-proof-of-life.md`.

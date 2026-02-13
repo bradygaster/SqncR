@@ -37,3 +37,6 @@ Microsoft.Extensions.Http.Resilience 9.10.0, Microsoft.Extensions.ServiceDiscove
 - `src/SqncR.ServiceDefaults/` — shared OTel + resilience + service discovery config
 - `global.json` — pins minimum SDK 9.0.100 with latestMajor rollForward
 - `Directory.Build.props` — common net9.0, nullable, implicit usings, TreatWarningsAsErrors (src only)
+
+📌 Team update (2026-02-15): M0 session complete — Aspire infrastructure established — M0 proof-of-life logged
+M0 milestone complete. Your Aspire AppHost + ServiceDefaults + global.json + Directory.Build.props work provides foundation for M1 MCP server. Build is clean (0 warnings), 85 tests passing (up from 13). Telemetry plumbing ready for Banana Guard's ActivitySource integration. Session logged to `.ai-team/log/2026-02-13-m0-proof-of-life.md`.

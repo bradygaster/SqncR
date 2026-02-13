@@ -28,3 +28,6 @@ The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, 
 - Known limitation: `SequenceParser` can't deserialize YAML files using `{ choice: [...] }` in note fields — `NoteEvent.Note` is typed as `string` but choice constructs produce a mapping node. Affects `another-brick-in-the-wall.sqnc.yaml` and `little-fluffy-clouds.sqnc.yaml`
 - Baseline: 39 tests before M0 work → 85 tests after (72 Core + 13 Specs), all passing
 - `SqncR.AppHost.csproj` emits `error MSB4057: The target "VSTest" does not exist` when running `dotnet test` at solution root — pre-existing, not a test project issue
+
+📌 Team update (2026-02-15): NoteEvent deserialization model evolution planned — M0 proof-of-life logged
+M0 milestone complete. Your 59 new SequenceParser tests + expanded NoteParser coverage establishes confidence baseline (85 tests passing, up from 13). Known limitation filed: NoteEvent.Note must support object types for `{ choice: [...] }` constructs to parse 2 of 5 example files. Model evolution planned for M1 before full fixture validation. Session logged to `.ai-team/log/2026-02-13-m0-proof-of-life.md`.
