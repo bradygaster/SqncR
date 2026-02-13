@@ -22,6 +22,7 @@
 | Simon | Music Theorist | `.ai-team/agents/simon/charter.md` | ✅ Active |
 | Peppermint Butler | Audio/MIDI Test Engineer | `.ai-team/agents/peppermint-butler/charter.md` | ✅ Active |
 | Banana Guard | Audio Interface Dev | `.ai-team/agents/banana-guard/charter.md` | ✅ Active |
+| LSP | DevRel / Blogger | `.ai-team/agents/lsp/charter.md` | ✅ Active |
 | Scribe | Session Logger | `.ai-team/agents/scribe/charter.md` | 📋 Silent |
 | Ralph | Work Monitor | — | 🔄 Monitor |
 

@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SqncR.Core\SqncR.Core.csproj" />
     <ProjectReference Include="..\SqncR.ServiceDefaults\SqncR.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\SqncR.SonicPi\SqncR.SonicPi.csproj" />
   </ItemGroup>
 
 </Project>

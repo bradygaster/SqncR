@@ -16,6 +16,7 @@ How to decide who handles what.
 | Music theory & harmony | Simon | Scales, modes, chord progressions, voice leading, vibe-to-parameters translation |
 | Audio/MIDI testing | Peppermint Butler | Timing-sensitive tests, MIDI protocol conformance, OSC verification, latency benchmarks, mock devices |
 | Audio interfaces & routing | Banana Guard | OS-level audio I/O, ASIO/WASAPI, virtual audio routing, inter-app audio, streaming audio setup |
+| Blog posts & DevRel | LSP | Project blog posts, milestone recaps, developer storytelling, tutorials |
 | Code review | Finn | Review PRs, check quality, suggest improvements |
 | Scope & priorities | Finn | What to build next, trade-offs, decisions |
 | Session logging | Scribe | Automatic — never needs routing |

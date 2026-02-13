@@ -7,11 +7,17 @@
     <Project Path="src/SqncR.Midi/SqncR.Midi.csproj" />
     <Project Path="src/SqncR.ServiceDefaults/SqncR.ServiceDefaults.csproj" />
     <Project Path="src/SqncR.Theory/SqncR.Theory.csproj" />
+    <Project Path="src/SqncR.SonicPi/SqncR.SonicPi.csproj" />
+    <Project Path="src/SqncR.Testing/SqncR.Testing.csproj" />
+    <Project Path="src/SqncR.VcvRack/SqncR.VcvRack.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/SqncR.Core.Tests/SqncR.Core.Tests.csproj" />
     <Project Path="tests/SqncR.Midi.Tests/SqncR.Midi.Tests.csproj" />
     <Project Path="tests/SqncR.Specs/SqncR.Specs.csproj" />
     <Project Path="tests/SqncR.Theory.Tests/SqncR.Theory.Tests.csproj" />
+    <Project Path="tests/SqncR.SonicPi.Tests/SqncR.SonicPi.Tests.csproj" />
+    <Project Path="tests/SqncR.Testing.Tests/SqncR.Testing.Tests.csproj" />
+    <Project Path="tests/SqncR.VcvRack.Tests/SqncR.VcvRack.Tests.csproj" />
   </Folder>
 </Solution>

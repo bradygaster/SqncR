@@ -22,3 +22,11 @@ Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets
 
 📌 Team update (2026-02-13): Roadmap decomposed into 36 work-item GitHub issues — decided by Finn
 The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, one per logical work unit. M0 has 2 issues, M1 has 10 issues, M2 has 7 issues, M3 has 8 issues, M4 has 9 issues. Each issue has clear context, acceptance criteria, and agent ownership labels. You have been assigned to M2 issues on Sonic Pi integration. Issue tracking is now granular and actionable.
+
+### VCV Rack Integration Implementation (Issue #16)
+- **SqncR.VcvRack project:** Built the full VCV Rack integration layer with patch model (VcvModule, VcvCable, VcvPatch), fluent PatchBuilder API, ModuleLibrary (8 VCV Rack Free modules), PatchTemplates (BasicSynth, AmbientPad, BassSynth), and VcvRackLauncher (process management with ActivitySource tracing).
+- **JSON serialization:** Used `System.Text.Json.Nodes` (JsonObject/JsonArray) instead of source-generated `JsonSerializerContext` — source generation cannot handle `Dictionary<string, object>` with polymorphic values in nested structures. JsonNode API works cleanly for building VCV Rack's expected JSON format.
+- **Zstd compression:** Used `ZstdSharp.Port` NuGet + `System.Formats.Tar` for tar+zstd .vcv file generation. Falls back to raw JSON on compression failure.
+- **Port naming:** ModuleLibrary defines friendly port names (e.g. "V/Oct", "Gate", "Saw") mapped to VCV Rack port indices, enabling the fluent Cable API to resolve connections by name.
+- **loopMIDI:** VcvRackLauncher has configurable `MidiPortName` property (default "loopMIDI Port") for virtual MIDI port awareness on Windows.
+- **Tests:** 21 tests (13 PatchBuilder + 8 Serialization) — all passing. 381 total tests across solution, 0 failures.

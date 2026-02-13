@@ -107,3 +107,19 @@ The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, 
 
 📌 Team update (2026-02-14): Hardware MIDI deferred to final milestone — decided by Finn
 Device profile work (your domain) moves to M4. The v1 roadmap is restructured to prove the generation engine works entirely in software (Sonic Pi, VCV Rack) before adding hardware complexity. M0–M3 focus on software validation; M4 integrates hardware (device profiles, MIDI routing, conversational setup). This is the final integration layer, not the foundation. Rationale: fastest path to validation is MCP server → music generation in pure software → hardware complexity last.
+
+### Sonic Pi Integration (Issue #14) — 2026-02-15
+
+Built the Sonic Pi integration layer (`src/SqncR.SonicPi`):
+
+- **OscMessage.cs** — Internal minimal OSC 1.0 encoder. Handles string padding/alignment to 4-byte boundaries. Sonic Pi's `/run-code` endpoint expects two string args: a GUID tag and the Ruby code.
+- **OscClient.cs** — UDP-based OSC sender targeting `localhost:4560`. Methods: `SendCode(string)`, `StopAll()`, `IsAvailable()`. ActivitySource `SqncR.SonicPi` with spans for each OSC message, following the same `internal static readonly ActivitySource` pattern as `SqncR.Midi`.
+- **RubyCodeGenerator.cs** — Generates valid Sonic Pi Ruby DSL strings: `use_synth`, `live_loop` blocks with optional FX wrapping, `play` notes with velocity→amp conversion (v/127), FX chains (`with_fx` nesting), and sustained drones. All floating-point output uses InvariantCulture.
+- **SonicPiInstrument.cs** — Instrument abstraction mapping to the unified architecture from decisions.md. Properties: Name, SynthName, Channel, FxChain, IsActive. `Activate()` sends setup code via OSC; `Deactivate()` sends stop.
+
+Tests (30 passing): `RubyCodeGeneratorTests` (18 tests covering synth setup, live loops, play notes, FX chains, drones, edge cases), `OscClientTests` (7 tests covering construction, validation, OSC byte format), `SonicPiInstrumentTests` (5 tests covering construction, validation).
+
+Key decisions:
+- No NuGet dependency for OSC — UDP + manual byte encoding is trivial for Sonic Pi's simple protocol.
+- `OscMessage` is `internal` with `InternalsVisibleTo` for test access.
+- Sonic Pi's `/run-code` requires two string args (GUID, code), not one — discovered from Sonic Pi's OSC API docs.
