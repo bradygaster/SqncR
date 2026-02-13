@@ -27,6 +27,7 @@ public sealed class GenerationEngine : BackgroundService
     private readonly NoteTracker _noteTracker;
     private readonly HealthMonitor _healthMonitor;
     private readonly SessionTelemetry _sessionTelemetry = new();
+    private readonly ChannelRouter _channelRouter;
 
     /// <summary>Writer for enqueuing commands from external callers (MCP tools).</summary>
     public ChannelWriter<GenerationCommand> Commands => _commandChannel.Writer;
@@ -53,6 +54,7 @@ public sealed class GenerationEngine : BackgroundService
         _transition = new TransitionEngine(state.Tempo);
         _noteTracker = new NoteTracker();
         _healthMonitor = new HealthMonitor(_noteTracker);
+        _channelRouter = new ChannelRouter(state);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -236,9 +238,22 @@ public sealed class GenerationEngine : BackgroundService
                     }
                 }
 
-                // Emit melody on beat boundaries (every quarter note = every PPQ ticks)
+                // Check if instruments are registered for multi-channel routing
                 long tickInMeasure = currentTick - measureStartTick;
-                if (tickInMeasure % Ppq == 0)
+                bool hasInstruments = _state.Instruments.GetAll().Count > 0;
+
+                if (hasInstruments)
+                {
+                    // Multi-channel: route via ChannelRouter
+                    var plan = _channelRouter.GeneratePlan(tickInMeasure, Ppq, measureEvents, currentTick);
+                    foreach (var planned in plan.Notes)
+                    {
+                        EmitPlannedNote(planned, measureNumber, measureActivity, ref eventsInCurrentMeasure);
+                    }
+                }
+
+                // Legacy melody: always emit when no instruments or as fallback
+                if (!hasInstruments && tickInMeasure % Ppq == 0)
                 {
                     int beatNumber = (int)(tickInMeasure / Ppq);
                     EmitMelodyTick(ref lastMelodyNotePlayed, measureNumber,
@@ -495,6 +510,48 @@ public sealed class GenerationEngine : BackgroundService
         }
     }
 
+    private void EmitPlannedNote(PlannedNote planned, int measureNumber,
+        Activity? measureActivity, ref int eventsInCurrentMeasure)
+    {
+        using var activity = ActivitySource.StartActivity("RoutedNote",
+            ActivityKind.Internal, measureActivity?.Context ?? default);
+        activity?.SetTag("generation.measure", measureNumber);
+        activity?.SetTag("generation.channel", planned.Channel);
+        activity?.SetTag("generation.note", planned.Note);
+
+        try
+        {
+            // Turn off previous note on this channel
+            var lastNote = _channelRouter.GetLastNote(planned.Channel);
+            if (lastNote.HasValue)
+            {
+                _midiOutput.SendNoteOff(planned.Channel, lastNote.Value);
+                _noteTracker.NoteOff(planned.Channel, lastNote.Value);
+                GenerationMetrics.ActiveVoices.Add(-1);
+            }
+
+            var forcedOff = _noteTracker.NoteOn(planned.Channel, planned.Note, planned.Velocity);
+            foreach (var (ch, n) in forcedOff)
+            {
+                _midiOutput.SendNoteOff(ch, n);
+                _channelRouter.ClearChannel(ch);
+                GenerationMetrics.ActiveVoices.Add(-1);
+            }
+
+            _midiOutput.SendNoteOn(planned.Channel, planned.Note, planned.Velocity);
+            _channelRouter.RecordNotePlayed(planned.Channel, planned.Note);
+            GenerationMetrics.NotesEmitted.Add(1);
+            GenerationMetrics.ActiveVoices.Add(1);
+            _sessionTelemetry.RecordNote();
+            eventsInCurrentMeasure++;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send routed note on channel {Channel}, note {Note}",
+                planned.Channel, planned.Note);
+        }
+    }
+
     private void SendAllNotesOff()
     {
         // Send note-offs for all tracked active notes
@@ -505,6 +562,15 @@ public sealed class GenerationEngine : BackgroundService
 
         // Also send channel-wide AllNotesOff as safety net
         var channels = new HashSet<int> { _state.MelodicChannel, _state.DrumChannel };
+
+        // Include channels used by registered instruments
+        foreach (var instrument in _state.Instruments.GetAll())
+            channels.Add(instrument.MidiChannel);
+
+        // Include channels tracked by the router
+        foreach (var ch in _channelRouter.GetActiveChannels())
+            channels.Add(ch);
+
         foreach (var ch in channels)
         {
             _midiOutput.AllNotesOff(ch);

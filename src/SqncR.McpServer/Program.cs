@@ -8,6 +8,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using SqncR.Core.Generation;
+using SqncR.Core.Instruments;
 using SqncR.Core.Persistence;
 using SqncR.Midi;
 using SqncR.Midi.Testing;
@@ -66,6 +67,9 @@ builder.Services.AddSingleton<SessionStore>();
 
 // Register SceneStore for scene presets
 builder.Services.AddSingleton<SceneStore>();
+
+// Register DeviceProfileStore for device profile persistence
+builder.Services.AddSingleton<DeviceProfileStore>();
 
 // Register GenerationEngine and its state as singletons
 builder.Services.AddSingleton<GenerationState>();

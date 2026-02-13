@@ -36,6 +36,9 @@ public sealed class GenerationState
     /// <summary>Variety engine for automatic musical evolution. Null means no variety.</summary>
     public VarietyEngine? Variety { get; set; }
 
+    /// <summary>Role-aware note selector for instrument-specific note generation.</summary>
+    public RoleNoteSelector NoteSelector { get; set; } = new();
+
     /// <summary>Registry of active instruments (hardware + software).</summary>
     public InstrumentRegistry Instruments { get; } = new();
 
