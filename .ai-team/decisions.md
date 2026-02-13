@@ -242,23 +242,10 @@ sustain_pedal_on_cc64: false
 - Peppermint Butler: M2 audio integration + M3 spectral analysis + M4 long-running tests
 - Banana Guard: M4 observability and profiling (collaborating with Peppermint Butler)
 
-### 2026-02-14: Hardware MIDI deferred to final milestone
-**By:** Finn (Lead)
-**What:** The v1 roadmap has been restructured to defer hardware MIDI device setup, device profiles, and multi-channel routing to the final milestone (M4). Software synthesis via Sonic Pi and VCV Rack is now M2, and streaming-ready stability work is M3. The new arc is:
-- M0: Proof of Life (foundation, mostly done)
-- M1: The Engine Room (MCP server + generation loop + music theory + foundational rhythm)
-- M2: Software Synths (Sonic Pi OSC + VCV Rack patch generation, no hardware dependencies)
-- M3: Stream-Ready (session persistence, smooth transitions, stability, long-running testing)
-- M4: Know Your Gear (device profiles, conversational setup, multi-channel routing)
-
-**Why:** Prove the *core generation engine works* entirely in software before adding hardware complexity. The fastest path to validation is: get the MCP server talking → prove music generation works with pure software → add multi-instrument hardware complexity last. Hardware integration (device profiles, MIDI routing, conversational setup) is valuable but should be treated as a final integration layer, not the foundation. This ordering also simplifies testing: M1–M3 can be validated without hardware; M4 adds hardware-specific test fixtures. It also reflects Brady's priority of proving the music is interesting and stable before worrying about device constraints.
-
-**Impact:** Issue #1 updated with reordered milestones. All existing content preserved; testing strategy and rhythm work carry forward. Team can now focus M1–M3 efforts on software validation, then integrate hardware in the final push.
-
 ### 2026-02-14: v1 roadmap structure — 5 milestones, MCP-first
 **By:** Finn
-**What:** The v1 roadmap is structured as 5 milestones (M0–M4). M0 validates what exists. M1 builds the MCP server and generation loop (the critical path). M2 adds software synthesis (Sonic Pi/VCV Rack). M3 adds streaming-quality features (session persistence, stability). M4 adds hardware integration and polish. Each milestone produces a usable, demoable system.
-**Why:** Brady wants something compelling but shippable. Five milestones keeps it tight for a side project while hitting all the key beats: make noise → talk to it → add software synths → stream it → add hardware. MCP server is milestone 1 (not 0) because the existing CLI proves MIDI works and we shouldn't redo that. Proof of concept first, hardware complexity last.
+**What:** The v1 roadmap is structured as 5 milestones (M0–M4). M0 validates what exists. M1 builds the MCP server and generation loop (the critical path). M2 adds software synthesis (Sonic Pi/VCV Rack). M3 adds streaming-quality features (session persistence, stability). M4 adds hardware integration and polish. Each milestone produces a usable, demoable system. Hardware MIDI device setup, device profiles, and multi-channel routing are deferred to M4, the final milestone. Software synthesis via Sonic Pi and VCV Rack is M2.
+**Why:** Brady wants something compelling but shippable. Five milestones keeps it tight for a side project while hitting all the key beats: make noise → talk to it → add software synths → stream it → add hardware. MCP server is milestone 1 (not 0) because the existing CLI proves MIDI works and we shouldn't redo that. Proof of concept first, hardware complexity last. Prove the core generation engine works entirely in software before adding hardware complexity.
 
 ### 2026-02-14: Cut ML, DAW integration, and web UI from v1
 **By:** Finn
@@ -302,3 +289,24 @@ Issue #1 (the original roadmap) is now labeled as "design" to distinguish it as 
 6. **Team coordination:** Multiple agents can work in parallel without merge conflicts or stepping on toes.
 
 This decomposition makes the roadmap *executable* rather than aspirational. Each issue is small enough to complete in a focused work session, large enough to deliver value. The team now has a backlog.
+
+### 2026-02-15: NoteEvent.Note must support non-string YAML constructs
+**By:** Lemongrab
+**What:** The `NoteEvent.Note` property is typed as `string`, but 2 of 5 example .sqnc.yaml files use `{ choice: [...] }` mapping constructs for note values (e.g., `note: { choice: [D2, A1] }`). These files (`another-brick-in-the-wall.sqnc.yaml`, `little-fluffy-clouds.sqnc.yaml`) fail to deserialize through `SequenceParser`. The `Note` field needs to become `object` or a union type that can represent both plain note names and choice/weighted-random constructs. Similarly, the `Pattern` field in `SequenceEntry` has the same issue with `{ choice: [...], weights: [...] }`.
+**Why:** 40% of example files can't be parsed. This blocks any feature that needs to load those sequences. The model needs to evolve before M1 work can treat all example files as valid test fixtures. Filed as a known limitation with regression tests documenting the current failure.
+
+### 2026-02-14: Aspire infrastructure uses SDK 9.5.2 with explicit Microsoft.NET.Sdk pattern
+**By:** Jake
+**What:** The Aspire AppHost project (`src/SqncR.AppHost/`) uses the explicit two-SDK pattern: `<Project Sdk="Microsoft.NET.Sdk">` with a child `<Sdk Name="Aspire.AppHost.Sdk" Version="9.5.2" />` element, plus `Aspire.Hosting.AppHost` 9.5.2 package reference. ServiceDefaults uses OpenTelemetry 1.11.1 and Microsoft.Extensions 9.x packages. The CLI project is registered in the AppHost as `sqncr-cli`. A `Directory.Build.props` at the repo root sets common properties (net9.0, nullable, implicit usings, TreatWarningsAsErrors for src/ only). A `global.json` pins minimum SDK 9.0.100 with `latestMajor` rollForward to support the .slnx format.
+**Why:** The Aspire dashboard is the "control room" for SqncR — every musical event needs to be visible there. This M0 work establishes the plumbing so Banana Guard can wire up ActivitySources and exporters, and so every subsequent milestone has OTel infrastructure ready. The two-SDK pattern is required because Aspire.AppHost.Sdk 9.5.2 doesn't auto-import Microsoft.NET.Sdk (fixed in 13.0.0+). TreatWarningsAsErrors is scoped to src/ to avoid breaking builds on pre-existing xUnit analyzer warnings in test code.
+
+### 2026-02-13: User directive — track issue lifecycle on GitHub
+**By:** Brady (via Copilot)
+**What:** Mark GitHub issues as in-progress when work starts and close them when work is complete. Use labels, assignees, and issue state transitions to keep the backlog accurate. The board should always reflect reality.
+**Why:** User request — Brady wants issue status to be actively managed, not just used for planning.
+
+### 2026-02-14: OpenTelemetry instrumentation pattern — System.Diagnostics in libraries, OTel SDK only in CLI
+**By:** Banana Guard
+**What:** Library projects (SqncR.Core, SqncR.Midi) use only `System.Diagnostics.ActivitySource` and `Activity` for instrumentation — no OpenTelemetry NuGet packages. The CLI project is the composition root that adds OpenTelemetry SDK (`OpenTelemetry`, `OpenTelemetry.Exporter.OpenTelemetryProtocol`, `OpenTelemetry.Extensions.Hosting`) and registers the ActivitySources by name. ActivitySources are declared as `internal static readonly` fields on the owning class. Span tags follow `{subsystem}.{attribute}` naming. The OTLP endpoint defaults to `http://localhost:4317` (Aspire dashboard) and is overridable via `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable.
+**Why:** This is the canonical .NET pattern for distributed tracing. Libraries shouldn't take hard dependencies on specific telemetry exporters — they just emit activities. The host process decides where traces go. This keeps the library packages lightweight and avoids version conflicts. It also means any future host (AppHost, test harness, MCP server) can collect the same traces by registering the same source names.
+
