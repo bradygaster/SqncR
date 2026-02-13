@@ -200,6 +200,34 @@ flowchart TD
 - **Tooling**: Excellent IDE support (Visual Studio, Rider, VS Code)
 - **Modern**: .NET 9+ with latest language features
 
+## MCP Integration
+
+SqncR runs as an MCP server over stdio — any MCP-compatible AI assistant can control it.
+
+**Quick start:**
+
+```bash
+dotnet run --project src/SqncR.McpServer
+```
+
+**VS Code / GitHub Copilot:** The repo includes `.vscode/mcp.json` — Copilot discovers the server automatically after cloning.
+
+**Claude Desktop:** Add to your config:
+```json
+{
+  "mcpServers": {
+    "sqncr": {
+      "command": "dotnet",
+      "args": ["run", "--project", "path/to/SqncR/src/SqncR.McpServer"]
+    }
+  }
+}
+```
+
+**Available tools:** `ping`, `list_devices`, `open_device`, `start_generation`, `modify_generation`, `stop_generation`, `get_status`
+
+📖 **[Full MCP Integration Guide →](docs/mcp-integration.md)** — tool reference, parameters, example conversations, and troubleshooting.
+
 ## Getting Started (Future)
 
 ```bash
@@ -252,6 +280,7 @@ dotnet run
 ## Documentation
 
 - [README.md](README.md) - Project overview and getting started
+- [MCP Integration Guide](docs/mcp-integration.md) - Connect AI assistants to SqncR
 - [CONCEPT.md](CONCEPT.md) - High-level vision and philosophy
 - [ARCHITECTURE.md](ARCHITECTURE.md) - AI-native system design
 - [DIAGRAMS.md](DIAGRAMS.md) - Visual architecture guide with Mermaid diagrams
