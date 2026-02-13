@@ -19,6 +19,11 @@ public static class PatternLibrary
             ["hip-hop"] = BuildHipHop,
             ["jazz"] = BuildJazz,
             ["ambient"] = BuildAmbient,
+            ["breakbeat"] = BuildBreakbeat,
+            ["half-time"] = BuildHalfTime,
+            ["shuffle"] = BuildShuffle,
+            ["latin-clave"] = BuildLatinClave,
+            ["bossa-nova"] = BuildBossaNova,
         }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
@@ -100,6 +105,78 @@ public static class PatternLibrary
         return new LayeredPattern("ambient", [
             (DrumVoice.Kick, kick),
             (DrumVoice.RimShot, rim)
+        ]);
+    }
+
+    private static LayeredPattern BuildBreakbeat()
+    {
+        // Breakbeat: syncopated kick with snare on 2 & 4, busy hat work
+        var kick = FromHits(16, [0, 3, 6, 10], 110, "breakbeat-kick");
+        var snare = FromHits(16, [4, 12], 110, "breakbeat-snare");
+        var hat = BuildAccentedHat(16, "breakbeat-hat");
+
+        return new LayeredPattern("breakbeat", [
+            (DrumVoice.Kick, kick),
+            (DrumVoice.Snare, snare),
+            (DrumVoice.ClosedHiHat, hat)
+        ]);
+    }
+
+    private static LayeredPattern BuildHalfTime()
+    {
+        // Half-time: kick on 1, snare on 3, open hat on 8ths
+        var kick = FromHits(16, [0], 110, "halftime-kick");
+        var snare = FromHits(16, [8], 110, "halftime-snare");
+        var hat = FromHits(16, [0, 4, 8, 12], 80, "halftime-hat");
+
+        return new LayeredPattern("half-time", [
+            (DrumVoice.Kick, kick),
+            (DrumVoice.Snare, snare),
+            (DrumVoice.ClosedHiHat, hat)
+        ]);
+    }
+
+    private static LayeredPattern BuildShuffle()
+    {
+        // Shuffle: kick on 1 & 3, snare on 2 & 4, triplet-feel hat (accented on beats)
+        var kick = FromHits(16, [0, 8], 110, "shuffle-kick");
+        var snare = FromHits(16, [4, 12], 110, "shuffle-snare");
+        // Simulate triplet shuffle with alternating velocities
+        var hat = FromHitsWithVelocity(16,
+            [(0, 100), (1, 50), (2, 80), (3, 50), (4, 100), (5, 50),
+             (6, 80), (7, 50), (8, 100), (9, 50), (10, 80), (11, 50),
+             (12, 100), (13, 50), (14, 80), (15, 50)], "shuffle-hat");
+
+        return new LayeredPattern("shuffle", [
+            (DrumVoice.Kick, kick),
+            (DrumVoice.Snare, snare),
+            (DrumVoice.ClosedHiHat, hat)
+        ]);
+    }
+
+    private static LayeredPattern BuildLatinClave()
+    {
+        // Son clave 3-2 pattern: hits on steps 0, 3, 6, 10, 12
+        var clave = FromHits(16, [0, 3, 6, 10, 12], 100, "clave-3-2");
+        var kick = FromHits(16, [0, 8], 90, "clave-kick");
+
+        return new LayeredPattern("latin-clave", [
+            (DrumVoice.RimShot, clave),
+            (DrumVoice.Kick, kick)
+        ]);
+    }
+
+    private static LayeredPattern BuildBossaNova()
+    {
+        // Bossa nova: cross-stick pattern with bass drum, gentle hat
+        var crossStick = FromHits(16, [2, 6, 10, 14], 80, "bossa-cross");
+        var kick = FromHits(16, [0, 4, 10], 90, "bossa-kick");
+        var hat = FromHits(16, [0, 2, 4, 6, 8, 10, 12, 14], 60, "bossa-hat");
+
+        return new LayeredPattern("bossa-nova", [
+            (DrumVoice.SideStick, crossStick),
+            (DrumVoice.Kick, kick),
+            (DrumVoice.ClosedHiHat, hat)
         ]);
     }
 

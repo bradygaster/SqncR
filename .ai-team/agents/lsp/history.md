@@ -39,3 +39,17 @@ Brady wants the team to blog about the project as it progresses. Live documentat
 - Voice characteristics: emojis used minimally but present, narrative arc (origin → problem → solution → code → validation → next), explain "why" not just "what", target audience remains developer-musicians
 - Blog post length: ~6k words (shorter than M1's 14k, more focused scope)
 - Key metadata: front matter with date 2026-02-14, 6 tags (sqncr, sonic-pi, vcv-rack, spectral-analysis, testing, generative-music)
+
+**M3 Blog Post (2026-02-15):**
+- Third blog post written: "Stream-Ready: Building a Music Generator That Won't Crash Live"
+- Covers M3 delivery: session persistence (save/load state), variety engine (6 automatic evolution behaviors at 3 levels), smooth transitions (TransitionEngine + common-tone bridging), long-running stability (NoteTracker 32-note cap + HealthMonitor), preset scenes (ambient-pad/driving-techno/chill-lofi), session telemetry
+- Technical deep dives: CircularBuffer health tracking, note velocity sine-wave LFO, octave drift scheduling, rhythmic fill timing, polyphony safety mechanics, OSC round-trip recovery
+- Key narrative: streaming context—what breaks during live performance (lost state, repetition, abrupt changes, polyphony overflow, latency creep)—and how M3 solved each
+- Code snippets highlight: VarietyEngine behavior selection (ConservativeVelocityVariation, RhythmicFill implementation), TransitionEngine smooth tempo glide, CommonToneBridge scale morphing, NoteTracker forced note release, HealthMonitor rolling averages
+- Emphasized variety engine as musically sophisticated feature—6 behaviors, 3 levels, every decision telemetrized
+- Also emphasized repository cleanup: 24K lines deleted, build time -69%, size -74%, dependency reduction
+- Structure: streaming problem → five solutions (persistence, variety, transitions, health, scenes) → cleanup → tests → M4 teaser
+- Tone: narrative focus on "streaming survival," practical/defensive design, humorous (e.g., "your synth fills with stuck notes. Audio clipping. Crash.")
+- Voice characteristics: streaming/gamer culture references, problem-solution format, "why production != demo", explain edge cases (MIDI backup, polyphony pressure), target audience widens to include live performers + coders
+- Blog post length: ~8k words (comprehensive M3 coverage)
+- Key metadata: front matter with date 2026-02-15, 6 tags (sqncr, stability, streaming, generative-music, variety-engine, persistence)

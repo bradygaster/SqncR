@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Threading.Channels;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SqncR.Core.Instruments;
 using SqncR.Core.Rhythm;
 using SqncR.Midi.Testing;
 
@@ -375,6 +376,18 @@ public sealed class GenerationEngine : BackgroundService
                 case GenerationCommand.AllNotesOff:
                     SendAllNotesOff();
                     _logger.LogInformation("All notes off (panic)");
+                    break;
+
+                case GenerationCommand.AddInstrument addInstrument:
+                    _state.Instruments.Add(addInstrument.Instrument);
+                    _logger.LogInformation("Instrument added: {Id} ({Name})",
+                        addInstrument.Instrument.Id, addInstrument.Instrument.Name);
+                    break;
+
+                case GenerationCommand.RemoveInstrument removeInstrument:
+                    _state.Instruments.Remove(removeInstrument.InstrumentId);
+                    _logger.LogInformation("Instrument removed: {Id}",
+                        removeInstrument.InstrumentId);
                     break;
             }
         }

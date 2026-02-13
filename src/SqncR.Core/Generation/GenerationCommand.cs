@@ -1,3 +1,4 @@
+using SqncR.Core.Instruments;
 using SqncR.Core.Rhythm;
 using SqncR.Theory;
 
@@ -19,6 +20,8 @@ public abstract record GenerationCommand
     public sealed record SetTempoSmooth(double Bpm, int TransitionBars = 4) : GenerationCommand;
     public sealed record SetScaleSmooth(Scale Scale, int TransitionBars = 4) : GenerationCommand;
     public sealed record SetVarietyLevel(VarietyLevel Level) : GenerationCommand;
+    public sealed record AddInstrument(Instrument Instrument) : GenerationCommand;
+    public sealed record RemoveInstrument(string InstrumentId) : GenerationCommand;
     public sealed record Start : GenerationCommand;
     public sealed record Stop : GenerationCommand;
     public sealed record AllNotesOff : GenerationCommand;

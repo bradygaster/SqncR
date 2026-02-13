@@ -1,3 +1,4 @@
+using SqncR.Core.Instruments;
 using SqncR.Core.Rhythm;
 using SqncR.Theory;
 
@@ -34,6 +35,9 @@ public sealed class GenerationState
 
     /// <summary>Variety engine for automatic musical evolution. Null means no variety.</summary>
     public VarietyEngine? Variety { get; set; }
+
+    /// <summary>Registry of active instruments (hardware + software).</summary>
+    public InstrumentRegistry Instruments { get; } = new();
 
     /// <summary>Index tracking the current position in the scale walk for melody.</summary>
     internal int MelodyScaleIndex { get; set; }

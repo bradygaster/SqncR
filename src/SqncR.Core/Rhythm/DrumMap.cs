@@ -69,4 +69,15 @@ public sealed class DrumMap
         [DrumVoice.Cowbell] = 56,
         [DrumVoice.RimShot] = 37
     });
+
+    /// <summary>Simplified kit — fewer voices for software synths with limited mapping.</summary>
+    public static DrumMap SimplifiedKit { get; } = new("Simplified Kit", new Dictionary<DrumVoice, int>
+    {
+        [DrumVoice.Kick] = 36,
+        [DrumVoice.Snare] = 38,
+        [DrumVoice.ClosedHiHat] = 42,
+        [DrumVoice.OpenHiHat] = 46,
+        [DrumVoice.Crash] = 49,
+        [DrumVoice.Ride] = 51
+    });
 }
