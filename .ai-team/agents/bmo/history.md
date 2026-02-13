@@ -43,3 +43,13 @@ Your unified Instrument abstraction remains the core architectural pattern. Howe
 
 📌 Team update (2026-02-13): Roadmap decomposed into 36 work-item GitHub issues — decided by Finn
 The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, one per logical work unit. M0 has 2 issues, M1 has 10 issues, M2 has 7 issues, M3 has 8 issues, M4 has 9 issues. Each issue has clear context, acceptance criteria, and agent ownership labels. You have been assigned to M1 issues on architecture and design. Issue tracking is now granular and actionable.
+
+### 2026-02-15: Long-Running Stability (Issue #24)
+- **NoteTracker** uses `Dictionary<(int channel, int note), long>` keyed by channel+note with timestamp. `MaxActiveNotes` defaults to 32 — when exceeded, the oldest note is forced off (safer than crashing). Duplicate note-on re-triggers the same key without leaking.
+- **HealthMonitor** uses a fixed-size circular buffer (1000 entries) for latency tracking — no allocations during steady state. Missed ticks detected via >2x expected duration threshold. `IsHealthy` flags if >5% ticks missed or avg latency >50ms.
+- **Error recovery**: All MIDI sends in the engine are wrapped in try/catch — a failing device logs the error and continues rather than crashing the generation loop. Critical for streaming where uptime matters more than a single missed note.
+- **Tick skip-ahead**: When a tick arrives >2x late, the engine skips forward rather than queuing up a backlog. Prevents cascading latency.
+- **Shutdown cleanup**: `SendAllNotesOff()` now drains NoteTracker's active set with individual note-offs before sending channel-wide AllNotesOff as a safety net.
+- **MCP surface**: `get_health` returns a JSON HealthSnapshot; `all_notes_off` is a panic button. Both registered via `WithToolsFromAssembly()`.
+- **AllNotesOff command**: Added to `GenerationCommand` as a first-class command processable mid-playback.
+- 14 new tests covering NoteTracker, HealthMonitor, error recovery, and engine integration. All pass alongside 220+ existing tests (1 pre-existing failure in VarietyEngineTests is unrelated).

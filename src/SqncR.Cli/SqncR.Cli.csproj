@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\SqncR.Core\SqncR.Core.csproj" />
+    <ProjectReference Include="..\SqncR.Midi\SqncR.Midi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

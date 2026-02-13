@@ -14,7 +14,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/SqncR.Core.Tests/SqncR.Core.Tests.csproj" />
     <Project Path="tests/SqncR.Midi.Tests/SqncR.Midi.Tests.csproj" />
-    <Project Path="tests/SqncR.Specs/SqncR.Specs.csproj" />
     <Project Path="tests/SqncR.Theory.Tests/SqncR.Theory.Tests.csproj" />
     <Project Path="tests/SqncR.SonicPi.Tests/SqncR.SonicPi.Tests.csproj" />
     <Project Path="tests/SqncR.Testing.Tests/SqncR.Testing.Tests.csproj" />

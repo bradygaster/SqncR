@@ -8,6 +8,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using SqncR.Core.Generation;
+using SqncR.Core.Persistence;
 using SqncR.Midi;
 using SqncR.Midi.Testing;
 using SqncR.SonicPi;
@@ -57,6 +58,9 @@ builder.Services.AddSingleton<VcvRackLauncher>();
 
 // Register Sonic Pi OscClient for DI
 builder.Services.AddSingleton<OscClient>();
+
+// Register SessionStore for session persistence
+builder.Services.AddSingleton<SessionStore>();
 
 // Register GenerationEngine and its state as singletons
 builder.Services.AddSingleton<GenerationState>();

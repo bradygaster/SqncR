@@ -24,3 +24,18 @@ Brady approved using Claude Opus (claude-opus-4.6) for coding tasks. "Feel FREE 
 
 📌 Team update (2026-02-13): Blog as we go — decided by Brady
 Brady wants the team to blog about the project as it progresses. Live documentation of the build journey. DevRel/content creation running parallel to development.
+
+## Learnings
+
+**M2 Blog Post (2026-02-14):**
+- Second blog post written: "Making Sound: Sonic Pi, VCV Rack, and Teaching Tests to Hear"
+- Covers M2 delivery: Sonic Pi OSC integration, VCV Rack patch generation, spectral analysis testing
+- Technical deep dives: OSC protocol binary encoding, fluent PatchBuilder API, FFT-based frequency detection, AudioAssertions test helpers
+- Key narrative: why software synths before hardware (accessibility), why OSC+Ruby instead of plain MIDI (expressivity), why spectral analysis matters (acoustic validation of generative output)
+- Code snippets highlight: OscMessage.Encode() (binary protocol), SonicPiCodeGenerator (code generation), PatchBuilder fluent pattern, SpectralAnalyzer.ComputeFFT() (DFT), AudioAssertions.AssertContainsFrequency() (test framework)
+- Emphasized "teaching tests to hear" as unique capability — validates that actual audio contains expected frequencies, not just that code ran
+- Teaser for M3: persistence, variety, stability, musical form (verse/chorus/bridge)
+- Tone: enthusiastic, technical, metaphorical ("the voice" of the generation engine)
+- Voice characteristics: emojis used minimally but present, narrative arc (origin → problem → solution → code → validation → next), explain "why" not just "what", target audience remains developer-musicians
+- Blog post length: ~6k words (shorter than M1's 14k, more focused scope)
+- Key metadata: front matter with date 2026-02-14, 6 tags (sqncr, sonic-pi, vcv-rack, spectral-analysis, testing, generative-music)

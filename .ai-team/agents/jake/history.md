@@ -49,3 +49,6 @@ Created `src/SqncR.McpServer/Tools/SonicPiTool.cs` with 5 MCP tools: `setup_soft
 
 📌 Team update (2026-02-16): Sonic Pi OscClient as Singleton in MCP Server DI — decided by Jake
 Register OscClient as a singleton in the DI container with default constructor (port 4560, host 127.0.0.1). All Sonic Pi MCP tools receive it via parameter injection, matching established pattern (MidiService, GenerationEngine). Singleton prevents socket waste and leaks. Default port 4560 is Sonic Pi standard. Configuration override can be added later if needed. FX chain defaults to mix: 0.5.
+
+📌 Issue #21: Session persistence (save/load/list) implemented — decided by Jake
+Created `SessionState` (serializable snapshot) and `SessionStore` (file-based JSON persistence at `~/.sqncr/sessions/`). Three MCP tools: `save_session(name)`, `load_session(name)`, `list_sessions()`. `SessionStore` accepts a custom directory via constructor for testability. `SessionState.ApplyTo()` enqueues commands via engine channel, gracefully skips missing patterns. 9 new tests (round-trip, missing session, list, delete, invalid JSON, overwrite, field capture). Build clean, all new tests pass. Pre-existing `TempoChange_MidPlay_NotesComeFaster` test failure is unrelated.

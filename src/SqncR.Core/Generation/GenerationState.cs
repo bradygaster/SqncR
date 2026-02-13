@@ -32,6 +32,9 @@ public sealed class GenerationState
     /// <summary>Pluggable note generation algorithm.</summary>
     public INoteGenerator NoteGenerator { get; set; } = new WeightedNoteGenerator();
 
+    /// <summary>Variety engine for automatic musical evolution. Null means no variety.</summary>
+    public VarietyEngine? Variety { get; set; }
+
     /// <summary>Index tracking the current position in the scale walk for melody.</summary>
     internal int MelodyScaleIndex { get; set; }
 

@@ -22,7 +22,8 @@ public static class GenerationTool
         [Description("Scale name (e.g. 'Pentatonic Minor', 'Dorian', 'Blues')")] string scale = "Pentatonic Minor",
         [Description("Root note (e.g. 'C4', 'F#3', 'Bb2')")] string rootNote = "C4",
         [Description("Drum pattern (rock, house, hip-hop, jazz, ambient)")] string pattern = "rock",
-        [Description("Base octave for melody (0-8)")] int octave = 4)
+        [Description("Base octave for melody (0-8)")] int octave = 4,
+        [Description("Variety level: conservative, moderate, adventurous, off")] string variety = "off")
     {
         using var activity = ActivitySource.StartActivity("mcp.start_generation");
         activity?.SetTag("mcp.tool", "start_generation");
@@ -37,9 +38,21 @@ public static class GenerationTool
             engine.Commands.TryWrite(new GenerationCommand.SetScale(scaleObj));
             engine.Commands.TryWrite(new GenerationCommand.SetPattern(patternObj));
             engine.Commands.TryWrite(new GenerationCommand.SetOctave(octave));
+
+            var varietySuffix = "";
+            if (!string.Equals(variety, "off", StringComparison.OrdinalIgnoreCase))
+            {
+                var varietyLevel = ParseVarietyLevel(variety);
+                if (varietyLevel.HasValue)
+                {
+                    engine.Commands.TryWrite(new GenerationCommand.SetVarietyLevel(varietyLevel.Value));
+                    varietySuffix = $", variety {variety}";
+                }
+            }
+
             engine.Commands.TryWrite(new GenerationCommand.Start());
 
-            return $"Started generation: {tempo} BPM, {scaleObj.Name} (root {rootNote}), {pattern} pattern, octave {octave}";
+            return $"Started generation: {tempo} BPM, {scaleObj.Name} (root {rootNote}), {pattern} pattern, octave {octave}{varietySuffix}";
         }
         catch (ArgumentException ex)
         {
@@ -55,7 +68,9 @@ public static class GenerationTool
         [Description("New scale name")] string? scale = null,
         [Description("New root note (e.g. 'C4')")] string? rootNote = null,
         [Description("New drum pattern")] string? pattern = null,
-        [Description("New base octave")] int? octave = null)
+        [Description("New base octave")] int? octave = null,
+        [Description("When true, transitions happen smoothly over bars instead of instantly")] bool smooth = false,
+        [Description("Variety level: conservative, moderate, adventurous, off")] string? variety = null)
     {
         using var activity = ActivitySource.StartActivity("mcp.modify_generation");
         activity?.SetTag("mcp.tool", "modify_generation");
@@ -66,8 +81,11 @@ public static class GenerationTool
         {
             if (tempo.HasValue)
             {
-                engine.Commands.TryWrite(new GenerationCommand.SetTempo(tempo.Value));
-                modified.AppendLine($"  Tempo → {tempo.Value} BPM");
+                if (smooth)
+                    engine.Commands.TryWrite(new GenerationCommand.SetTempoSmooth(tempo.Value));
+                else
+                    engine.Commands.TryWrite(new GenerationCommand.SetTempo(tempo.Value));
+                modified.AppendLine($"  Tempo → {tempo.Value} BPM{(smooth ? " (smooth)" : "")}");
             }
 
             if (!string.IsNullOrWhiteSpace(scale) || !string.IsNullOrWhiteSpace(rootNote))
@@ -77,8 +95,11 @@ public static class GenerationTool
                     ? NoteParser.Parse(rootNote)
                     : state.Scale.RootNote;
                 var scaleObj = ScaleLibrary.Get(resolvedScale, resolvedRoot);
-                engine.Commands.TryWrite(new GenerationCommand.SetScale(scaleObj));
-                modified.AppendLine($"  Scale → {scaleObj.Name}");
+                if (smooth)
+                    engine.Commands.TryWrite(new GenerationCommand.SetScaleSmooth(scaleObj));
+                else
+                    engine.Commands.TryWrite(new GenerationCommand.SetScale(scaleObj));
+                modified.AppendLine($"  Scale → {scaleObj.Name}{(smooth ? " (smooth)" : "")}");
             }
 
             if (!string.IsNullOrWhiteSpace(pattern))
@@ -92,6 +113,24 @@ public static class GenerationTool
             {
                 engine.Commands.TryWrite(new GenerationCommand.SetOctave(octave.Value));
                 modified.AppendLine($"  Octave → {octave.Value}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(variety))
+            {
+                if (string.Equals(variety, "off", StringComparison.OrdinalIgnoreCase))
+                {
+                    state.Variety = null;
+                    modified.AppendLine("  Variety → off");
+                }
+                else
+                {
+                    var varietyLevel = ParseVarietyLevel(variety);
+                    if (varietyLevel.HasValue)
+                    {
+                        engine.Commands.TryWrite(new GenerationCommand.SetVarietyLevel(varietyLevel.Value));
+                        modified.AppendLine($"  Variety → {variety}");
+                    }
+                }
             }
 
             if (modified.Length == 0)
@@ -115,4 +154,12 @@ public static class GenerationTool
 
         return "Generation stopped.";
     }
+
+    private static VarietyLevel? ParseVarietyLevel(string value) => value.ToLowerInvariant() switch
+    {
+        "conservative" => VarietyLevel.Conservative,
+        "moderate" => VarietyLevel.Moderate,
+        "adventurous" => VarietyLevel.Adventurous,
+        _ => null
+    };
 }

@@ -22,9 +22,18 @@ public sealed class GenerationEngine : BackgroundService
     private readonly IMidiOutput _midiOutput;
     private readonly ILogger<GenerationEngine> _logger;
     private readonly Channel<GenerationCommand> _commandChannel;
+    private readonly TransitionEngine _transition;
+    private readonly NoteTracker _noteTracker;
+    private readonly HealthMonitor _healthMonitor;
 
     /// <summary>Writer for enqueuing commands from external callers (MCP tools).</summary>
     public ChannelWriter<GenerationCommand> Commands => _commandChannel.Writer;
+
+    /// <summary>Provides access to the note tracker for health reporting.</summary>
+    public NoteTracker NoteTracker => _noteTracker;
+
+    /// <summary>Provides access to the health monitor for health reporting.</summary>
+    public HealthMonitor HealthMonitor => _healthMonitor;
 
     public GenerationEngine(
         GenerationState state,
@@ -36,6 +45,9 @@ public sealed class GenerationEngine : BackgroundService
         _logger = logger;
         _commandChannel = Channel.CreateUnbounded<GenerationCommand>(
             new UnboundedChannelOptions { SingleReader = true });
+        _transition = new TransitionEngine(state.Tempo);
+        _noteTracker = new NoteTracker();
+        _healthMonitor = new HealthMonitor(_noteTracker);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -80,11 +92,19 @@ public sealed class GenerationEngine : BackgroundService
                     continue;
                 }
 
-                // Calculate microseconds per tick from BPM
+                // Advance transitions
+                int transitionTicksPerMeasure = 4 * Ppq; // 4/4 time
+                _transition.Tick(currentTick, transitionTicksPerMeasure);
+
+                // If a tempo transition completed, update state
+                if (_transition.TempoTransition == TransitionEngine.TransitionState.None)
+                    _state.Tempo = _transition.CurrentEffectiveTempo;
+
+                // Calculate microseconds per tick from BPM (use interpolated tempo)
                 // BPM = quarter notes per minute
                 // microseconds per quarter note = 60_000_000 / BPM
                 // microseconds per tick = microseconds per quarter note / PPQ
-                double usPerTick = 60_000_000.0 / (_state.Tempo * Ppq);
+                double usPerTick = 60_000_000.0 / (_transition.CurrentEffectiveTempo * Ppq);
 
                 // Wait for the next tick using Stopwatch + spin-wait
                 double targetUs = (currentTick + 1) * usPerTick;
@@ -111,6 +131,19 @@ public sealed class GenerationEngine : BackgroundService
                 double actualUs = stopwatch.Elapsed.TotalMicroseconds;
                 double latencyUs = Math.Abs(actualUs - targetUs);
                 GenerationMetrics.TickLatency.Record(latencyUs);
+
+                // Record tick for health monitoring
+                _healthMonitor.SetExpectedTickDuration(usPerTick / 1000.0);
+                _healthMonitor.RecordTick(currentTick, (long)(latencyUs / 1000.0));
+
+                // If tick is >2x late, skip ahead to catch up
+                if (latencyUs > usPerTick * 2)
+                {
+                    long ticksToSkip = (long)(latencyUs / usPerTick);
+                    currentTick += ticksToSkip;
+                    _logger.LogWarning("Tick {Tick} late by {LatencyUs}µs, skipping {Skip} ticks",
+                        currentTick, latencyUs, ticksToSkip);
+                }
 
                 currentTick++;
 
@@ -139,6 +172,9 @@ public sealed class GenerationEngine : BackgroundService
                     measureEventIndex = 0;
                     measureNumber++;
                     eventsInCurrentMeasure = 0;
+
+                    // Trigger variety engine on measure boundary
+                    _state.Variety?.OnMeasureBoundary(_state, measureNumber);
 
                     // Start new measure span as child of session
                     measureActivity = ActivitySource.StartActivity("Measure",
@@ -207,6 +243,7 @@ public sealed class GenerationEngine : BackgroundService
             {
                 case GenerationCommand.SetTempo setTempo:
                     _state.Tempo = setTempo.Bpm;
+                    _transition.SetTempo(setTempo.Bpm);
                     _logger.LogInformation("Tempo set to {Bpm} BPM", setTempo.Bpm);
                     break;
 
@@ -216,6 +253,25 @@ public sealed class GenerationEngine : BackgroundService
                     _state.MelodyDirection = 1;
                     _logger.LogInformation("Scale set to {Scale}", setScale.Scale.Name);
                     break;
+
+                case GenerationCommand.SetTempoSmooth setTempoSmooth:
+                {
+                    int ticksPerMeasure = 4 * Ppq; // 4/4 time
+                    _transition.StartTempoTransition(setTempoSmooth.Bpm, setTempoSmooth.TransitionBars, currentTick, ticksPerMeasure);
+                    _logger.LogInformation("Smooth tempo transition to {Bpm} BPM over {Bars} bars", setTempoSmooth.Bpm, setTempoSmooth.TransitionBars);
+                    break;
+                }
+
+                case GenerationCommand.SetScaleSmooth setScaleSmooth:
+                {
+                    int ticksPerMeasure = 4 * Ppq; // 4/4 time
+                    _transition.StartScaleTransition(_state.Scale, setScaleSmooth.Scale, setScaleSmooth.TransitionBars, currentTick, ticksPerMeasure);
+                    _state.Scale = setScaleSmooth.Scale;
+                    _state.MelodyScaleIndex = 0;
+                    _state.MelodyDirection = 1;
+                    _logger.LogInformation("Smooth scale transition to {Scale} over {Bars} bars", setScaleSmooth.Scale.Name, setScaleSmooth.TransitionBars);
+                    break;
+                }
 
                 case GenerationCommand.SetPattern setPattern:
                     _state.DrumPattern = setPattern.Pattern;
@@ -244,6 +300,15 @@ public sealed class GenerationEngine : BackgroundService
                     _state.DrumChannel = setDrumChannel.Channel;
                     break;
 
+                case GenerationCommand.SetVarietyLevel setVariety:
+                    if (setVariety.Level is { } level)
+                    {
+                        _state.Variety ??= new VarietyEngine();
+                        _state.Variety.Level = level;
+                    }
+                    _logger.LogInformation("Variety level set to {Level}", setVariety.Level);
+                    break;
+
                 case GenerationCommand.Start:
                     _state.IsPlaying = true;
                     sessionActivity = ActivitySource.StartActivity("Session", ActivityKind.Internal);
@@ -262,6 +327,11 @@ public sealed class GenerationEngine : BackgroundService
                     sessionActivity?.Dispose();
                     sessionActivity = null;
                     _logger.LogInformation("Playback stopped");
+                    break;
+
+                case GenerationCommand.AllNotesOff:
+                    SendAllNotesOff();
+                    _logger.LogInformation("All notes off (panic)");
                     break;
             }
         }
@@ -286,9 +356,23 @@ public sealed class GenerationEngine : BackgroundService
         if (drumMap.Contains(evt.Voice))
         {
             int midiNote = drumMap.GetMidiNote(evt.Voice);
-            _midiOutput.SendNoteOn(_state.DrumChannel, midiNote, evt.Velocity);
-            GenerationMetrics.NotesEmitted.Add(1);
-            GenerationMetrics.ActiveVoices.Add(1);
+            try
+            {
+                var forcedOff = _noteTracker.NoteOn(_state.DrumChannel, midiNote, evt.Velocity);
+                foreach (var (ch, n) in forcedOff)
+                {
+                    _midiOutput.SendNoteOff(ch, n);
+                    GenerationMetrics.ActiveVoices.Add(-1);
+                }
+                _midiOutput.SendNoteOn(_state.DrumChannel, midiNote, evt.Velocity);
+                GenerationMetrics.NotesEmitted.Add(1);
+                GenerationMetrics.ActiveVoices.Add(1);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send drum event on channel {Channel}, note {Note}",
+                    _state.DrumChannel, midiNote);
+            }
         }
     }
 
@@ -313,15 +397,33 @@ public sealed class GenerationEngine : BackgroundService
         // Turn off previous note
         TurnOffMelodyNote(ref lastMelodyNotePlayed);
 
+        // Variety engine: rest insertion for breathing room
+        if (_state.Variety?.ShouldInsertRest() == true) return;
+
         var note = _state.NoteGenerator.NextNote(_state);
         if (note == null) return; // rest
 
         int midiNote = note.Value;
-        _midiOutput.SendNoteOn(_state.MelodicChannel, midiNote, 80);
-        lastMelodyNotePlayed = midiNote;
-        GenerationMetrics.NotesEmitted.Add(1);
-        GenerationMetrics.ActiveVoices.Add(1);
-        eventsInCurrentMeasure++;
+        int velocity = _state.Variety?.ApplyVelocityDrift(80) ?? 80;
+        try
+        {
+            var forcedOff = _noteTracker.NoteOn(_state.MelodicChannel, midiNote, velocity);
+            foreach (var (ch, n) in forcedOff)
+            {
+                _midiOutput.SendNoteOff(ch, n);
+                GenerationMetrics.ActiveVoices.Add(-1);
+            }
+            _midiOutput.SendNoteOn(_state.MelodicChannel, midiNote, velocity);
+            lastMelodyNotePlayed = midiNote;
+            GenerationMetrics.NotesEmitted.Add(1);
+            GenerationMetrics.ActiveVoices.Add(1);
+            eventsInCurrentMeasure++;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send melody event on channel {Channel}, note {Note}",
+                _state.MelodicChannel, midiNote);
+        }
     }
 
     private void TurnOffMelodyNote(ref int lastMelodyNotePlayed)
@@ -329,6 +431,7 @@ public sealed class GenerationEngine : BackgroundService
         if (lastMelodyNotePlayed >= 0)
         {
             _midiOutput.SendNoteOff(_state.MelodicChannel, lastMelodyNotePlayed);
+            _noteTracker.NoteOff(_state.MelodicChannel, lastMelodyNotePlayed);
             GenerationMetrics.ActiveVoices.Add(-1);
             lastMelodyNotePlayed = -1;
         }
@@ -336,6 +439,13 @@ public sealed class GenerationEngine : BackgroundService
 
     private void SendAllNotesOff()
     {
+        // Send note-offs for all tracked active notes
+        foreach (var (ch, n) in _noteTracker.AllNotesOff())
+        {
+            _midiOutput.SendNoteOff(ch, n);
+        }
+
+        // Also send channel-wide AllNotesOff as safety net
         var channels = new HashSet<int> { _state.MelodicChannel, _state.DrumChannel };
         foreach (var ch in channels)
         {
