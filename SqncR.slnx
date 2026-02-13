@@ -19,5 +19,6 @@
     <Project Path="tests/SqncR.SonicPi.Tests/SqncR.SonicPi.Tests.csproj" />
     <Project Path="tests/SqncR.Testing.Tests/SqncR.Testing.Tests.csproj" />
     <Project Path="tests/SqncR.VcvRack.Tests/SqncR.VcvRack.Tests.csproj" />
+    <Project Path="tests/SqncR.Integration.Tests/SqncR.Integration.Tests.csproj" />
   </Folder>
 </Solution>
