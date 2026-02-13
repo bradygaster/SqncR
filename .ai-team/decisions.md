@@ -310,3 +310,55 @@ This decomposition makes the roadmap *executable* rather than aspirational. Each
 **What:** Library projects (SqncR.Core, SqncR.Midi) use only `System.Diagnostics.ActivitySource` and `Activity` for instrumentation — no OpenTelemetry NuGet packages. The CLI project is the composition root that adds OpenTelemetry SDK (`OpenTelemetry`, `OpenTelemetry.Exporter.OpenTelemetryProtocol`, `OpenTelemetry.Extensions.Hosting`) and registers the ActivitySources by name. ActivitySources are declared as `internal static readonly` fields on the owning class. Span tags follow `{subsystem}.{attribute}` naming. The OTLP endpoint defaults to `http://localhost:4317` (Aspire dashboard) and is overridable via `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable.
 **Why:** This is the canonical .NET pattern for distributed tracing. Libraries shouldn't take hard dependencies on specific telemetry exporters — they just emit activities. The host process decides where traces go. This keeps the library packages lightweight and avoids version conflicts. It also means any future host (AppHost, test harness, MCP server) can collect the same traces by registering the same source names.
 
+### 2026-02-15: MCP Server uses official ModelContextProtocol C# SDK with stdio transport
+**By:** Jake (Core Dev)
+**What:** The `SqncR.McpServer` project uses the official `ModelContextProtocol` NuGet package (v0.8.0-preview.1) from the MCP project. The server uses `Microsoft.Extensions.Hosting` with `AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly()`. Tools are declared as static methods on classes annotated with `[McpServerToolType]` / `[McpServerTool]`. DI services (like `MidiService`) are injected as tool method parameters. All console logging is routed to stderr (stdout is reserved for JSON-RPC). The server is registered in Aspire AppHost as `sqncr-mcp`. The package is in preview — breaking changes are expected before 1.0.
+**Why:** This establishes the canonical pattern for all future MCP tools in SqncR. Everyone adding tools (generation loop, software synth control, etc.) should follow this attribute-based pattern. The SDK handles the full MCP lifecycle (initialize, capabilities, shutdown, tool dispatch) so we don't need to implement JSON-RPC ourselves.
+
+### 2026-02-15: Music Theory Foundations — SqncR.Theory library design
+**By:** Simon (Music Theorist)
+**What:** Created `SqncR.Theory` as a pure .NET 9 class library containing the foundational music theory types for SqncR:
+
+1. **Interval.cs** — Named constants for all 13 intervals (Unison through Octave) with `GetName()` lookup. Used as building blocks for scale and chord construction.
+
+2. **Scale.cs** — Sealed record with `RootNote`, `Name`, `Intervals`. Factory methods for 10 scale types: Major, Natural Minor, Harmonic Minor, Melodic Minor, Pentatonic Major, Pentatonic Minor, Blues, Whole Tone, Diminished (half-whole), Chromatic. Query methods: `ContainsNote(midiNote)` uses pitch-class math (mod 12), `GetNearestScaleNote(midiNote)` snaps to closest scale tone (rounds down on ties), `GetNotesInOctave(octave)` returns MIDI numbers within a given octave.
+
+3. **Mode.cs** — All 7 modes of the major scale (Ionian–Locrian) implemented as interval rotations. `FromMajorScale(root, index)` plus named convenience methods.
+
+4. **ScaleLibrary.cs** — Case-insensitive registry with 19 entries (10 scales + 7 modes + 2 aliases). `Get(name, root)`, `Exists(name)`, `AvailableScales`.
+
+**Design decisions:**
+- All types are immutable (records, readonly). Music theory data is value data.
+- Pure computation — no side effects, no MIDI, no I/O.
+- Pitch-class arithmetic is mod-12, consistent with NoteParser's C4=60 convention.
+- `GetNearestScaleNote` rounds down on equidistant ties — a musical choice that favors resolution downward (common in voice leading).
+- Scale intervals are stored as semitone offsets from root (0-based, all < 12). This makes mode rotation a simple array shift.
+- SqncR.Core references SqncR.Theory (not the reverse) so the generation engine can use theory types.
+
+**Why:** These types are the foundation for all music generation. Scales constrain which notes the generator can choose. Modes provide tonal color. The query API (`ContainsNote`, `GetNearestScaleNote`) will be used by the generation loop to ensure output stays musically coherent. The `ScaleLibrary` enables natural-language requests like "play in Dorian" via MCP tools.
+
+### 2026-02-15: Rhythm types live in SqncR.Core, not SqncR.Theory
+**By:** Rainicorn
+**What:** All rhythm/beat/sequencer types are in `src/SqncR.Core/Rhythm/`. This is intentional: rhythm is engine-level (how to play), not theory-level (what to play). The boundary is: BeatPattern, StepSequencer, SwingProfile, DrumMap, PatternLibrary → Core. Scales, chords, key, harmony → Theory. Simon's Theory work and Rainicorn's rhythm work are parallel and decoupled.
+**Why:** Rhythm drives the generation loop directly — it produces tick-timed events that feed into MIDI output. Theory informs *which notes* to play but not *when* or *how hard*. Keeping them separate avoids circular dependencies and makes it clear where to put new code. If it grooves, it's Core. If it resolves, it's Theory.
+
+### 2026-02-15: Rhythm types produce SequencerEvents, not MIDI directly
+**By:** Rainicorn
+**What:** The rhythm subsystem outputs `SequencerEvent` records (tick, step index, drum voice, velocity, probability). It never imports or references MIDI types. The MIDI layer is responsible for mapping DrumVoice → MIDI note (via DrumMap) and sending NoteOn/NoteOff messages. This keeps rhythm logic testable without any MIDI dependency.
+**Why:** Decoupling rhythm from MIDI means the same patterns work for software synths (Sonic Pi, VCV Rack) that don't use MIDI note numbers directly. It also makes unit testing trivial — no MIDI ports needed.
+
+### 2026-02-15: PPQ=480 is the project standard for tick-based timing
+**By:** Rainicorn
+**What:** The StepSequencer defaults to 480 ticks per quarter note, matching `MetaData.Tpq` in Sequence.cs. All tick calculations assume this unless overridden. At 16-step resolution in 4/4, each step = 120 ticks, each measure = 1920 ticks.
+**Why:** Consistency across the generation loop. If the sequencer and the sequence parser disagree on PPQ, timing will drift. 480 is the de facto MIDI standard and matches what's already in the codebase.
+
+### 2026-02-15: FrozenDictionary needs explicit comparer for case-insensitive lookup
+**By:** Rainicorn
+**What:** When converting a `Dictionary<string, T>` with `StringComparer.OrdinalIgnoreCase` to `FrozenDictionary`, you must pass the comparer to `.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase)`. The comparer from the source dictionary is not automatically carried over.
+**Why:** Discovered when PatternLibrary.Get("HOUSE") failed despite the source dictionary using case-insensitive comparison. This is a .NET gotcha worth remembering.
+
+### 2026-02-15: IMidiOutput interface extraction and MockMidiOutput test double
+**By:** Lemongrab (Tester)
+**What:** Extracted `IMidiOutput` interface from `MidiService` in `src/SqncR.Midi/Testing/`. The interface covers `SendNoteOn`, `SendNoteOff`, `AllNotesOff`, and `CurrentDeviceName`. `MidiService` now implements `IMidiOutput` with zero behavioral change. `SequencePlayer` constructor changed from `MidiService` to `IMidiOutput`. `MockMidiOutput` is a thread-safe test double that captures every MIDI event with relative timing (Stopwatch from first event, ConcurrentQueue for thread safety). It lives alongside the interface in `src/SqncR.Midi/Testing/`.
+**Why:** MidiService wraps DryWetMidi hardware access — untestable without real devices. The interface lets tests inject MockMidiOutput instead. All new tests run without MIDI hardware, pure software, CI/CD safe. Generation loop runs async; ConcurrentQueue ensures no data races in event capture. Issue #12 (scale-aware validation) and all M1 MIDI tests build on this framework.
+
