@@ -69,6 +69,7 @@ Add to `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/.config/cla
 ## Architecture
 
 ```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#333', 'primaryTextColor': '#fff', 'lineColor': '#888', 'secondaryColor': '#222', 'tertiaryColor': '#111'}}}%%
 flowchart LR
     Client["MCP Client\n(Copilot / Claude)"]
     Server["SqncR.McpServer\n30+ tools"]
@@ -83,12 +84,12 @@ flowchart LR
     Server --> SP
     Server --> VCV
 
-    style Client fill:#e1f5ff
-    style Server fill:#fff4e1
-    style Engine fill:#f0e1ff
-    style MIDI fill:#e1ffe1
-    style SP fill:#e1ffe1
-    style VCV fill:#e1ffe1
+    style Client fill:#1a1a2e,stroke:#888,color:#fff
+    style Server fill:#1a1a2e,stroke:#888,color:#fff
+    style Engine fill:#1a1a2e,stroke:#888,color:#fff
+    style MIDI fill:#1a1a2e,stroke:#888,color:#fff
+    style SP fill:#1a1a2e,stroke:#888,color:#fff
+    style VCV fill:#1a1a2e,stroke:#888,color:#fff
 ```
 
 ### Projects
