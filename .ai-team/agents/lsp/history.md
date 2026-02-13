@@ -53,3 +53,20 @@ Brady wants the team to blog about the project as it progresses. Live documentat
 - Voice characteristics: streaming/gamer culture references, problem-solution format, "why production != demo", explain edge cases (MIDI backup, polyphony pressure), target audience widens to include live performers + coders
 - Blog post length: ~8k words (comprehensive M3 coverage)
 - Key metadata: front matter with date 2026-02-15, 6 tags (sqncr, stability, streaming, generative-music, variety-engine, persistence)
+
+**M4 Blog Post (2026-02-16):**
+- Fourth blog post written: "Know Your Gear: Instruments, Hardware, and the Conductor's Baton" — THE VICTORY LAP
+- Covers M4 delivery: instrument abstraction (Instrument type + Role + Capabilities + DeviceProfile), multi-channel generation (ChannelRouter, ChannelPlan), polyrhythm engine (3/4, 5/4, 7/8 ratios), walking bass patterns, advanced drum sequencing (DrumMap General MIDI, FillGenerator, VelocityAccent), hardware telemetry (PerInstrumentNoteTracker, 4 per-device metrics), signal chain tests (7 tests validating isolation), hardware latency validation (LatencyProfiler, LatencyReport)
+- Technical deep dives: Instrument record structure (unified type across hardware/SonicPi/VcvRack), DeviceProfile JSON persistence at ~/.sqncr/devices/, 3 built-in profiles (moog-sub37, roland-juno, sonic-pi-default), ChannelRouter role-based dispatch with polyphony safety, ChannelPlan per-tick routing decisions, PolyrhythmEngine ratio-based beat calculations, WalkingBassGenerator bar composition (root→approach→target→anticipation), DrumMap standard MIDI percussion mapping (kick=36, snare=38, etc.), FillGenerator intensity-based variations, VelocityAccent beat-importance dynamics
+- Key narrative: V1 complete—from single-synth to multi-instrument orchestration. The conductor's baton metaphor. Each device plays its role. Multi-channel routing becomes transparent.
+- Code snippets highlight: Instrument record and enum definitions, InstrumentRegistry dispatch, ChannelRouter routing logic with polyphony checks, PolyrhythmPattern and IsOnBeat calculation, WalkingBassGenerator bar composition with approach/target/anticipation, DrumMap pitch mapping, LatencyProfiler and LatencyReport structures
+- Emphasized instrument abstraction as the key architectural decision—enables hardware, software synths, and VCV Rack without refactoring, Instrument role enables intelligent routing without hardcoded channels
+- Also emphasized walking bass and polyrhythms as musically exciting—jazz technique meets generative, rhythmic complexity that surprises
+- Highlighted multi-channel routing as the conductor metaphor—different instruments playing different roles simultaneously
+- Recap full journey M0→M5 through lens of solving five problems: observe (M0), generate (M1), sound (M2), survive (M3), orchestrate (M4)
+- Structure: journey recap → problem statement (single-synth limitation) → instrument abstraction solution → channel routing → polyrhythms and walking bass → drum fills → hardware telemetry → comprehensive M4 architecture → V1 stats → learnings and philosophy → V2 speculation → celebration and epilogue
+- Tone: celebratory, retrospective, technical without being dense, metaphorical (conductor, conversation, energy, breathing), narrative arc from "wonder if this works" to "it shipped"
+- Voice characteristics: intimate retrospective, philosophical tone ("The Unwaver" epilogue), explain why each architectural choice mattered, target audience is the full SqncR community (Brady, the team, future V2 contributors)
+- Blog post length: ~13k words (comprehensive V1 victory lap)
+- Key metadata: front matter with date 2026-02-16, 6 tags (sqncr, instruments, hardware, multi-channel, polyrhythms, v1-complete)
+- Special structure: Opening with the multi-synth problem, then journey recap (hooks back to M0), then technical deep dive parts 1-8, then learnings and philosophy, then V2 speculation, then celebration, then epilogue ("The Unwaver")
