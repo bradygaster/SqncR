@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SqncR.Cli")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9116b44fbff617d3ce30b75d93470813ae96d16e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+14176335976eaaf03e6b4d2e868b1f14dc4eb0c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("SqncR.Cli")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SqncR.Cli")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

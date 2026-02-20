@@ -26,7 +26,6 @@ C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\xunit.abstractions.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\xunit.assert.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\xunit.core.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\xunit.execution.dotnet.dll
-C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\YamlDotNet.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\de\Microsoft.TestPlatform.CoreUtilities.resources.dll
@@ -108,3 +107,13 @@ C:\src\SqncR\tests\SqncR.Core.Tests\obj\Debug\net9.0\refint\SqncR.Core.Tests.dll
 C:\src\SqncR\tests\SqncR.Core.Tests\obj\Debug\net9.0\SqncR.Core.Tests.pdb
 C:\src\SqncR\tests\SqncR.Core.Tests\obj\Debug\net9.0\SqncR.Core.Tests.genruntimeconfig.cache
 C:\src\SqncR\tests\SqncR.Core.Tests\obj\Debug\net9.0\ref\SqncR.Core.Tests.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\SqncR.Theory.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\SqncR.Theory.pdb
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
+C:\src\SqncR\tests\SqncR.Core.Tests\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll

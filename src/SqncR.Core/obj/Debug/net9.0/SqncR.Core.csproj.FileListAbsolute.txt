@@ -17,3 +17,5 @@ C:\src\SqncR\src\SqncR.Core\obj\Debug\net9.0\SqncR.Core.dll
 C:\src\SqncR\src\SqncR.Core\obj\Debug\net9.0\refint\SqncR.Core.dll
 C:\src\SqncR\src\SqncR.Core\obj\Debug\net9.0\SqncR.Core.pdb
 C:\src\SqncR\src\SqncR.Core\obj\Debug\net9.0\ref\SqncR.Core.dll
+C:\src\SqncR\src\SqncR.Core\bin\Debug\net9.0\SqncR.Theory.dll
+C:\src\SqncR\src\SqncR.Core\bin\Debug\net9.0\SqncR.Theory.pdb
