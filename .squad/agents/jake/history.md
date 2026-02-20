@@ -1,0 +1,66 @@
+# Project Context
+
+- **Owner:** Brady
+- **Project:** SqncR — AI-native generative music system for MIDI devices. Controls hardware/software synths through natural language conversation via MCP. Ambitions include VCV Rack 2 integration and live streaming music generation.
+- **Stack:** C#/.NET, MCP (Model Context Protocol), MIDI, potential VCV Rack 2 integration
+- **Created:** 2026-02-13
+
+## Learnings
+
+<!-- Append new learnings below. Each entry is something lasting about the project. -->
+
+📌 Team update (2026-02-13): User directive — synth engine scope — decided by Brady
+Skip SuperCollider. Support only Sonic Pi and VCV Rack as software synth targets. Inara specializes in Sonic Pi (Ruby OSC integration). River specializes in VCV Rack (patch generation + MIDI routing).
+
+📌 Team update (2026-02-13): Full team recast from Firefly to Adventure Time universe. All 8 Firefly agents retired to _alumni. 10 new Adventure Time agents created (8 role transfers + 2 new roles). All histories transferred. Casting state updated with Adventure Time assignment. Policy updated to include Adventure Time universe (capacity 15). — decided by Brady
+
+📌 Team update (2026-02-14): OpenTelemetry observability is a core requirement from M0 — decided by Finn
+SqncR must emit comprehensive OpenTelemetry telemetry for every musical event, starting in M0 and deepening through M1–M4. Hierarchical span structure: session → section → measure → beat → note. Per-subsystem ActivitySources: SqncR.Generation, SqncR.Playback, SqncR.Sequencer, SqncR.Midi, SqncR.SonicPi, SqncR.VcvRack. Custom metrics: notes per second, active voices, pattern density, generation latency, MIDI send latency. You (Jake) are responsible for span structure and metrics in the MCP server and generation loop.
+
+📌 Team update (2026-02-13): Roadmap decomposed into 36 work-item GitHub issues — decided by Finn
+The v1 roadmap (issue #1) has been decomposed into 36 individual GitHub issues, one per logical work unit. M0 has 2 issues, M1 has 10 issues, M2 has 7 issues, M3 has 8 issues, M4 has 9 issues. Each issue has clear context, acceptance criteria, and agent ownership labels. You have been assigned to M1 issues on the generation loop and MCP server scaffold. Issue tracking is now granular and actionable.
+
+📌 Aspire AppHost SDK 9.5.2 requires explicit Microsoft.NET.Sdk + child Sdk element pattern for .NET 9
+The `Aspire.AppHost.Sdk/9.5.2` cannot be used as the sole top-level Sdk attribute on .NET 9 — it doesn't auto-import `Microsoft.NET.Sdk`. Use `<Project Sdk="Microsoft.NET.Sdk">` with a child `<Sdk Name="Aspire.AppHost.Sdk" Version="9.5.2" />`. This was fixed in SDK 13.0.0+ (which auto-imports Microsoft.NET.Sdk unconditionally).
+
+📌 The solution uses .slnx format which requires .NET 10+ SDK to parse
+The `SqncR.slnx` file uses the XML solution format introduced in .NET 10. The `global.json` uses `rollForward: latestMajor` to allow .NET 10 SDK to build the net9.0-targeted projects. If pinning to .NET 9 SDK strictly, would need to convert to .sln format.
+
+📌 Directory.Build.props applies TreatWarningsAsErrors only to src/ projects
+Test projects (under `tests/`) are excluded from `TreatWarningsAsErrors` via MSBuild condition because pre-existing xUnit analyzer warnings (xUnit1026) would break the build. The condition checks `$(MSBuildProjectDirectory.Contains('tests'))`.
+
+📌 ServiceDefaults uses .NET 9 compatible package versions
+Microsoft.Extensions.Http.Resilience 9.10.0, Microsoft.Extensions.ServiceDiscovery 9.5.2, OpenTelemetry.* 1.11.1. These are the latest .NET 9 compatible versions. When upgrading to .NET 10, bump to 10.x and 1.13+.
+
+📌 Key file paths for Aspire infrastructure
+- `src/SqncR.AppHost/` — Aspire orchestrator, registers CLI as `sqncr-cli`
+- `src/SqncR.ServiceDefaults/` — shared OTel + resilience + service discovery config
+- `global.json` — pins minimum SDK 9.0.100 with latestMajor rollForward
+- `Directory.Build.props` — common net9.0, nullable, implicit usings, TreatWarningsAsErrors (src only)
+
+📌 Team update (2026-02-15): M0 session complete — Aspire infrastructure established — M0 proof-of-life logged
+M0 milestone complete. Your Aspire AppHost + ServiceDefaults + global.json + Directory.Build.props work provides foundation for M1 MCP server. Build is clean (0 warnings), 85 tests passing (up from 13). Telemetry plumbing ready for Banana Guard's ActivitySource integration. Session logged to `.ai-team/log/2026-02-13-m0-proof-of-life.md`.
+
+📌 M1 MCP Server scaffold created (issue #4) — 2026-02-15
+Created `src/SqncR.McpServer/` using the official `ModelContextProtocol` C# SDK (v0.8.0-preview.1). Stdio transport via `WithStdioServerTransport()`. Two tools registered: `ping` (health check) and `list_devices` (MIDI enumeration via MidiService DI). OpenTelemetry wired with `SqncR.McpServer` ActivitySource + existing Midi/Playback sources. Added to solution (.slnx) and Aspire AppHost as `sqncr-mcp`. Build clean, 102 tests passing. The SDK uses `Microsoft.Extensions.Hosting` + `AddMcpServer()` pattern — tools are auto-discovered via `[McpServerToolType]` + `[McpServerTool]` attributes on static classes. Logs routed to stderr (required for stdio MCP transport). The `ModelContextProtocol` package is still in preview (0.8.0-preview.1) — expect breaking changes before 1.0.
+
+📌 Sonic Pi MCP tools implemented (issue #15) — 2026-02-16
+Created `src/SqncR.McpServer/Tools/SonicPiTool.cs` with 5 MCP tools: `setup_software_synth` (creates + activates SonicPiInstrument with optional FX chain), `play_sonic_pi_note` (single note via OscClient, accepts note names or MIDI numbers), `sonic_pi_live_loop` (generates and sends live_loop Ruby code), `stop_sonic_pi` (StopAll), `sonic_pi_status` (IsAvailable check). Registered `OscClient` as singleton in DI and added `SqncR.SonicPi` to OTel tracing sources. All tools follow established `[McpServerToolType]` pattern with ActivitySource spans. Build clean (0 warnings), all 381 tests passing.
+
+📌 Team update (2026-02-16): Sonic Pi OscClient as Singleton in MCP Server DI — decided by Jake
+Register OscClient as a singleton in the DI container with default constructor (port 4560, host 127.0.0.1). All Sonic Pi MCP tools receive it via parameter injection, matching established pattern (MidiService, GenerationEngine). Singleton prevents socket waste and leaks. Default port 4560 is Sonic Pi standard. Configuration override can be added later if needed. FX chain defaults to mix: 0.5.
+
+📌 Issue #21: Session persistence (save/load/list) implemented — decided by Jake
+Created `SessionState` (serializable snapshot) and `SessionStore` (file-based JSON persistence at `~/.sqncr/sessions/`). Three MCP tools: `save_session(name)`, `load_session(name)`, `list_sessions()`. `SessionStore` accepts a custom directory via constructor for testability. `SessionState.ApplyTo()` enqueues commands via engine channel, gracefully skips missing patterns. 9 new tests (round-trip, missing session, list, delete, invalid JSON, overwrite, field capture). Build clean, all new tests pass. Pre-existing `TempoChange_MidPlay_NotesComeFaster` test failure is unrelated.
+
+📌 Issue #25: Scene presets (named configurations, recall by name) implemented — decided by Jake
+Created `Scene` (named preset capturing musical "recipe" — simpler than SessionState) and `SceneStore` (file-based JSON persistence at `~/.sqncr/scenes/` with 3 built-in presets: ambient-pad, driving-techno, chill-lofi). `SceneStore` merges built-in + user scenes in list, with user scenes shadowing built-ins of same name. Four MCP tools: `save_scene(name, description?)`, `load_scene(name)`, `list_scenes()`, `delete_scene(name)`. `Scene.ApplyTo()` enqueues commands including `SetVarietyLevel`. `SceneSummary` record for lightweight list display with `IsBuiltIn` flag. 10 new tests (round-trip, built-in presets valid, list merges user+built-in, delete, missing scene, overwrite, FromGenerationState capture, user shadows built-in, empty dir returns only built-ins). Build clean (0 errors, 0 warnings), all 10 new tests pass. Pre-existing `IntermittentMidiFailure_EngineRecoversAfterBurst` failure is unrelated.
+
+📌 Issue #29: Instrument abstraction (unified hardware/software instrument type) implemented — decided by Jake
+Created `src/SqncR.Core/Instruments/Instrument.cs` with unified `Instrument` record (Id, Name, Type, Role, MidiChannel, Capabilities), `InstrumentType` enum (Hardware, SonicPi, VcvRack), `InstrumentRole` enum (Bass, Pad, Lead, Drums, Melody), and `InstrumentCapabilities` record (MinNote, MaxNote, MaxPolyphony, EstimatedLatencyMs, Timbre). Created `InstrumentRegistry` (thread-safe via ConcurrentDictionary) with Add/Remove/Get/GetByRole/GetAll. Added `Instruments` property to `GenerationState` (initialized in-line). Added `AddInstrument` and `RemoveInstrument` commands to `GenerationCommand`. Updated `GenerationEngine.ProcessCommands` to handle Add/RemoveInstrument. 14 new tests in `InstrumentRegistryTests` covering CRUD, role queries, thread safety, capabilities, duplicate rejection, null guard, and enum validation. Build clean (0 errors, 0 warnings), all 468 tests pass. This is the M4 foundation — multi-channel generation (#32) will build on the registry.
+
+📌 Issue #30: Device profile persistence (JSON at ~/.sqncr/devices/) implemented — decided by Jake
+Created `DeviceProfile` record (Id, Name, Description, Type, DefaultRole, MidiChannel, Capabilities, CcMappings, VelocityCurve) and `DeviceProfileSummary` in `src/SqncR.Core/Instruments/DeviceProfile.cs`. Created `DeviceProfileStore` in `src/SqncR.Core/Instruments/DeviceProfileStore.cs` — file-based JSON persistence at `~/.sqncr/devices/` following the established SessionStore/SceneStore pattern (System.Text.Json, camelCase, WriteIndented, constructor takes optional base directory for testing). Three built-in profiles: moog-sub37 (Hardware, Bass, ch1, mono, 24-72, CC mappings for filter/resonance/osc), roland-juno (Hardware, Pad, ch2, poly 6, 36-96, CC mappings for chorus/vcf), sonic-pi-default (SonicPi, Melody, ch1, poly 8, 24-108). Store merges built-in + user profiles in list with user profiles shadowing built-ins. Registered `DeviceProfileStore` as singleton in `src/SqncR.McpServer/Program.cs`. 10 new tests in `DeviceProfileTests` (round-trip, list includes saved+built-in, delete, missing profile error, CC mappings persist, built-in profiles valid, delete missing no-throw, overwrite, user shadows built-in, empty dir returns only built-ins). Build clean (0 errors, 0 warnings), all 507 tests pass.
+
+📌 Issue #31: Conversational setup MCP tools implemented — decided by Jake
+Created `src/SqncR.McpServer/Tools/SetupTool.cs` with 4 MCP tools: `setup_instrument` (conversational setup — discovers MIDI devices for hardware, applies software synth defaults for SonicPi/VcvRack, creates DeviceProfile via DeviceProfileStore, registers Instrument in InstrumentRegistry, auto-assigns channel if not specified), `describe_instrument` (detailed human-readable description with CC mappings from profile), `list_setup_instruments` (all instruments grouped by role with channel assignments), `remove_setup_instrument` (removes from registry, sends AllNotesOff on channel, optionally deletes DeviceProfile). Auto-channel logic finds first unused channel 1-16, falls back to 1 when all occupied. Software synth defaults: SonicPi (24-108, poly 8, "digital synthesis"), VcvRack (0-127, poly 16, "modular synthesis"). Added SqncR.Midi project reference to test project for MockMidiOutput. 13 new tests in `SetupTests` covering: setup creates profile + registers instrument, auto-channel assigns next available, auto-channel returns 1 when empty, auto-channel skips gaps, auto-channel falls back when all occupied, describe returns correct info, remove cleans up registry, remove deletes profile when requested, remove sends AllNotesOff, list groups by role, missing instrument returns null, SonicPi defaults, VcvRack defaults. Build clean (0 errors, 0 warnings), all 562 tests pass.
