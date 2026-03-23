@@ -26,6 +26,17 @@
 | Scribe | Session Logger | `.ai-team/agents/scribe/charter.md` | 📋 Silent |
 | Ralph | Work Monitor | — | 🔄 Monitor |
 
+## Performers
+
+> Brady Modules jam session agents — for live performance via SqncR MCP tools.
+
+| Name | Role | Charter | MIDI Ch | Status |
+|------|------|---------|:-------:|--------|
+| Tremor | Drums Performer | `.ai-team/agents/tremor/charter.md` | 10 | 🎵 Performer |
+| Tidegate | Euclidean Rhythm Performer | `.ai-team/agents/tidegate/charter.md` | 2 | 🎶 Performer |
+| Driftwave | Pad/Atmosphere Performer | `.ai-team/agents/driftwave/charter.md` | 3 | 🌊 Performer |
+| Rustle | Effects/Space Performer | `.ai-team/agents/rustle/charter.md` | 4 | 🍃 Performer |
+
 ## Project Context
 
 - **Owner:** Brady (bradyg@microsoft.com)
