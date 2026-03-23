@@ -61,6 +61,20 @@ public sealed class SceneStore
             MelodicChannel = 1,
             DrumChannel = 10,
         },
+        ["brady-jam"] = new Scene
+        {
+            Name = "brady-jam",
+            Description = "AI agent jam session — 4 Brady Modules (Tremor, Tidegate, Driftwave, Rustle)",
+            Tempo = 118,
+            ScaleName = "Natural Minor",
+            RootNote = "A3",
+            Octave = 3,
+            GeneratorName = "Weighted",
+            VarietyLevel = "Moderate",
+            DrumPatternName = "house",
+            MelodicChannel = 2,
+            DrumChannel = 10,
+        },
     };
 
     public SceneStore()
