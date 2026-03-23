@@ -206,4 +206,66 @@ public static class ModuleLibrary
             ["Mix"] = 0
         }
     };
+
+    /// <summary>
+    /// Core MIDI-Gate — converts MIDI notes to individual gate outputs.
+    /// </summary>
+    public static VcvModule MidiGate() => new()
+    {
+        Plugin = "Core",
+        Model = "MIDI-Gate",
+        OutputPorts = new Dictionary<string, int>
+        {
+            ["Gate 1"] = 0, ["Gate 2"] = 1, ["Gate 3"] = 2, ["Gate 4"] = 3,
+            ["Gate 5"] = 4, ["Gate 6"] = 5, ["Gate 7"] = 6, ["Gate 8"] = 7,
+        }
+    };
+
+    /// <summary>
+    /// Core MIDI-CC — converts MIDI CCs to CV.
+    /// </summary>
+    public static VcvModule MidiCc() => new()
+    {
+        Plugin = "Core",
+        Model = "MIDI-CC",
+        OutputPorts = new Dictionary<string, int>
+        {
+            ["CC 1"] = 0, ["CC 2"] = 1, ["CC 3"] = 2, ["CC 4"] = 3,
+            ["CC 5"] = 4, ["CC 6"] = 5, ["CC 7"] = 6, ["CC 8"] = 7,
+        }
+    };
+
+    /// <summary>
+    /// Fundamental Noise — white/pink noise source.
+    /// </summary>
+    public static VcvModule Noise() => new()
+    {
+        Plugin = "Fundamental",
+        Model = "Noise",
+        OutputPorts = new Dictionary<string, int>
+        {
+            ["White"] = 0, ["Pink"] = 1,
+        }
+    };
+
+    /// <summary>
+    /// Fundamental Delay — simple delay module.
+    /// </summary>
+    public static VcvModule Delay() => new()
+    {
+        Plugin = "Fundamental",
+        Model = "Delay",
+        Params = new Dictionary<string, float>
+        {
+            ["Time"] = 0.5f, ["Feedback"] = 0.3f, ["Mix"] = 0.5f, ["Color"] = 0.5f,
+        },
+        InputPorts = new Dictionary<string, int>
+        {
+            ["In"] = 0, ["Time CV"] = 1, ["Feedback CV"] = 2,
+        },
+        OutputPorts = new Dictionary<string, int>
+        {
+            ["Out"] = 0,
+        }
+    };
 }

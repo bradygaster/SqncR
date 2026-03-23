@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SqncR.Midi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+14176335976eaaf03e6b4d2e868b1f14dc4eb0c6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8298c10d84e09f3d805c45836a716cbd8f328fcc")]
 [assembly: System.Reflection.AssemblyProductAttribute("SqncR.Midi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SqncR.Midi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
