@@ -24,6 +24,13 @@ public static class PatternLibrary
             ["shuffle"] = BuildShuffle,
             ["latin-clave"] = BuildLatinClave,
             ["bossa-nova"] = BuildBossaNova,
+            ["euclidean"] = BuildEuclidean,
+            ["euclidean-tresillo"] = () => BuildEuclideanPattern(8, 3, "euclidean-tresillo"),
+            ["euclidean-cinquillo"] = () => BuildEuclideanPattern(8, 5, "euclidean-cinquillo"),
+            ["euclidean-bossa"] = () => BuildEuclideanPattern(16, 5, "euclidean-bossa"),
+            ["euclidean-west-african"] = () => BuildEuclideanPattern(16, 7, "euclidean-west-african"),
+            ["euclidean-sparse"] = () => BuildEuclideanPattern(16, 3, "euclidean-sparse"),
+            ["euclidean-dense"] = () => BuildEuclideanPattern(16, 11, "euclidean-dense"),
         }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
@@ -181,6 +188,22 @@ public static class PatternLibrary
     }
 
     // ── Helpers ──
+
+    private static LayeredPattern BuildEuclidean()
+    {
+        // Default euclidean: cinquillo E(5,8) main voice with a sparse kick
+        return BuildEuclideanPattern(8, 5, "euclidean");
+    }
+
+    private static LayeredPattern BuildEuclideanPattern(int steps, int hits, string name)
+    {
+        var main = EuclideanGenerator.ToBeatPattern(steps, hits, name: name);
+        var kick = FromHits(steps, [0, steps / 2], 90, $"{name}-kick");
+        return new LayeredPattern(name, [
+            (DrumVoice.RimShot, main),
+            (DrumVoice.Kick, kick)
+        ]);
+    }
 
     private static BeatPattern FromHits(int steps, int[] activeSteps, int velocity, string name)
     {
