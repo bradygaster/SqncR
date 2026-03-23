@@ -182,7 +182,7 @@ public class SceneTests : IDisposable
     {
         var list = await _store.ListAsync();
 
-        Assert.Equal(3, list.Count);
+        Assert.Equal(4, list.Count);
         Assert.All(list, s => Assert.True(s.IsBuiltIn));
     }
 }
