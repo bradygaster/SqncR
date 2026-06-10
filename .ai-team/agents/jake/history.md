@@ -64,3 +64,27 @@ Created `DeviceProfile` record (Id, Name, Description, Type, DefaultRole, MidiCh
 
 📌 Issue #31: Conversational setup MCP tools implemented — decided by Jake
 Created `src/SqncR.McpServer/Tools/SetupTool.cs` with 4 MCP tools: `setup_instrument` (conversational setup — discovers MIDI devices for hardware, applies software synth defaults for SonicPi/VcvRack, creates DeviceProfile via DeviceProfileStore, registers Instrument in InstrumentRegistry, auto-assigns channel if not specified), `describe_instrument` (detailed human-readable description with CC mappings from profile), `list_setup_instruments` (all instruments grouped by role with channel assignments), `remove_setup_instrument` (removes from registry, sends AllNotesOff on channel, optionally deletes DeviceProfile). Auto-channel logic finds first unused channel 1-16, falls back to 1 when all occupied. Software synth defaults: SonicPi (24-108, poly 8, "digital synthesis"), VcvRack (0-127, poly 16, "modular synthesis"). Added SqncR.Midi project reference to test project for MockMidiOutput. 13 new tests in `SetupTests` covering: setup creates profile + registers instrument, auto-channel assigns next available, auto-channel returns 1 when empty, auto-channel skips gaps, auto-channel falls back when all occupied, describe returns correct info, remove cleans up registry, remove deletes profile when requested, remove sends AllNotesOff, list groups by role, missing instrument returns null, SonicPi defaults, VcvRack defaults. Build clean (0 errors, 0 warnings), all 562 tests pass.
+
+## Learnings
+
+### Package Update - December 2024
+
+**What was updated:**
+- .NET SDK: 9.0.100 → 9.0.101 in global.json
+- OpenTelemetry packages: 1.11.1/1.11.2 → 1.15.3 (critical security fix for GHSA-4625-4j76-fww9)
+- Microsoft.Extensions packages: 9.0.0 → 9.0.17
+- ModelContextProtocol: 0.8.0-preview.1 → 0.9.0-preview.2
+- Test infrastructure: Microsoft.NET.Test.Sdk (17.12.0 → 17.14.1), xunit (2.9.2 → 2.9.3), coverlet.collector (6.0.2 → 6.0.4)
+- ZstdSharp.Port: 0.8.4 → 0.8.8
+
+**Security vulnerability fixed:**
+OpenTelemetry.Exporter.OpenTelemetryProtocol versions 1.8.0-1.15.2 had a vulnerability (CVE-2026-42191) where the disk retry mechanism would fall back to a shared temporary directory when the required environment variable wasn't configured. This allowed attackers on multi-user systems to inject, read, or congest blob files, risking information disclosure or denial of service. Fixed in version 1.15.3.
+
+**Issues encountered:**
+- The dotnet-outdated tool successfully automated most package updates
+- Build succeeded without issues after updates
+- Tests require .NET 9 runtime (9.0.0) to be installed; system only has .NET 10 runtime
+- The global.json uses "rollForward": "latestMajor" which allows .NET 10 SDK to build .NET 9 projects, but test execution still requires the matching runtime
+
+**Tool used:**
+Used `dotnet-outdated-tool` (v4.8.0) with `--upgrade --version-lock Major` to automatically update packages while respecting major version boundaries.
