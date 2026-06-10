@@ -184,22 +184,50 @@ const undoMgr = new UndoManager();
 class Transport {
   constructor() {
     this.bpm = 120; this.playing = false; this.tick = 0;
-    this.listeners = new Set(); this.intervalId = null;
+    this.listeners = new Set();
     this.midiClockCount = 0;
+    // Web Worker clock — immune to webview/tab throttling
+    this._worker = null;
+    this._createWorker();
+  }
+  _createWorker() {
+    // Inline Web Worker: its setInterval is never throttled
+    const blob = new Blob([`
+      let intervalId = null;
+      self.onmessage = function(e) {
+        if (e.data.cmd === 'start') {
+          if (intervalId) clearInterval(intervalId);
+          intervalId = setInterval(() => self.postMessage('tick'), e.data.interval);
+        } else if (e.data.cmd === 'stop') {
+          if (intervalId) { clearInterval(intervalId); intervalId = null; }
+        }
+      };
+    `], { type: 'application/javascript' });
+    this._worker = new Worker(URL.createObjectURL(blob));
+    this._worker.onmessage = () => { if (this.playing) this._scheduler(); };
+    this.nextTickTime = 0;
+    this.lookahead = 0.1; // schedule 100ms ahead
   }
   setBpm(bpm) { this.bpm = Math.max(20, Math.min(300, bpm)); document.getElementById('bpm-display').textContent = this.bpm; if (this.playing) { this.stop(); this.play(); } }
   play() {
     if (this.playing) return;
     this.playing = true; this.tick = 0;
-    const tickMs = (60000 / this.bpm) / 4; // 16th note resolution
-    this.intervalId = setInterval(() => { this._advance(); }, tickMs);
+    this.nextTickTime = audioCtx.currentTime + 0.05;
+    this._worker.postMessage({ cmd: 'start', interval: 25 });
     document.getElementById('btn-play').classList.add('active');
   }
   stop() {
     this.playing = false; this.tick = 0;
-    if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
+    this._worker.postMessage({ cmd: 'stop' });
     document.getElementById('btn-play').classList.remove('active');
     this.listeners.forEach(fn => fn('stop', 0));
+  }
+  _scheduler() {
+    const tickDuration = 60.0 / this.bpm / 4; // 16th note in seconds
+    while (this.nextTickTime < audioCtx.currentTime + this.lookahead) {
+      this._advance();
+      this.nextTickTime += tickDuration;
+    }
   }
   _advance() {
     this.listeners.forEach(fn => fn('tick', this.tick));
@@ -587,10 +615,12 @@ class SequencerModule extends SynthModule {
     super('seq', 'Sequencer', x, y);
     this.inputs = [
       { id: 'clock_in', label: 'Clock', type: 'cv' },
+      { id: 'sync_in', label: 'Sync', type: 'gate' },
     ];
     this.outputs = [
       { id: 'cv_out', label: 'CV', type: 'cv' },
       { id: 'gate_out', label: 'Gate', type: 'gate' },
+      { id: 'sync_out', label: 'Sync', type: 'gate' },
     ];
     this.steps = 16;
     this.pattern = Array(16).fill(null).map(() => ({ note: 60, active: false, velocity: 100 }));
@@ -609,32 +639,60 @@ class SequencerModule extends SynthModule {
     this.gateSource = ctx.createConstantSource();
     this.gateSource.offset.value = 0;
     this.gateSource.start();
+    // Sync output: pulses when pattern loops to step 0
+    this.syncSource = ctx.createConstantSource();
+    this.syncSource.offset.value = 0;
+    this.syncSource.start();
     this.audioNodes = {
       'in_clock_in': ctx.createGain(), // placeholder
+      'in_sync_in': ctx.createGain(), // placeholder — sync handled via _noteOn
       'out_cv_out': this.cvSource,
       'out_gate_out': this.gateSource,
+      'out_sync_out': this.syncSource,
     };
+    this._syncOverride = false; // when true, use local step counter instead of global tick
+    this._localTick = 0;
     // Subscribe to transport
     this._unsub = transport.subscribe((type, tick) => {
       if (type === 'tick') this._onTick(tick);
-      else if (type === 'stop') { this.currentStep = 0; this._updateStepDisplay(); this.gateSource.offset.setTargetAtTime(0, getAudioCtx().currentTime, 0.001); }
+      else if (type === 'stop') { this.currentStep = 0; this._localTick = 0; this._syncOverride = false; this._updateStepDisplay(); this.gateSource.offset.setTargetAtTime(0, getAudioCtx().currentTime, 0.001); }
     });
     this._buildUI();
   }
+  // Called when sync_in receives a pulse (from another sequencer's sync_out)
+  _noteOn(note, vel) {
+    this._syncOverride = true;
+    this._localTick = 0;
+    this.currentStep = 0;
+  }
   _onTick(tick) {
     if (tick % this.params.clockDiv !== 0) return;
+    // If synced to another sequencer, use local tick counter
+    if (this._syncOverride) {
+      this.currentStep = Math.floor(this._localTick / this.params.clockDiv) % this.params.steps;
+      this._localTick++;
+    } else {
+      const dividedTick = Math.floor(tick / this.params.clockDiv);
+      this.currentStep = dividedTick % this.params.steps;
+    }
+    // Emit sync_out pulse when we wrap to step 0
+    if (this.currentStep === 0) {
+      this.syncSource.offset.setTargetAtTime(1, getAudioCtx().currentTime, 0.001);
+      setTimeout(() => { this.syncSource.offset.setTargetAtTime(0, getAudioCtx().currentTime, 0.001); }, 10);
+      // Trigger any modules connected to sync_out
+      patchBay.cables.filter(c => c.fromModule === this.id && c.fromJack === 'sync_out').forEach(cable => {
+        const mod = moduleRegistry.get(cable.toModule);
+        if (mod && mod._noteOn) mod._noteOn(60, 127);
+      });
+    }
     const step = this.pattern[this.currentStep];
     if (step.active) {
-      // Set CV (V/Oct: note / 12)
       this.cvSource.offset.setTargetAtTime(step.note / 12, getAudioCtx().currentTime, 0.001);
       this.gateSource.offset.setTargetAtTime(step.velocity / 127, getAudioCtx().currentTime, 0.001);
-      // Short gate
       setTimeout(() => { this.gateSource.offset.setTargetAtTime(0, getAudioCtx().currentTime, 0.001); }, 50);
-      // Also trigger connected osc noteOn/noteOff through patch system
       this._triggerNote(step.note, step.velocity);
     }
     this._updateStepDisplay();
-    this.currentStep = (this.currentStep + 1) % this.params.steps;
   }
   _triggerNote(note, vel) {
     // Find cables from our gate output and trigger connected modules
