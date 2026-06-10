@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "RR6Tv05hvec=",
+  "dgSpecHash": "IInytPwacpo=",
   "success": true,
-  "projectFilePath": "C:\\src\\SqncR\\src\\SqncR.Midi\\SqncR.Midi.csproj",
+  "projectFilePath": "/Users/bradyg/src/copilot-worktrees/SqncR/bradygaster-expert-couscous/src/SqncR.Midi/SqncR.Midi.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\brady\\.nuget\\packages\\melanchall.drywetmidi\\8.0.3\\melanchall.drywetmidi.8.0.3.nupkg.sha512"
+    "/Users/bradyg/.nuget/packages/melanchall.drywetmidi/8.0.3/melanchall.drywetmidi.8.0.3.nupkg.sha512"
   ],
   "logs": []
 }

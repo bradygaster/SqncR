@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SqncR.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+869936749a3302fae47f0d38cde2dde992f40091")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f8dc41266f220948c2777281908d952778d0c19d")]
 [assembly: System.Reflection.AssemblyProductAttribute("SqncR.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SqncR.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
