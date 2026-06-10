@@ -31,6 +31,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
 #toolbar label { display: flex; align-items: center; gap: 4px; }
 #toolbar input[type="number"] { width: 50px; background: var(--bg); color: var(--text); border: 1px solid var(--accent); border-radius: 3px; padding: 2px 4px; font-family: inherit; font-size: 10px; }
 #toolbar select { background: var(--bg); color: var(--text); border: 1px solid var(--accent); border-radius: 3px; padding: 2px 4px; font-family: inherit; font-size: 10px; }
+.toolbar-dropdown { position: relative; }
+.toolbar-dropdown .dropdown-toggle { background: var(--accent); color: var(--text); border: 1px solid #2a4a7f; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 10px; font-family: inherit; }
+.toolbar-dropdown .dropdown-toggle:hover { background: var(--highlight); border-color: var(--highlight); }
+.toolbar-dropdown .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; background: var(--panel); border: 1px solid var(--accent); border-radius: 4px; padding: 4px; z-index: 200; min-width: 120px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+.toolbar-dropdown .dropdown-menu button { display: block; width: 100%; text-align: left; background: transparent; color: var(--text); border: none; border-radius: 3px; padding: 5px 10px; cursor: pointer; font-size: 10px; font-family: inherit; white-space: nowrap; }
+.toolbar-dropdown .dropdown-menu button:hover { background: var(--highlight); }
+.toolbar-dropdown.open .dropdown-menu { display: block; }
+.toolbar-dropdown.open .dropdown-toggle { background: var(--highlight); }
 #transport { display: flex; align-items: center; gap: 4px; }
 #transport .bpm-display { font-size: 14px; font-weight: bold; color: var(--highlight); min-width: 50px; text-align: center; }
 
@@ -109,14 +117,40 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
       <label>BPM <input type="number" id="bpm-input" value="120" min="20" max="300" step="1"/></label>
     </div>
     <span class="separator"></span>
-    <button id="btn-add-osc">+ Osc</button>
-    <button id="btn-add-seq">+ Seq</button>
-    <button id="btn-add-drum">+ Drum</button>
-    <button id="btn-add-env">+ Env</button>
-    <button id="btn-add-vca">+ VCA</button>
-    <button id="btn-add-mixer">+ Mixer</button>
-    <button id="btn-add-reverb">+ Reverb</button>
-    <button id="btn-add-delay">+ Delay</button>
+    <div class="toolbar-dropdown">
+      <button class="dropdown-toggle">Sources ▾</button>
+      <div class="dropdown-menu">
+        <button id="btn-add-osc">Oscillator</button>
+        <button id="btn-add-drum">Drum Voice</button>
+        <button id="btn-add-seq">Sequencer</button>
+      </div>
+    </div>
+    <div class="toolbar-dropdown">
+      <button class="dropdown-toggle">Modulation ▾</button>
+      <div class="dropdown-menu">
+        <button id="btn-add-env">Envelope</button>
+        <button id="btn-add-lfo">LFO</button>
+        <button id="btn-add-vca">VCA</button>
+      </div>
+    </div>
+    <div class="toolbar-dropdown">
+      <button class="dropdown-toggle">Effects ▾</button>
+      <div class="dropdown-menu">
+        <button id="btn-add-filter">Filter</button>
+        <button id="btn-add-reverb">Reverb</button>
+        <button id="btn-add-delay">Delay</button>
+        <button id="btn-add-chorus">Chorus</button>
+        <button id="btn-add-phaser">Phaser</button>
+        <button id="btn-add-compressor">Compressor</button>
+      </div>
+    </div>
+    <div class="toolbar-dropdown">
+      <button class="dropdown-toggle">Utility ▾</button>
+      <div class="dropdown-menu">
+        <button id="btn-add-mixer">Mixer</button>
+        <button id="btn-add-panner">Panner</button>
+      </div>
+    </div>
     <span class="separator"></span>
     <button id="btn-presets">Presets</button>
     <button id="btn-export">Export</button>
@@ -1151,6 +1185,358 @@ class DelayEffect extends EffectModule {
 registerEffect('delay', DelayEffect);
 
 // ============================================================
+// FILTER MODULE
+// ============================================================
+class FilterEffect extends EffectModule {
+  constructor(x, y) {
+    super('filter', 'Filter', x, y);
+    this.params = { cutoff: 0.5, resonance: 0.3, type: 0, mix: 1.0 };
+    this._init();
+  }
+  _init() {
+    const ctx = getAudioCtx();
+    this.inputGain = ctx.createGain();
+    this.dryGain = ctx.createGain();
+    this.wetGain = ctx.createGain();
+    this.outputGain = ctx.createGain();
+    this.dryGain.gain.value = 0;
+    this.wetGain.gain.value = 1;
+    this.filter = ctx.createBiquadFilter();
+    this.filter.type = 'lowpass';
+    this.filter.frequency.value = this._cutoffToFreq(0.5);
+    this.filter.Q.value = 0.3 * 30;
+    this.inputGain.connect(this.dryGain);
+    this.inputGain.connect(this.filter);
+    this.filter.connect(this.wetGain);
+    this.dryGain.connect(this.outputGain);
+    this.wetGain.connect(this.outputGain);
+    // CV inputs for modulation
+    this.cutoffCvGain = ctx.createGain();
+    this.cutoffCvGain.gain.value = 5000;
+    this.cutoffCvGain.connect(this.filter.frequency);
+    this.audioNodes = {
+      'in_audio_in': this.inputGain,
+      'in_cutoff_cv': this.cutoffCvGain,
+      'out_audio_out': this.outputGain,
+    };
+    this._buildUI();
+  }
+  _cutoffToFreq(v) { return 20 * Math.pow(1000, v); }
+  _buildUI() {
+    const el = this.createUI();
+    const body = el.querySelector('.module-body');
+    const paramsRow = document.createElement('div');
+    paramsRow.className = 'params-row';
+    this.createKnob(paramsRow, 'cutoff', 'Cutoff', 0, 1, 0.5);
+    this.createKnob(paramsRow, 'resonance', 'Res', 0, 1, 0.3);
+    this.createKnob(paramsRow, 'type', 'Type', 0, 3, 0, 1);
+    this.createKnob(paramsRow, 'mix', 'Mix', 0, 1, 1);
+    body.appendChild(paramsRow);
+    this.renderJacks(body);
+  }
+  onParamChange(name, value) {
+    const ctx = getAudioCtx(); const now = ctx.currentTime;
+    if (name === 'cutoff') this.filter.frequency.setTargetAtTime(this._cutoffToFreq(value), now, 0.01);
+    else if (name === 'resonance') this.filter.Q.setTargetAtTime(value * 30, now, 0.01);
+    else if (name === 'type') {
+      const types = ['lowpass', 'highpass', 'bandpass', 'notch'];
+      this.filter.type = types[Math.round(value)] || 'lowpass';
+    }
+    else if (name === 'mix') { this.dryGain.gain.setTargetAtTime(1-value, now, 0.01); this.wetGain.gain.setTargetAtTime(value, now, 0.01); }
+  }
+}
+registerEffect('filter', FilterEffect);
+
+// ============================================================
+// LFO MODULE
+// ============================================================
+class LFOModule extends SynthModule {
+  constructor(x, y) {
+    super('lfo', 'LFO', x, y);
+    this.params = { rate: 1, depth: 0.5, shape: 0 };
+    this.outputs = ['out_cv'];
+    this.inputs = ['in_rate_cv'];
+    this._init();
+  }
+  _init() {
+    const ctx = getAudioCtx();
+    this.lfo = ctx.createOscillator();
+    this.lfo.type = 'sine';
+    this.lfo.frequency.value = 1;
+    this.depthGain = ctx.createGain();
+    this.depthGain.gain.value = 0.5;
+    this.lfo.connect(this.depthGain);
+    this.lfo.start();
+    this.rateCvGain = ctx.createGain();
+    this.rateCvGain.gain.value = 5;
+    this.rateCvGain.connect(this.lfo.frequency);
+    this.audioNodes = {
+      'out_cv': this.depthGain,
+      'in_rate_cv': this.rateCvGain,
+    };
+    this._buildUI();
+  }
+  _buildUI() {
+    const el = this.createUI();
+    const body = el.querySelector('.module-body');
+    const paramsRow = document.createElement('div');
+    paramsRow.className = 'params-row';
+    this.createKnob(paramsRow, 'rate', 'Rate', 0.01, 20, 1, 0.01, 'Hz');
+    this.createKnob(paramsRow, 'depth', 'Depth', 0, 1, 0.5);
+    this.createKnob(paramsRow, 'shape', 'Shape', 0, 3, 0, 1);
+    body.appendChild(paramsRow);
+    this.renderJacks(body);
+  }
+  onParamChange(name, value) {
+    const ctx = getAudioCtx(); const now = ctx.currentTime;
+    if (name === 'rate') this.lfo.frequency.setTargetAtTime(value, now, 0.01);
+    else if (name === 'depth') this.depthGain.gain.setTargetAtTime(value, now, 0.01);
+    else if (name === 'shape') {
+      const shapes = ['sine', 'triangle', 'sawtooth', 'square'];
+      this.lfo.type = shapes[Math.round(value)] || 'sine';
+    }
+  }
+  dispose() { this.lfo.stop(); super.dispose(); }
+}
+
+// ============================================================
+// CHORUS EFFECT
+// ============================================================
+class ChorusEffect extends EffectModule {
+  constructor(x, y) {
+    super('chorus', 'Chorus', x, y);
+    this.params = { rate: 1.5, depth: 0.005, mix: 0.5 };
+    this._init();
+  }
+  _init() {
+    const ctx = getAudioCtx();
+    this.inputGain = ctx.createGain();
+    this.dryGain = ctx.createGain();
+    this.wetGain = ctx.createGain();
+    this.outputGain = ctx.createGain();
+    this.dryGain.gain.value = 1 - this.params.mix;
+    this.wetGain.gain.value = this.params.mix;
+    // Two detuned delay lines modulated by LFOs
+    this.delayL = ctx.createDelay(0.1);
+    this.delayR = ctx.createDelay(0.1);
+    this.delayL.delayTime.value = 0.015;
+    this.delayR.delayTime.value = 0.017;
+    this.lfoL = ctx.createOscillator();
+    this.lfoR = ctx.createOscillator();
+    this.lfoL.frequency.value = this.params.rate;
+    this.lfoR.frequency.value = this.params.rate * 1.1;
+    this.lfoL.type = 'sine';
+    this.lfoR.type = 'sine';
+    this.lfoGainL = ctx.createGain();
+    this.lfoGainR = ctx.createGain();
+    this.lfoGainL.gain.value = this.params.depth;
+    this.lfoGainR.gain.value = this.params.depth;
+    this.lfoL.connect(this.lfoGainL);
+    this.lfoR.connect(this.lfoGainR);
+    this.lfoGainL.connect(this.delayL.delayTime);
+    this.lfoGainR.connect(this.delayR.delayTime);
+    this.lfoL.start();
+    this.lfoR.start();
+    // Merge wet
+    this.wetMerge = ctx.createGain();
+    this.inputGain.connect(this.dryGain);
+    this.inputGain.connect(this.delayL);
+    this.inputGain.connect(this.delayR);
+    this.delayL.connect(this.wetMerge);
+    this.delayR.connect(this.wetMerge);
+    this.wetMerge.connect(this.wetGain);
+    this.dryGain.connect(this.outputGain);
+    this.wetGain.connect(this.outputGain);
+    this.audioNodes = {
+      'in_audio_in': this.inputGain,
+      'out_audio_out': this.outputGain,
+    };
+    this._buildUI();
+  }
+  _buildUI() {
+    const el = this.createUI();
+    const body = el.querySelector('.module-body');
+    const paramsRow = document.createElement('div');
+    paramsRow.className = 'params-row';
+    this.createKnob(paramsRow, 'rate', 'Rate', 0.1, 5, 1.5, 0.1, 'Hz');
+    this.createKnob(paramsRow, 'depth', 'Depth', 0, 0.02, 0.005, 0.001);
+    this.createKnob(paramsRow, 'mix', 'Mix', 0, 1, 0.5);
+    body.appendChild(paramsRow);
+    this.renderJacks(body);
+  }
+  onParamChange(name, value) {
+    const ctx = getAudioCtx(); const now = ctx.currentTime;
+    if (name === 'rate') { this.lfoL.frequency.setTargetAtTime(value, now, 0.01); this.lfoR.frequency.setTargetAtTime(value*1.1, now, 0.01); }
+    else if (name === 'depth') { this.lfoGainL.gain.setTargetAtTime(value, now, 0.01); this.lfoGainR.gain.setTargetAtTime(value, now, 0.01); }
+    else if (name === 'mix') { this.dryGain.gain.setTargetAtTime(1-value, now, 0.01); this.wetGain.gain.setTargetAtTime(value, now, 0.01); }
+  }
+  dispose() { this.lfoL.stop(); this.lfoR.stop(); super.dispose(); }
+}
+registerEffect('chorus', ChorusEffect);
+
+// ============================================================
+// PHASER EFFECT
+// ============================================================
+class PhaserEffect extends EffectModule {
+  constructor(x, y) {
+    super('phaser', 'Phaser', x, y);
+    this.params = { rate: 0.5, depth: 0.7, mix: 0.5 };
+    this._init();
+  }
+  _init() {
+    const ctx = getAudioCtx();
+    this.inputGain = ctx.createGain();
+    this.dryGain = ctx.createGain();
+    this.wetGain = ctx.createGain();
+    this.outputGain = ctx.createGain();
+    this.dryGain.gain.value = 1 - this.params.mix;
+    this.wetGain.gain.value = this.params.mix;
+    // Chain of allpass filters
+    this.allpasses = [];
+    let prev = this.inputGain;
+    for (let i = 0; i < 6; i++) {
+      const ap = ctx.createBiquadFilter();
+      ap.type = 'allpass';
+      ap.frequency.value = 1000 + i * 500;
+      ap.Q.value = 0.5;
+      prev.connect(ap);
+      this.allpasses.push(ap);
+      prev = ap;
+    }
+    // LFO modulates allpass frequencies
+    this.lfo = ctx.createOscillator();
+    this.lfo.type = 'sine';
+    this.lfo.frequency.value = this.params.rate;
+    this.lfoGain = ctx.createGain();
+    this.lfoGain.gain.value = this.params.depth * 3000;
+    this.lfo.connect(this.lfoGain);
+    this.allpasses.forEach(ap => this.lfoGain.connect(ap.frequency));
+    this.lfo.start();
+    prev.connect(this.wetGain);
+    this.inputGain.connect(this.dryGain);
+    this.dryGain.connect(this.outputGain);
+    this.wetGain.connect(this.outputGain);
+    this.audioNodes = {
+      'in_audio_in': this.inputGain,
+      'out_audio_out': this.outputGain,
+    };
+    this._buildUI();
+  }
+  _buildUI() {
+    const el = this.createUI();
+    const body = el.querySelector('.module-body');
+    const paramsRow = document.createElement('div');
+    paramsRow.className = 'params-row';
+    this.createKnob(paramsRow, 'rate', 'Rate', 0.05, 5, 0.5, 0.05, 'Hz');
+    this.createKnob(paramsRow, 'depth', 'Depth', 0, 1, 0.7);
+    this.createKnob(paramsRow, 'mix', 'Mix', 0, 1, 0.5);
+    body.appendChild(paramsRow);
+    this.renderJacks(body);
+  }
+  onParamChange(name, value) {
+    const ctx = getAudioCtx(); const now = ctx.currentTime;
+    if (name === 'rate') this.lfo.frequency.setTargetAtTime(value, now, 0.01);
+    else if (name === 'depth') this.lfoGain.gain.setTargetAtTime(value * 3000, now, 0.01);
+    else if (name === 'mix') { this.dryGain.gain.setTargetAtTime(1-value, now, 0.01); this.wetGain.gain.setTargetAtTime(value, now, 0.01); }
+  }
+  dispose() { this.lfo.stop(); super.dispose(); }
+}
+registerEffect('phaser', PhaserEffect);
+
+// ============================================================
+// COMPRESSOR MODULE
+// ============================================================
+class CompressorEffect extends EffectModule {
+  constructor(x, y) {
+    super('compressor', 'Comp', x, y);
+    this.params = { threshold: -24, ratio: 4, attack: 0.003, release: 0.25, makeup: 0 };
+    this._init();
+  }
+  _init() {
+    const ctx = getAudioCtx();
+    this.inputGain = ctx.createGain();
+    this.compressor = ctx.createDynamicsCompressor();
+    this.compressor.threshold.value = this.params.threshold;
+    this.compressor.ratio.value = this.params.ratio;
+    this.compressor.attack.value = this.params.attack;
+    this.compressor.release.value = this.params.release;
+    this.makeupGain = ctx.createGain();
+    this.makeupGain.gain.value = Math.pow(10, this.params.makeup / 20);
+    this.inputGain.connect(this.compressor);
+    this.compressor.connect(this.makeupGain);
+    this.audioNodes = {
+      'in_audio_in': this.inputGain,
+      'out_audio_out': this.makeupGain,
+    };
+    this._buildUI();
+  }
+  _buildUI() {
+    const el = this.createUI();
+    const body = el.querySelector('.module-body');
+    const paramsRow = document.createElement('div');
+    paramsRow.className = 'params-row';
+    this.createKnob(paramsRow, 'threshold', 'Thresh', -60, 0, -24, 1, 'dB');
+    this.createKnob(paramsRow, 'ratio', 'Ratio', 1, 20, 4, 0.5);
+    this.createKnob(paramsRow, 'attack', 'Atk', 0, 0.1, 0.003, 0.001, 's');
+    this.createKnob(paramsRow, 'release', 'Rel', 0.01, 1, 0.25, 0.01, 's');
+    this.createKnob(paramsRow, 'makeup', 'Gain', 0, 24, 0, 0.5, 'dB');
+    body.appendChild(paramsRow);
+    this.renderJacks(body);
+  }
+  onParamChange(name, value) {
+    const ctx = getAudioCtx(); const now = ctx.currentTime;
+    if (name === 'threshold') this.compressor.threshold.setTargetAtTime(value, now, 0.01);
+    else if (name === 'ratio') this.compressor.ratio.setTargetAtTime(value, now, 0.01);
+    else if (name === 'attack') this.compressor.attack.setTargetAtTime(value, now, 0.01);
+    else if (name === 'release') this.compressor.release.setTargetAtTime(value, now, 0.01);
+    else if (name === 'makeup') this.makeupGain.gain.setTargetAtTime(Math.pow(10, value/20), now, 0.01);
+  }
+}
+registerEffect('compressor', CompressorEffect);
+
+// ============================================================
+// STEREO PANNER MODULE
+// ============================================================
+class PannerModule extends SynthModule {
+  constructor(x, y) {
+    super('panner', 'Panner', x, y);
+    this.params = { pan: 0 };
+    this.inputs = ['in_audio_in', 'in_pan_cv'];
+    this.outputs = ['out_audio_out'];
+    this._init();
+  }
+  _init() {
+    const ctx = getAudioCtx();
+    this.inputGain = ctx.createGain();
+    this.panner = ctx.createStereoPanner();
+    this.panner.pan.value = 0;
+    this.inputGain.connect(this.panner);
+    this.panCvGain = ctx.createGain();
+    this.panCvGain.gain.value = 1;
+    this.panCvGain.connect(this.panner.pan);
+    this.audioNodes = {
+      'in_audio_in': this.inputGain,
+      'in_pan_cv': this.panCvGain,
+      'out_audio_out': this.panner,
+    };
+    this._buildUI();
+  }
+  _buildUI() {
+    const el = this.createUI();
+    const body = el.querySelector('.module-body');
+    const paramsRow = document.createElement('div');
+    paramsRow.className = 'params-row';
+    this.createKnob(paramsRow, 'pan', 'Pan', -1, 1, 0, 0.01);
+    body.appendChild(paramsRow);
+    this.renderJacks(body);
+  }
+  onParamChange(name, value) {
+    const ctx = getAudioCtx(); const now = ctx.currentTime;
+    if (name === 'pan') this.panner.pan.setTargetAtTime(value, now, 0.01);
+  }
+}
+
+// ============================================================
 // PRESET SYSTEM
 // ============================================================
 class PresetManager {
@@ -1241,6 +1627,31 @@ document.getElementById('btn-add-vca').addEventListener('click', () => { const p
 document.getElementById('btn-add-mixer').addEventListener('click', () => { const p = nextPos(); new MixerModule(p.x, p.y); });
 document.getElementById('btn-add-reverb').addEventListener('click', () => { const p = nextPos(); new ReverbEffect(p.x, p.y); });
 document.getElementById('btn-add-delay').addEventListener('click', () => { const p = nextPos(); new DelayEffect(p.x, p.y); });
+document.getElementById('btn-add-filter').addEventListener('click', () => { const p = nextPos(); new FilterEffect(p.x, p.y); });
+document.getElementById('btn-add-lfo').addEventListener('click', () => { const p = nextPos(); new LFOModule(p.x, p.y); });
+document.getElementById('btn-add-chorus').addEventListener('click', () => { const p = nextPos(); new ChorusEffect(p.x, p.y); });
+document.getElementById('btn-add-phaser').addEventListener('click', () => { const p = nextPos(); new PhaserEffect(p.x, p.y); });
+document.getElementById('btn-add-compressor').addEventListener('click', () => { const p = nextPos(); new CompressorEffect(p.x, p.y); });
+document.getElementById('btn-add-panner').addEventListener('click', () => { const p = nextPos(); new PannerModule(p.x, p.y); });
+
+// Dropdown menus
+document.querySelectorAll('.toolbar-dropdown .dropdown-toggle').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const dd = btn.parentElement;
+    const wasOpen = dd.classList.contains('open');
+    document.querySelectorAll('.toolbar-dropdown.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) dd.classList.add('open');
+  });
+});
+document.querySelectorAll('.toolbar-dropdown .dropdown-menu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.toolbar-dropdown.open').forEach(d => d.classList.remove('open'));
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.toolbar-dropdown.open').forEach(d => d.classList.remove('open'));
+});
 
 // MIDI selects
 document.getElementById('midi-in-select').addEventListener('change', (e) => midiSystem.setInput(e.target.value));

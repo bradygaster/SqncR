@@ -69,6 +69,12 @@ function getSynthHtml(wsPort) {
             case 'mixer': mod = new MixerModule(x, y); break;
             case 'reverb': mod = new ReverbEffect(x, y); break;
             case 'delay': mod = new DelayEffect(x, y); break;
+            case 'filter': mod = new FilterEffect(x, y); break;
+            case 'lfo': mod = new LFOModule(x, y); break;
+            case 'chorus': mod = new ChorusEffect(x, y); break;
+            case 'phaser': mod = new PhaserEffect(x, y); break;
+            case 'compressor': mod = new CompressorEffect(x, y); break;
+            case 'panner': mod = new PannerModule(x, y); break;
             default: return { error: 'Unknown module type: ' + cmd.module_type };
         }
         // Apply initial params if provided
@@ -221,7 +227,7 @@ async function startServer(instanceId) {
                 sent = true;
             }
             if (!sent) {
-                resolve({ error: "No synth UI connected. Please click on the Modular Synth panel to activate it." });
+                resolve({ error: "No synth UI connected. Please click on the SqncR panel to activate it." });
                 return;
             }
             const timer = setTimeout(() => {
@@ -245,8 +251,8 @@ async function startServer(instanceId) {
 const session = await joinSession({
     canvases: [
         createCanvas({
-            id: "modular-synth",
-            displayName: "Modular Synth",
+            id: "sqncr",
+            displayName: "SqncR",
             description:
                 "A modular software synthesizer with oscillators, sequencer, drum voices, virtual patch cables, MIDI I/O with clock sync, effects (reverb, delay), polyphony, and preset save/load. Fully controllable programmatically — build patches, trigger notes, and modify parameters via actions.",
             actions: [
@@ -258,7 +264,7 @@ const session = await joinSession({
                         properties: {
                             module_type: {
                                 type: "string",
-                                enum: ["osc", "seq", "drum", "env", "vca", "mixer", "reverb", "delay"],
+                                enum: ["osc", "seq", "drum", "env", "vca", "mixer", "reverb", "delay", "filter", "lfo", "chorus", "phaser", "compressor", "panner"],
                                 description: "Type of module to add",
                             },
                             params: {
@@ -483,7 +489,7 @@ const session = await joinSession({
                     servers.set(ctx.instanceId, entry);
                 }
                 return {
-                    title: "Modular Synth",
+                    title: "SqncR",
                     url: entry.url,
                 };
             },
