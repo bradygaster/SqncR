@@ -1,0 +1,18 @@
+{
+  "id": "euclidean-meditation",
+  "name": "Euclidean Meditation",
+  "description": "Ambient generative patch using Euclidean rhythms (Bjorklund's algorithm). Sparse, evolving, perfect for deep focus coding sessions.",
+  "author": "bradygaster",
+  "tags": ["ambient", "euclidean", "generative", "minimal", "focus", "coding"],
+  "genre": "Ambient",
+  "mood": "calm",
+  "energy": "low",
+  "bpm": 85,
+  "key": "F#",
+  "scale": "pentatonicMinor",
+  "style": "ambient",
+  "bass_style": "walking",
+  "lead_style": "scalar",
+  "version": "1.0.0",
+  "created": "2026-06-13"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "midnight-drive",
+  "name": "Midnight Drive",
+  "description": "Deep, moody house track with pulsing bass and atmospheric pads. Think 2am cruising with the windows down.",
+  "author": "bradygaster",
+  "tags": ["house", "deep", "moody", "driving", "nocturnal"],
+  "genre": "Deep House",
+  "mood": "dark",
+  "energy": "medium",
+  "bpm": 122,
+  "key": "D",
+  "scale": "minor",
+  "style": "house",
+  "bass_style": "pumping",
+  "lead_style": "call-response",
+  "version": "1.0.0",
+  "created": "2026-06-13"
+}

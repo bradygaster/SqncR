@@ -1,0 +1,18 @@
+{
+  "id": "breakbeat-science",
+  "name": "Breakbeat Science",
+  "description": "Syncopated breaks with blues-scale melodics. Dirty, funky, head-nodding. Think Chemical Brothers meets Fatboy Slim.",
+  "author": "bradygaster",
+  "tags": ["breakbeat", "funky", "dirty", "blues", "big-beat", "chemical-brothers"],
+  "genre": "Breakbeat",
+  "mood": "energetic",
+  "energy": "high",
+  "bpm": 135,
+  "key": "G",
+  "scale": "blues",
+  "style": "breakbeat",
+  "bass_style": "octave",
+  "lead_style": "arpeggiated",
+  "version": "1.0.0",
+  "created": "2026-06-13"
+}

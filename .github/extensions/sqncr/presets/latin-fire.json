@@ -1,0 +1,18 @@
+{
+  "id": "latin-fire",
+  "name": "Latin Fire",
+  "description": "Son clave rhythms meet modern production. Phrygian mode for that flamenco edge over a cross-stick groove.",
+  "author": "bradygaster",
+  "tags": ["latin", "clave", "flamenco", "phrygian", "percussive", "groove"],
+  "genre": "Latin House",
+  "mood": "passionate",
+  "energy": "high",
+  "bpm": 118,
+  "key": "B",
+  "scale": "phrygian",
+  "style": "latin",
+  "bass_style": "walking",
+  "lead_style": "arpeggiated",
+  "version": "1.0.0",
+  "created": "2026-06-13"
+}

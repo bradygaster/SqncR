@@ -1,0 +1,18 @@
+{
+  "id": "sex-on-fire",
+  "name": "Sex on Fire (Remix)",
+  "description": "Kings of Leon energy meets house production. E Mixolydian swagger with octave bass bounce and call-response lead.",
+  "author": "bradygaster",
+  "tags": ["house", "indie", "rock", "kings-of-leon", "anthem", "driving"],
+  "genre": "Indie Dance",
+  "mood": "euphoric",
+  "energy": "high",
+  "bpm": 126,
+  "key": "E",
+  "scale": "mixolydian",
+  "style": "house",
+  "bass_style": "octave",
+  "lead_style": "call-response",
+  "version": "1.0.0",
+  "created": "2026-06-13"
+}

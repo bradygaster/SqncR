@@ -1,0 +1,18 @@
+{
+  "id": "dorian-groove",
+  "name": "Dorian Groove",
+  "description": "Smooth jazz-house fusion in D Dorian. Walking bass, scalar lead melodies, laid-back and sophisticated.",
+  "author": "bradygaster",
+  "tags": ["house", "jazz", "dorian", "smooth", "sophisticated", "lounge"],
+  "genre": "Jazz House",
+  "mood": "chill",
+  "energy": "medium",
+  "bpm": 120,
+  "key": "D",
+  "scale": "dorian",
+  "style": "house",
+  "bass_style": "walking",
+  "lead_style": "scalar",
+  "version": "1.0.0",
+  "created": "2026-06-13"
+}
